@@ -26,6 +26,9 @@
       font-weight: 700;
       margin-top: 0.6rem;
       letter-spacing: 0;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     * {
@@ -211,11 +214,10 @@
       }
     }
 
-    // Secret: Click footer text 3 times to reveal counter
-    const footerText = document.getElementById('footer-text');
-    if (footerText) {
-      footerText.style.cursor = 'pointer';
-      footerText.addEventListener('click', () => {
+    // Secret: Click "abu-eid" text 3 times to reveal counter
+    const abuEidText = document.querySelector('.abu-eid');
+    if (abuEidText) {
+      abuEidText.addEventListener('click', () => {
         clickCount++;
         if (clickCount >= 3) {
           showCount();
