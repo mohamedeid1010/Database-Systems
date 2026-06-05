@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الـ EER Model — Chapter 3 — دليل المذاكرة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0b0f; --bg2:#101016; --panel:#15151c; --panel2:#1a1a22; --ink:#070709;
+  --gold:#e0b56a; --gold2:#f3d49a; --gold-dim:#8f7440;
+  --text:#eceae4; --dim:#9b978d; --faint:#6b6860; --line:#26262f;
+  --blue:#82b4d6; --green:#83d3aa; --red:#dc8c8c; --purp:#bd9fd8;
+  --cn:#54545f;
+  --sh:0 24px 70px -20px rgba(0,0,0,.7);
+  --r:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;line-height:1.85;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:
+  radial-gradient(1100px 700px at 88% -8%, rgba(224,181,106,.11), transparent 58%),
+  radial-gradient(800px 600px at -5% 105%, rgba(189,159,216,.05), transparent 55%), var(--bg)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;opacity:.022;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.en{font-family:'IBM Plex Mono',monospace;direction:ltr;unicode-bidi:embed;font-weight:500}
+code.en{background:rgba(224,181,106,.10);color:var(--gold2);padding:.08em .42em;border-radius:5px;font-size:.84em;border:1px solid rgba(224,181,106,.16)}
+
+/* ===== NAV ===== */
+.topbar{position:sticky;top:0;z-index:200;background:rgba(11,11,15,.78);backdrop-filter:blur(16px) saturate(1.2);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.4rem;gap:1rem}
+.brand{display:flex;align-items:center;gap:.6rem;font-weight:800;color:var(--gold2);white-space:nowrap}
+.brand .mk{width:26px;height:26px;border-radius:8px;background:linear-gradient(140deg,var(--gold2),var(--gold-dim));display:grid;place-items:center;color:var(--ink);font-family:'IBM Plex Mono';font-weight:700;font-size:.8rem}
+.navlinks{display:flex;gap:.15rem;flex-wrap:wrap}
+.navlinks a{color:var(--dim);text-decoration:none;font-size:.8rem;font-weight:600;padding:.4rem .7rem;border-radius:9px;transition:.18s;white-space:nowrap}
+.navlinks a:hover{color:var(--gold2);background:rgba(224,181,106,.08)}
+.menu-btn{display:none;background:none;border:1px solid var(--line);color:var(--gold);padding:.45rem .7rem;border-radius:9px;font-size:1.05rem;cursor:pointer}
+@media(max-width:1024px){.navlinks{display:none;position:absolute;top:100%;right:0;left:0;flex-direction:column;background:var(--bg2);padding:.5rem;border-bottom:1px solid var(--line)}.navlinks.open{display:flex}.menu-btn{display:block}}
+
+/* ===== HERO ===== */
+.hero{max-width:1000px;margin:0 auto;padding:5.5rem 1.5rem 3rem;text-align:center}
+.kicker{font-family:'IBM Plex Mono',monospace;direction:ltr;color:var(--gold);letter-spacing:.34em;font-size:.74rem;font-weight:600;margin-bottom:1.5rem;opacity:.9}
+.hero h1{font-family:'Aref Ruqaa',serif;font-weight:700;font-size:clamp(2.7rem,7.5vw,5.2rem);line-height:1.22;background:linear-gradient(176deg,#fce8c0,var(--gold) 52%,var(--gold-dim));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:1.3rem;padding-bottom:.18em}
+.hero p{font-size:1.13rem;color:var(--dim);max-width:660px;margin:0 auto 2rem}
+.hero .pill{display:inline-block;background:rgba(224,181,106,.07);border:1px solid rgba(224,181,106,.24);color:var(--gold2);padding:.55rem 1.2rem;border-radius:50px;font-weight:700;font-size:.93rem}
+.hdiv{width:130px;height:1px;margin:2.6rem auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+
+/* ===== SECTION ===== */
+section{max-width:1000px;margin:0 auto;padding:3.2rem 1.5rem;scroll-margin-top:74px}
+.sec-head{display:flex;align-items:center;gap:1rem;margin-bottom:1.8rem}
+.sec-head .num{font-family:'IBM Plex Mono',monospace;direction:ltr;font-size:.95rem;font-weight:700;color:var(--ink);background:linear-gradient(140deg,var(--gold2),var(--gold-dim));min-width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px -6px rgba(224,181,106,.5)}
+.sec-head h2{font-size:clamp(1.55rem,4vw,2.2rem);font-weight:800;color:var(--gold2)}
+.lead{color:var(--dim);font-size:1.06rem;margin-bottom:1.8rem;border-right:3px solid var(--gold-dim);padding-right:1rem}
+
+/* ===== CARD ===== */
+.card{background:linear-gradient(165deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);padding:1.6rem 1.7rem;margin-bottom:1.2rem;box-shadow:var(--sh);position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(180deg,var(--gold),transparent 80%)}
+.card h3{color:var(--gold2);font-size:1.25rem;margin-bottom:.6rem;display:flex;align-items:center;gap:.55rem;flex-wrap:wrap}
+.badge{font-family:'IBM Plex Mono',monospace;direction:ltr;font-size:.68rem;background:rgba(130,180,214,.12);color:var(--blue);padding:.2rem .55rem;border-radius:6px;border:1px solid rgba(130,180,214,.24);font-weight:600}
+.card p{color:var(--text);margin-bottom:.65rem}
+.ex{background:var(--ink);border-radius:12px;padding:.85rem 1.05rem;margin-top:.85rem;border:1px dashed rgba(224,181,106,.2);color:var(--dim);font-size:.95rem}
+.ex b{color:var(--gold)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:stretch;margin:1rem 0}
+@media(max-width:600px){.vs{grid-template-columns:1fr;text-align:center}.vs .mid{padding:.2rem}}
+.vs .side{background:var(--ink);border:1px solid var(--line);border-radius:13px;padding:1rem 1.1rem}
+.vs .side h4{color:var(--gold2);margin-bottom:.35rem;font-size:1.02rem}
+.vs .side.b h4{color:var(--blue)} .vs .side.g h4{color:var(--green)} .vs .side.p h4{color:var(--purp)}
+.vs .side p{font-size:.93rem;margin:0;color:var(--text)}
+.vs .mid{display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;color:var(--gold);font-weight:700;font-size:1.15rem}
+
+.steps{counter-reset:s;margin:1.1rem 0}
+.stp{position:relative;padding:.75rem 0;padding-right:3rem;border-bottom:1px solid var(--line)}
+.stp:last-child{border:none}
+.stp::before{counter-increment:s;content:counter(s);position:absolute;right:0;top:.8rem;width:30px;height:30px;border-radius:9px;background:rgba(224,181,106,.1);border:1px solid var(--gold-dim);color:var(--gold2);font-family:'IBM Plex Mono';font-weight:700;font-size:.82rem;display:flex;align-items:center;justify-content:center}
+.stp b{color:var(--gold2)}
+
+.tip{background:rgba(130,180,214,.07);border:1px solid rgba(130,180,214,.2);border-radius:13px;padding:1rem 1.15rem;margin:1rem 0}.tip b{color:var(--blue)}
+.warn{background:rgba(220,140,140,.07);border:1px solid rgba(220,140,140,.2);border-radius:13px;padding:1rem 1.15rem;margin:1rem 0}.warn b{color:var(--red)}
+.good{background:rgba(131,211,170,.07);border:1px solid rgba(131,211,170,.2);border-radius:13px;padding:1rem 1.15rem;margin:1rem 0}.good b{color:var(--green)}
+
+.qlist{list-style:none}
+.qlist li{padding:.5rem 0;border-bottom:1px dashed var(--line);display:flex;gap:.65rem}
+.qlist li:last-child{border:none}
+.qlist .k{color:var(--gold2);font-weight:700;direction:ltr;font-family:'IBM Plex Mono';font-size:.86rem;flex-shrink:0;min-width:max-content}
+
+/* ============ DIAGRAM SYSTEM (pure HTML/CSS) ============ */
+.diagram{background:radial-gradient(120% 120% at 50% 0%,#101017,#0c0c11);border:1px solid var(--line);border-radius:16px;padding:1.8rem 1.2rem;margin:1.1rem 0;overflow-x:auto}
+.diagram-inner{min-width:min-content;display:flex;flex-direction:column;align-items:center}
+.dcap{text-align:center;color:var(--dim);font-size:.88rem;margin:.2rem 0 1rem;font-weight:500}
+.dcap2{text-align:center;color:var(--faint);font-size:.8rem;margin-top:1rem;font-family:'IBM Plex Mono';direction:ltr}
+
+/* entity box — auto sizes to content, never clips */
+.ent{display:inline-flex;flex-direction:column;direction:ltr;text-align:left;background:linear-gradient(160deg,#1d1a12,#15140f);border:1.6px solid var(--gold);border-radius:11px;padding:0;min-width:120px;box-shadow:0 10px 24px -14px rgba(0,0,0,.8)}
+.ent .nm{font-family:'IBM Plex Mono';font-weight:700;color:var(--gold2);text-align:center;padding:.45rem .8rem;font-size:.86rem;border-bottom:1px solid rgba(224,181,106,.28);letter-spacing:.02em}
+.ent .at{padding:.5rem .8rem;display:flex;flex-direction:column;gap:.18rem}
+.ent .at span{font-family:'IBM Plex Mono';font-size:.76rem;color:var(--dim);white-space:nowrap}
+.ent .at .key{color:var(--gold2);text-decoration:underline;text-underline-offset:2px}
+.ent .at .disc{color:var(--gold)}
+.ent.nofields .nm{border-bottom:none}
+.ent.sub{border-color:var(--blue);background:linear-gradient(160deg,#11161c,#0e1318)}
+.ent.sub .nm{color:var(--blue);border-bottom-color:rgba(130,180,214,.28)}
+.ent.sub .at .disc{color:var(--blue)}
+.ent.weak{box-shadow:0 0 0 3px #0c0c11,0 0 0 4.6px var(--gold),0 10px 24px -14px rgba(0,0,0,.8)}
+.ent.assoc{border-color:var(--purp)}.ent.assoc .nm{color:var(--purp);border-bottom-color:rgba(189,159,216,.28)}
+
+/* relationship pill (diamond-ish) */
+.rel{display:inline-flex;flex-direction:column;align-items:center;direction:ltr;background:#15131a;border:1.6px solid var(--purp);color:var(--purp);font-family:'IBM Plex Mono';font-size:.76rem;font-weight:600;padding:.4rem .85rem;border-radius:999px;white-space:nowrap}
+.rel .sub-t{color:var(--dim);font-size:.68rem;font-weight:400}
+
+/* EER hierarchy tree */
+.eer{display:flex;flex-direction:column;align-items:center}
+.spine{display:flex;flex-direction:column;align-items:center;position:relative}
+.spine .ln{width:2px;height:24px;background:var(--cn)}
+.spine.total .ln{width:7px;height:24px;background:transparent;border-left:2px solid var(--cn);border-right:2px solid var(--cn)}
+.spine .circ{width:34px;height:34px;border-radius:50%;border:2px solid var(--gold);background:#0c0c11;display:grid;place-items:center;font-family:'IBM Plex Mono';font-weight:700;color:var(--gold2);font-size:.9rem;box-shadow:0 0 18px -4px rgba(224,181,106,.5)}
+.spine .disc{font-family:'IBM Plex Mono';font-size:.7rem;color:var(--dim);direction:ltr;position:absolute;right:42px;top:50%;transform:translateY(-50%);white-space:nowrap}
+.spine .ln2{width:2px;height:22px;background:var(--cn)}
+.branches{display:flex;justify-content:center;align-items:flex-start}
+.branch{position:relative;padding-top:26px;margin:0 18px;display:flex;flex-direction:column;align-items:center;gap:7px}
+.branch::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:26px;background:var(--cn)}
+.branch::after{content:"";position:absolute;top:0;left:-18px;right:-18px;height:2px;background:var(--cn)}
+.branch:first-child::after{left:50%}
+.branch:last-child::after{right:50%}
+.branch:only-child::after{display:none}
+.blbl{font-family:'IBM Plex Mono';font-size:.7rem;color:var(--gold);background:#0c0c11;padding:0 5px;position:relative;z-index:2;border-radius:4px}
+
+/* horizontal flow (binary relationships) */
+.flow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.2rem}
+.flow .edge{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:30px}
+.flow .edge .ln{height:2px;width:100%;min-width:26px;background:var(--cn)}
+.flow .edge .card-lbl{font-family:'IBM Plex Mono';font-size:.66rem;color:var(--faint);direction:ltr;white-space:nowrap;margin:.15rem 0}
+.col{display:flex;flex-direction:column;align-items:center;gap:0}
+.vln{width:2px;height:26px;background:var(--cn)}
+
+/* cluster (dashed wrapper for PARTY model) */
+.cluster{border:1.6px dashed var(--gold-dim);border-radius:14px;padding:1rem;display:inline-flex;flex-direction:column;gap:.6rem;background:rgba(224,181,106,.02)}
+.cluster.b{border-color:rgba(130,180,214,.5);background:rgba(130,180,214,.02)}
+.cluster .ctitle{font-family:'IBM Plex Mono';font-size:.78rem;font-weight:700;color:var(--gold2);text-align:center}
+.cluster.b .ctitle{color:var(--blue)}
+.cluster .row{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
+
+/* legend */
+.legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.9rem;margin-top:.5rem}
+.lg{display:flex;align-items:center;gap:.8rem;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:.8rem .9rem}
+.lg .vis{flex-shrink:0;width:54px;display:flex;align-items:center;justify-content:center}
+.lg .txt b{color:var(--gold2);font-size:.92rem;display:block}
+.lg .txt span{color:var(--dim);font-size:.8rem}
+.mini-line{width:2px;height:30px;background:var(--cn)}
+.mini-line.dbl{width:7px;background:transparent;border-left:2px solid var(--cn);border-right:2px solid var(--cn)}
+.mini-circ{width:28px;height:28px;border-radius:50%;border:2px solid var(--gold);display:grid;place-items:center;font-family:'IBM Plex Mono';font-weight:700;color:var(--gold2);font-size:.8rem}
+.mini-box{font-family:'IBM Plex Mono';font-size:.64rem;font-weight:700;padding:.3rem .5rem;border-radius:6px;border:1.6px solid var(--gold);color:var(--gold2)}
+.mini-box.sub{border-color:var(--blue);color:var(--blue)}
+.mini-box.weak{box-shadow:0 0 0 2px #0c0c11,0 0 0 3.4px var(--gold)}
+
+/* problems */
+.prob{background:linear-gradient(165deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;margin-bottom:1rem;overflow:hidden;box-shadow:var(--sh)}
+.prob summary{list-style:none;cursor:pointer;padding:1.15rem 1.4rem;display:flex;align-items:center;gap:.9rem;font-weight:700;color:var(--text);font-size:1.04rem;transition:.18s}
+.prob summary::-webkit-details-marker{display:none}
+.prob summary:hover{background:rgba(224,181,106,.04)}
+.prob summary .qn{font-family:'IBM Plex Mono';direction:ltr;background:linear-gradient(140deg,var(--gold2),var(--gold-dim));color:var(--ink);min-width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0}
+.prob summary .ar{margin-right:auto;color:var(--gold);transition:.3s;font-size:1.1rem}
+.prob[open] summary .ar{transform:rotate(90deg)}
+.prob .body{padding:.2rem 1.4rem 1.4rem;border-top:1px solid var(--line)}
+.qtext{color:var(--dim);font-style:italic;margin:1rem 0;padding-left:.8rem;border-left:2px solid var(--gold-dim);direction:ltr;text-align:left;font-family:'IBM Plex Mono';font-size:.82rem;line-height:1.65}
+.tagp{display:inline-block;font-family:'IBM Plex Mono';direction:ltr;font-size:.7rem;padding:.18rem .5rem;border-radius:6px;margin:.15rem;font-weight:600}
+.t-e{background:rgba(224,181,106,.12);color:var(--gold2);border:1px solid rgba(224,181,106,.24)}
+.t-s{background:rgba(130,180,214,.12);color:var(--blue);border:1px solid rgba(130,180,214,.24)}
+.t-r{background:rgba(189,159,216,.12);color:var(--purp);border:1px solid rgba(189,159,216,.24)}
+
+footer{text-align:center;padding:3rem 1.5rem;color:var(--dim);border-top:1px solid var(--line);margin-top:2rem}
+footer .h{color:var(--gold)}
+.reveal{opacity:0;transform:translateY(22px);transition:.65s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+html[dir="rtl"] .branch:first-child::after{right:50%;left:-18px}
+html[dir="rtl"] .branch:last-child::after{left:50%;right:-18px}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="topbar-in">
+  <div class="brand"><span class="mk">3</span> EER Model</div>
+  <button class="menu-btn" onclick="document.getElementById('nav').classList.toggle('open')">☰</button>
+  <nav class="navlinks" id="nav">
+    <a href="index.html" style="color:var(--gold2);font-weight:700">← Back</a>
+    <a href="#legend">الرموز</a>
+    <a href="#core">Super/Sub</a>
+    <a href="#gen">Gen vs Spec</a>
+    <a href="#constraints">القيود</a>
+    <a href="#disc">Discriminator</a>
+    <a href="#extra">Cluster & PARTY</a>
+    <a href="#method">طريقة الحل</a>
+    <a href="#problems">المسائل</a>
+    <a href="#defs">التعريفات</a>
+  </nav>
+</div></div>
+
+<header class="hero">
+  <div class="kicker">CSE 301 · DATABASE SYSTEMS · CHAPTER 3</div>
+  <h1>الـ EER Model</h1>
+  <p>النسخة المطوّرة من الـ E-R. هنا بنضيف فكرة <span class="en">supertype / subtype</span> — نوع عام وأنواع فرعية منه. هتفهم القيود الأربعة، الرموز، وكل مسائل شيت 3 محلولة بالرسم النضيف.</p>
+  <span class="pill">يلا نبدأ بالرموز 👇</span>
+  <div class="hdiv"></div>
+</header>
+
+<!-- ===== LEGEND ===== -->
+<section id="legend">
+  <div class="sec-head"><span class="num">00</span><h2>مفتاح الرموز — اقرأه الأول</h2></div>
+  <p class="lead">كل الرسومات في الصفحة بتستخدم الرموز دي. لو فهمتها هنا، هتقرأ أي رسمة على طول.</p>
+  <div class="card reveal">
+    <div class="legend">
+      <div class="lg"><div class="vis"><span class="mini-box">SUPER</span></div><div class="txt"><b>Supertype</b><span>النوع العام (إطار دهبي)</span></div></div>
+      <div class="lg"><div class="vis"><span class="mini-box sub">SUB</span></div><div class="txt"><b>Subtype</b><span>النوع الفرعي (إطار أزرق)</span></div></div>
+      <div class="lg"><div class="vis"><span class="mini-box weak">WEAK</span></div><div class="txt"><b>Weak entity</b><span>إطار مزدوج</span></div></div>
+      <div class="lg"><div class="vis"><span class="mini-circ">d</span></div><div class="txt"><b>Disjoint</b><span>نوع واحد بس في المرة</span></div></div>
+      <div class="lg"><div class="vis"><span class="mini-circ">o</span></div><div class="txt"><b>Overlap</b><span>ممكن أكتر من نوع</span></div></div>
+      <div class="lg"><div class="vis"><span class="mini-line dbl"></span></div><div class="txt"><b>خط مزدوج</b><span>Total (لازم يكون نوع)</span></div></div>
+      <div class="lg"><div class="vis"><span class="mini-line"></span></div><div class="txt"><b>خط مفرد</b><span>Partial (ممكن لأ)</span></div></div>
+      <div class="lg"><div class="vis"><span class="rel" style="font-size:.62rem;padding:.25rem .5rem">Rel</span></div><div class="txt"><b>Relationship</b><span>علاقة (بنفسجي)</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CORE ===== -->
+<section id="core">
+  <div class="sec-head"><span class="num">01</span><h2>الفكرة الأساسية — Supertype & Subtype</h2></div>
+  <p class="lead">في الشابتر اللي فات الكيان كان حاجة واحدة. هنا بنقول إن الكيان ممكن يكون ليه «أنواع فرعية» مختلفة في صفاتها. ده كل سحر الـ EER.</p>
+
+  <div class="card reveal">
+    <h3>إيه هو الـ EER؟ <span class="badge">EER Model</span></h3>
+    <p>الـ <span class="en">Enhanced E-R Model</span> هو الـ E-R العادي + إضافات. أهمها علاقة <b>Supertype / Subtype</b>.</p>
+    <div class="vs">
+      <div class="side"><h4>Supertype (نوع عام)</h4><p>الكيان العام اللي فيه الصفات <b>المشتركة</b> لكل الأنواع. زي <code class="en">EMPLOYEE</code>.</p></div>
+      <div class="mid">▲</div>
+      <div class="side b"><h4>Subtype (نوع فرعي)</h4><p>مجموعة فرعية ليها صفات <b>تخصها هي بس</b>. زي <code class="en">HOURLY</code> و<code class="en">SALARIED</code>.</p></div>
+    </div>
+    <div class="diagram reveal">
+      <p class="dcap">EMPLOYEE فيه الصفات المشتركة · كل subtype فيه صفاته الخاصة</p>
+      <div class="diagram-inner">
+        <div class="eer">
+          <div class="ent"><div class="nm">EMPLOYEE</div><div class="at"><span class="key">Employee Number</span><span>Name, Address</span><span>Date Hired</span></div></div>
+          <div class="spine"><span class="ln"></span><span class="circ">d</span><span class="ln2"></span></div>
+          <div class="branches">
+            <div class="branch"><div class="ent sub"><div class="nm">HOURLY</div><div class="at"><span>Hourly Rate</span></div></div></div>
+            <div class="branch"><div class="ent sub"><div class="nm">SALARIED</div><div class="at"><span>Annual Salary</span><span>Stock Option</span></div></div></div>
+            <div class="branch"><div class="ent sub"><div class="nm">CONSULTANT</div><div class="at"><span>Contract Number</span><span>Billing Rate</span></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h3>وراثة الصفات — Attribute Inheritance <span class="badge">Inheritance</span></h3>
+    <p>أي <span class="en">subtype</span> بيرث كل صفات الـ <span class="en">supertype</span> أوتوماتيك. يعني <code class="en">HOURLY</code> عنده <code class="en">Hourly Rate</code> + كل صفات <code class="en">EMPLOYEE</code>.</p>
+    <div class="good">✅ <b>ليه مهمة؟</b> عشان منكررش صفات الـ supertype في كل subtype. وأي حالة في الـ subtype هي تلقائياً حالة في الـ supertype.</div>
+  </div>
+
+  <div class="card reveal">
+    <h3>العلاقات: على مستوى Super ولا Sub؟ <span class="badge">Relationships</span></h3>
+    <ul class="qlist">
+      <li><span class="k">Supertype</span> العلاقة على الـ supertype → <b>كل</b> الأنواع بتشارك فيها. (كل مريض ليه طبيب).</li>
+      <li><span class="k">Subtype</span> العلاقة على subtype معيّن → <b>بس</b> النوع ده بيشارك. (المريض المقيم بس بياخد سرير).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== GEN VS SPEC ===== -->
+<section id="gen">
+  <div class="sec-head"><span class="num">02</span><h2>Generalization vs Specialization</h2></div>
+  <p class="lead">الاتنين بيوصلوك لنفس الرسمة، الفرق في <b>اتجاه التفكير</b>. سؤال بيتكرر.</p>
+  <div class="grid2">
+    <div class="card reveal" style="margin:0"><h3 style="color:var(--green)">Generalization <span class="badge">BOTTOM-UP</span></h3><p>من <b>تحت لفوق</b>. عندك كيانات متخصصة مشتركة في صفات، فبتطلّع منهم كيان عام.</p><div class="ex"><b>مثال:</b> <code class="en">CAR</code> و<code class="en">TRUCK</code> مشتركين في Vehicle ID و Price → تعمل supertype <code class="en">VEHICLE</code>.</div></div>
+    <div class="card reveal" style="margin:0"><h3 style="color:var(--blue)">Specialization <span class="badge">TOP-DOWN</span></h3><p>من <b>فوق لتحت</b>. عندك كيان عام، وبتلاقي صفات بتنطبق على جزء بس، فبتقسّمه.</p><div class="ex"><b>مثال:</b> <code class="en">PART</code> → <code class="en">MANUFACTURED</code> (Routing Number) و<code class="en">PURCHASED</code> (Supplier).</div></div>
+  </div>
+  <div class="diagram reveal">
+    <p class="dcap">Generalization: من CAR و TRUCK نطلّع supertype اسمه VEHICLE</p>
+    <div class="diagram-inner">
+      <div class="eer">
+        <div class="ent"><div class="nm">VEHICLE</div><div class="at"><span class="key">Vehicle ID</span><span>Price</span><span>Engine Displacement</span></div></div>
+        <div class="spine"><span class="ln"></span><span class="circ">d</span><span class="ln2"></span></div>
+        <div class="branches">
+          <div class="branch"><div class="ent sub"><div class="nm">CAR</div><div class="at"><span>No Of Passengers</span></div></div></div>
+          <div class="branch"><div class="ent sub"><div class="nm">TRUCK</div><div class="at"><span>Capacity</span><span>Cab Type</span></div></div></div>
+        </div>
+      </div>
+    </div>
+    <p class="dcap2">note: motorcycle has no unique attributes → no subtype</p>
+  </div>
+</section>
+
+<!-- ===== CONSTRAINTS ===== -->
+<section id="constraints">
+  <div class="sec-head"><span class="num">03</span><h2>القيود — أهم جزء في الرسم</h2></div>
+  <p class="lead">كل علاقة super/sub فيها قيدين <b>منفصلين</b>: الـ Completeness (الخط) والـ Disjointness (حرف الدايرة). متخلطش بينهم.</p>
+
+  <div class="card reveal">
+    <h3>1) Completeness — الخط <span class="badge">Total / Partial</span></h3>
+    <p>السؤال: هل <b>لازم</b> كل حالة في الـ supertype تكون نوع؟</p>
+    <div class="diagram">
+      <div class="diagram-inner" style="flex-direction:row;gap:3.5rem;flex-wrap:wrap;justify-content:center">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:.7rem">
+          <div class="eer">
+            <div class="ent nofields"><div class="nm">SUPERTYPE</div></div>
+            <div class="spine total"><span class="ln"></span><span class="circ">d</span><span class="ln2"></span></div>
+            <div class="branches">
+              <div class="branch"><div class="ent sub nofields"><div class="nm">SUB&nbsp;1</div></div></div>
+              <div class="branch"><div class="ent sub nofields"><div class="nm">SUB&nbsp;2</div></div></div>
+            </div>
+          </div>
+          <span style="color:var(--green);font-weight:700;font-family:'IBM Plex Mono';font-size:.8rem">TOTAL — خط مزدوج (لازم)</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:.7rem">
+          <div class="eer">
+            <div class="ent nofields"><div class="nm">SUPERTYPE</div></div>
+            <div class="spine"><span class="ln"></span><span class="circ">d</span><span class="ln2"></span></div>
+            <div class="branches">
+              <div class="branch"><div class="ent sub nofields"><div class="nm">SUB&nbsp;1</div></div></div>
+              <div class="branch"><div class="ent sub nofields"><div class="nm">SUB&nbsp;2</div></div></div>
+            </div>
+          </div>
+          <span style="color:var(--blue);font-weight:700;font-family:'IBM Plex Mono';font-size:.8rem">PARTIAL — خط مفرد (مش لازم)</span>
+        </div>
+      </div>
+    </div>
+    <div class="ex"><b>Total:</b> المريض لازم يكون Outpatient أو Resident. · <b>Partial:</b> العربية ممكن متكونش Car ولا Truck (زي الموتوسيكل).</div>
+  </div>
+
+  <div class="card reveal">
+    <h3>2) Disjointness — حرف الدايرة <span class="badge">d / o</span></h3>
+    <p>السؤال: هل الحالة ممكن تكون <b>أكتر من نوع في نفس الوقت</b>؟</p>
+    <div class="vs">
+      <div class="side"><h4>Disjoint — حرف d</h4><p>نوع <b>واحد بس</b>. منفصلين. مثال: <code class="en">PERSON → MALE / FEMALE</code>.</p></div>
+      <div class="mid">vs</div>
+      <div class="side p"><h4>Overlap — حرف o</h4><p>ممكن <b>أكتر من نوع</b>. مثال: <code class="en">PERSON → INSTRUCTOR / STUDENT</code>.</p></div>
+    </div>
+    <div class="warn">⚠️ <b>الخلاصة:</b> الدايرة (d/o) بتجاوب «نوع واحد ولا أكتر؟» · الخط (مفرد/مزدوج) بيجاوب «لازم يكون نوع ولا لأ؟». قيدين منفصلين في كل رسمة.</div>
+  </div>
+</section>
+
+<!-- ===== DISCRIMINATOR ===== -->
+<section id="disc">
+  <div class="sec-head"><span class="num">04</span><h2>المُميِّز — Subtype Discriminator</h2></div>
+  <p class="lead">صفة في الـ supertype قيمتها بتقولك الحالة دي تروح لأنهي subtype.</p>
+  <div class="card reveal">
+    <div class="vs">
+      <div class="side"><h4>مع Disjoint (d)</h4><p>صفة <b>بسيطة</b> بقيمة واحدة. زي <code class="en">Employee Type = "H"/"S"/"C"</code>.</p></div>
+      <div class="mid">vs</div>
+      <div class="side p"><h4>مع Overlap (o)</h4><p>صفة <b>مركّبة</b>، كل جزء قيمته <span class="en">Y/N</span>. زي <code class="en">(Employee? Student? Alumnus?)</code>.</p></div>
+    </div>
+    <div class="diagram">
+      <p class="dcap">EMPLOYEE — disjoint (d) مع discriminator على الخط</p>
+      <div class="diagram-inner">
+        <div class="eer">
+          <div class="ent"><div class="nm">EMPLOYEE</div><div class="at"><span class="key">Employee Number</span><span>Name, Address, Date Hired</span><span class="disc">Employee Type ← disc.</span></div></div>
+          <div class="spine"><span class="ln"></span><span class="circ">d</span><span class="disc">Employee Type =</span><span class="ln2"></span></div>
+          <div class="branches">
+            <div class="branch"><span class="blbl">"H"</span><div class="ent sub"><div class="nm">HOURLY</div><div class="at"><span>Hourly Rate</span></div></div></div>
+            <div class="branch"><span class="blbl">"S"</span><div class="ent sub"><div class="nm">SALARIED</div><div class="at"><span>Annual Salary</span></div></div></div>
+            <div class="branch"><span class="blbl">"C"</span><div class="ent sub"><div class="nm">CONSULTANT</div><div class="at"><span>Billing Rate</span></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CLUSTER & PARTY ===== -->
+<section id="extra">
+  <div class="sec-head"><span class="num">05</span><h2>Entity Cluster & النماذج الجاهزة</h2></div>
+  <p class="lead">مفاهيم نظرية بتيجي في التعريفات.</p>
+  <div class="card reveal">
+    <h3>Entity Cluster <span class="badge">Cluster</span></h3>
+    <p>مجموعة كيانات وعلاقاتها متجمّعين في <b>كيان مجرّد واحد</b>. الهدف: تبسيط الـ ERD المعقّد، تفكيكه لمستويات، والتركيز على جزء معيّن.</p>
+  </div>
+  <div class="card reveal">
+    <h3>Universal Data Model — نمط PARTY <span class="badge">PARTY</span></h3>
+    <p>نموذج جاهز (template) يُعاد استخدامه. بنفصل «الكيان» عن «الدور»:</p>
+    <div class="vs">
+      <div class="side"><h4>PARTY</h4><p>الأشخاص والمؤسسات <b>بغض النظر عن الدور</b>.</p></div>
+      <div class="mid">≠</div>
+      <div class="side b"><h4>PARTY ROLE</h4><p>معلومات الـ party في <b>دور معيّن</b> (EMPLOYEE, CUSTOMER...).</p></div>
+    </div>
+    <div class="good">✅ مزايا النماذج الجاهزة: مكوّنات مجرّبة · توفير وقت · أخطاء أقل · أسهل تعديل وقراءة · بتشجّع إعادة الاستخدام.</div>
+  </div>
+</section>
+
+<!-- ===== METHOD ===== -->
+<section id="method">
+  <div class="sec-head"><span class="num">06</span><h2>طريقة الحل — الوصفة</h2></div>
+  <p class="lead">أي مسألة EER بتتحل بنفس الخطوات.</p>
+  <div class="card reveal">
+    <h3>متى تستخدم super/sub؟</h3>
+    <div class="steps">
+      <div class="stp"><b>صفات لجزء بس:</b> فيه صفات عند بعض الحالات مش كلها.</div>
+      <div class="stp"><b>علاقات لجزء بس:</b> فيه علاقات بتخص بعض الحالات مش كلها.</div>
+    </div>
+  </div>
+  <div class="card reveal">
+    <h3>تحديد القيود (الأهم)</h3>
+    <div class="steps">
+      <div class="stp"><b>ارسم</b> الـ supertype (صفات مشتركة + مفتاح) والـ subtypes (صفات خاصة).</div>
+      <div class="stp"><b>«نوع واحد ولا أكتر؟»</b> → واحد = <b>d</b> · أكتر = <b>o</b>.</div>
+      <div class="stp"><b>«لازم يكون نوع ولا لأ؟»</b> → لازم = <b>خط مزدوج</b> · لأ = <b>خط مفرد</b>.</div>
+      <div class="stp"><b>حط الـ discriminator</b> على الخط (بسيط مع d، مركّب Y/N مع o).</div>
+      <div class="stp"><b>العلاقات:</b> المشتركة على الـ supertype، الخاصة على الـ subtype.</div>
+    </div>
+  </div>
+  <div class="tip">🔑 <b>ترجمة الكلمات:</b> «either A or B, not both» = <b>d</b> · «may belong to two or more» = <b>o</b> · «need not belong to any» = <b>Partial</b> · «must be one of» = <b>Total</b>.</div>
+</section>
+
+<!-- ===== PROBLEMS ===== -->
+<section id="problems">
+  <div class="sec-head"><span class="num">07</span><h2>المسائل المحلولة</h2></div>
+  <p class="lead">جرّب تحلها لوحدك الأول. ركّز على d/o والخط المفرد/المزدوج في كل واحدة.</p>
+
+  <details class="prob reveal">
+    <summary><span class="qn">10</span> هرم الجامعة — اكتب صفاتك أنت <span class="ar">›</span></summary>
+    <div class="body">
+      <p class="qtext">As a GRADUATE student, list all attributes that apply to you (via inheritance) and your data value for each.</p>
+      <p>بفضل <b>الوراثة</b>، طالب الـ Graduate بيرث صفات PERSON + STUDENT + نوعه:</p>
+      <ul class="qlist">
+        <li><span class="k">SSN</span> 32017158</li>
+        <li><span class="k">Name</span> Mostafa Mohamed</li>
+        <li><span class="k">Address</span> Nasr City, Cairo</li>
+        <li><span class="k">Gender</span> male</li>
+        <li><span class="k">Date Of Birth</span> Oct 23, 1997</li>
+        <li><span class="k">Major Dept</span> Computer Science</li>
+        <li><span class="k">Test Score</span> 986</li>
+      </ul>
+      <div class="tip">🎓 لو Undergrad: بدل <code class="en">Test Score</code> يبقى <code class="en">Class Standing</code>.</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">11</span> هرم الجامعة + الـ Discriminators (3 مستويات) <span class="ar">›</span></summary>
+    <div class="body">
+      <p class="qtext">Add subtype discriminators. PERSON: Person Type (Employee? Alumnus? Student?) · EMPLOYEE: Employee Type (Faculty, Staff) · STUDENT: Student Type (Grad, Undergrad).</p>
+      <span class="tagp t-e">PERSON</span><span class="tagp t-s">EMPLOYEE</span><span class="tagp t-s">ALUMNUS</span><span class="tagp t-s">STUDENT</span>
+      <ul class="qlist" style="margin-top:.7rem">
+        <li><span class="k">PERSON</span> <b>o (overlap)</b> — ممكن موظف وخريج. discriminator مركّب.</li>
+        <li><span class="k">EMPLOYEE</span> <b>d</b> — Faculty أو Staff.</li>
+        <li><span class="k">STUDENT</span> <b>d</b> — Grad أو Undergrad.</li>
+      </ul>
+      <div class="diagram">
+        <div class="diagram-inner">
+          <div class="eer">
+            <div class="ent"><div class="nm">PERSON</div><div class="at"><span class="key">SSN</span><span>Name, Address</span><span>Gender, Date Of Birth</span><span class="disc">Person Type (disc.)</span></div></div>
+            <div class="spine"><span class="ln"></span><span class="circ">o</span><span class="ln2"></span></div>
+            <div class="branches">
+              <div class="branch"><span class="blbl">Emp?="Y"</span>
+                <div class="eer">
+                  <div class="ent sub"><div class="nm">EMPLOYEE</div><div class="at"><span>Date Hired, Salary</span><span class="disc">Employee Type</span></div></div>
+                  <div class="spine"><span class="ln"></span><span class="circ">d</span><span class="ln2"></span></div>
+                  <div class="branches">
+                    <div class="branch"><span class="blbl">"Faculty"</span><div class="ent sub"><div class="nm">FACULTY</div><div class="at"><span>Rank</span></div></div></div>
+                    <div class="branch"><span class="blbl">"Staff"</span><div class="ent sub"><div class="nm">STAFF</div><div class="at"><span>Position</span></div></div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="branch"><span class="blbl">Alum?="Y"</span><div class="ent sub"><div class="nm">ALUMNUS</div><div class="at"><span>{Degree (Date,</span><span>Year, Designation)}</span></div></div></div>
+              <div class="branch"><span class="blbl">Stu?="Y"</span>
+                <div class="eer">
+                  <div class="ent sub"><div class="nm">STUDENT</div><div class="at"><span>Major Dept</span><span class="disc">Student Type</span></div></div>
+                  <div class="spine"><span class="ln"></span><span class="circ">d</span><span class="ln2"></span></div>
+                  <div class="branches">
+                    <div class="branch"><span class="blbl">"Grad"</span><div class="ent sub"><div class="nm">GRAD STUDENT</div><div class="at"><span>Test Score</span></div></div></div>
+                    <div class="branch"><span class="blbl">"Undergrad"</span><div class="ent sub"><div class="nm">UNDERGRAD</div><div class="at"><span>Class Standing</span></div></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">12</span> منظمة غير ربحية — كلاسيك ⭐ <span class="ar">›</span></summary>
+    <div class="body">
+      <p class="qtext">PERSON → EMPLOYEE (Date Hired), VOLUNTEER (Skill), DONOR. DONOR Donates ITEM (donor: 1+ items, item: 0+ donors). A person may belong to two or more groups, and need not belong to any.</p>
+      <span class="tagp t-e">PERSON</span><span class="tagp t-s">EMPLOYEE</span><span class="tagp t-s">VOLUNTEER</span><span class="tagp t-s">DONOR</span><span class="tagp t-r">Donates</span><span class="tagp t-e">ITEM</span>
+      <ul class="qlist" style="margin-top:.7rem">
+        <li><span class="k">o (overlap)</span> «may belong to two or more» → موظف ومتبرّع.</li>
+        <li><span class="k">Partial</span> «need not belong to any» → خط مفرد.</li>
+        <li><span class="k">Donates</span> على الـ subtype DONOR بس.</li>
+      </ul>
+      <div class="diagram">
+        <div class="diagram-inner">
+          <div class="eer">
+            <div class="ent"><div class="nm">PERSON</div><div class="at"><span class="key">SSN</span><span>Name, Address, City</span><span>State, Zip, Telephone</span></div></div>
+            <div class="spine"><span class="ln"></span><span class="circ">o</span><span class="ln2"></span></div>
+            <div class="branches">
+              <div class="branch"><div class="ent sub"><div class="nm">EMPLOYEE</div><div class="at"><span>Date Hired</span></div></div></div>
+              <div class="branch"><div class="ent sub"><div class="nm">VOLUNTEER</div><div class="at"><span>{Skill}</span></div></div></div>
+              <div class="branch">
+                <div class="col">
+                  <div class="ent sub nofields"><div class="nm">DONOR</div></div>
+                  <span class="vln"></span>
+                  <div class="rel">Donates<span class="sub-t">1+ / 0+</span></div>
+                  <span class="vln"></span>
+                  <div class="ent nofields"><div class="nm">ITEM</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="dcap2">single line = Partial · circle o = Overlap · Donates on DONOR only</p>
+      </div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">13</span> شركة Fin &amp; Finicky للأمن — Disjoint <span class="ar">›</span></summary>
+    <div class="body">
+      <p class="qtext">A CONSULTANT is either Business or Technical, not both. BUSINESS prepares ESTIMATE; TECHNICAL does SERVICE PERFORMED.</p>
+      <span class="tagp t-e">CONSULTANT</span><span class="tagp t-s">BUSINESS</span><span class="tagp t-s">TECHNICAL</span>
+      <ul class="qlist" style="margin-top:.7rem">
+        <li><span class="k">d (disjoint)</span> «either ... not both». discriminator = Consultant Type "B"/"T".</li>
+        <li><span class="k">subtype rels</span> BUSINESS → ESTIMATE · TECHNICAL → SERVICE PERFORMED.</li>
+      </ul>
+      <div class="diagram">
+        <div class="diagram-inner">
+          <div class="eer">
+            <div class="ent"><div class="nm">CONSULTANT</div><div class="at"><span class="key">Emp ID</span><span>Emp Name, Address, Phone</span><span>Emp DOB, [Age], {Degree}</span><span class="disc">Consultant Type ← disc.</span></div></div>
+            <div class="spine"><span class="ln"></span><span class="circ">d</span><span class="disc">Consultant Type =</span><span class="ln2"></span></div>
+            <div class="branches">
+              <div class="branch"><span class="blbl">"B"</span>
+                <div class="col">
+                  <div class="ent sub"><div class="nm">BUSINESS</div><div class="at"><span>{Bus Exper}</span></div></div>
+                  <span class="vln"></span>
+                  <div class="ent assoc"><div class="nm">ESTIMATE</div><div class="at"><span>Est Date</span><span>Est Amount</span></div></div>
+                </div>
+              </div>
+              <div class="branch"><span class="blbl">"T"</span>
+                <div class="col">
+                  <div class="ent sub"><div class="nm">TECHNICAL</div><div class="at"><span>{Tech Skill}</span></div></div>
+                  <span class="vln"></span>
+                  <div class="ent assoc"><div class="nm">SERVICE PERFORMED</div><div class="at"><span>SP Date</span><span>SP Amount</span></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="dcap2">+ entities: CUSTOMER (Maintains LOCATION), SERVICE linked to ESTIMATE / SERVICE PERFORMED</p>
+      </div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">15</span> سلسلة سينمات — Theatre Chain <span class="ar">›</span></summary>
+    <div class="body">
+      <p class="qtext">THEATRE Contains SCREEN, SCREEN Utilizes TIMESLOT, MOVIE Schedule TIMESLOT. Track attendance & price per timeslot; Movie Seq No = order of movies in a slot.</p>
+      <span class="tagp t-e">THEATRE</span><span class="tagp t-e">SCREEN</span><span class="tagp t-e">TIMESLOT</span><span class="tagp t-e">MOVIE</span><span class="tagp t-r">SCHEDULE</span>
+      <p style="margin-top:.6rem">سلسلة علاقات 1:M (مفيهاش super/sub):</p>
+      <div class="diagram">
+        <div class="diagram-inner">
+          <div class="flow">
+            <div class="ent"><div class="nm">MOVIE</div><div class="at"><span class="key">Movie ID</span><span>Title, Duration, Type</span></div></div>
+            <div class="edge"><span class="card-lbl">M:1</span><span class="ln"></span></div>
+            <div class="rel">SCHEDULE<span class="sub-t">Movie Seq No</span></div>
+            <div class="edge"><span class="card-lbl">1:M</span><span class="ln"></span></div>
+            <div class="ent"><div class="nm">TIMESLOT</div><div class="at"><span class="key">Slot ID</span><span>Slot Date</span><span>Start / End Time</span><span class="disc">Price Charged</span><span class="disc">Attendance</span></div></div>
+            <div class="edge"><span class="card-lbl">Utilizes M:1</span><span class="ln"></span></div>
+            <div class="ent"><div class="nm">SCREEN</div><div class="at"><span class="key">Screen No</span><span>Seating Capacity</span></div></div>
+            <div class="edge"><span class="card-lbl">Contains M:1</span><span class="ln"></span></div>
+            <div class="ent"><div class="nm">THEATRE</div><div class="at"><span class="key">Theatre ID</span><span>Name, Location</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">16</span> نموذج PARTY العالمي <span class="ar">›</span></summary>
+    <div class="body">
+      <p class="qtext">Universal PARTY model. PERSON in EMPLOYMENT may hold multiple POSITIONs (0:M); a POSITION may be filled by multiple EMPLOYMENT instances (0:M).</p>
+      <ul class="qlist">
+        <li><span class="k">PARTY</span> → PERSON + ORGANIZATION (الكيان نفسه).</li>
+        <li><span class="k">PARTY ROLE</span> → PERSON ROLE / ORG ROLE / CUSTOMER ROLE (الدور).</li>
+        <li><span class="k">PARTY RELATIONSHIP</span> → بيربط الأدوار (زي EMPLOYMENT). وليه From/Thru Date.</li>
+      </ul>
+      <div class="diagram">
+        <p class="dcap">الصناديق المنقطة = entity clusters · جواها supertype/subtype</p>
+        <div class="diagram-inner" style="gap:1rem">
+          <div class="cluster">
+            <div class="ctitle">PARTY RELATIONSHIP — (From / Thru Date)</div>
+            <div class="row">
+              <div class="ent sub nofields"><div class="nm">EMPLOYMENT</div></div>
+              <div class="ent sub nofields"><div class="nm">PARTNERSHIP</div></div>
+            </div>
+          </div>
+          <span class="vln"></span>
+          <div class="cluster b">
+            <div class="ctitle">PARTY ROLE</div>
+            <div class="row">
+              <div class="ent sub nofields"><div class="nm">PERSON ROLE</div></div>
+              <div class="ent sub nofields"><div class="nm">ORG ROLE</div></div>
+              <div class="ent sub nofields"><div class="nm">CUSTOMER ROLE</div></div>
+            </div>
+          </div>
+          <span class="vln"></span>
+          <div class="cluster">
+            <div class="ctitle">PARTY — (Party ID)</div>
+            <div class="row">
+              <div class="ent sub nofields"><div class="nm">PERSON</div></div>
+              <div class="ent sub nofields"><div class="nm">ORGANIZATION</div></div>
+            </div>
+          </div>
+        </div>
+        <p class="dcap2">EMPLOYMENT ↔ POSITION : 0:M / 0:M</p>
+      </div>
+    </div>
+  </details>
+</section>
+
+<!-- ===== DEFS ===== -->
+<section id="defs">
+  <div class="sec-head"><span class="num">08</span><h2>التعريفات والأسئلة النظرية</h2></div>
+  <p class="lead">إجابات أسئلة 1 → 9 جاهزة للحفظ.</p>
+  <div class="card reveal">
+    <h3>سؤال 1 — عرّف المصطلحات</h3>
+    <ul class="qlist">
+      <li><span class="k">Supertype</span> كيان عام ليه علاقة بنوع فرعي أو أكتر.</li>
+      <li><span class="k">Subtype</span> مجموعة فرعية من حالات الكيان ليها معنى للمؤسسة.</li>
+      <li><span class="k">Specialization</span> تعريف subtypes من الـ supertype (top-down).</li>
+      <li><span class="k">Entity cluster</span> كيانات وعلاقاتها متجمّعة في كيان مجرّد واحد.</li>
+      <li><span class="k">Completeness</span> هل لازم حالة الـ supertype تكون عضو في subtype (total/partial).</li>
+      <li><span class="k">EER model</span> الـ E-R + إضافات زي supertype/subtype.</li>
+      <li><span class="k">Discriminator</span> صفة في الـ supertype بتحدد الـ subtype المستهدف.</li>
+      <li><span class="k">Total spec.</span> كل حالة لازم تكون عضو في subtype.</li>
+      <li><span class="k">Generalization</span> تعريف كيان عام من كيانات متخصصة (bottom-up).</li>
+      <li><span class="k">Disjoint rule</span> لو في subtype مينفعش يكون في تاني نفس الوقت.</li>
+      <li><span class="k">Overlap rule</span> ممكن يكون في أكتر من subtype نفس الوقت.</li>
+      <li><span class="k">Partial spec.</span> مسموح متكونش في أي subtype.</li>
+      <li><span class="k">Universal model</span> نموذج جاهز يُعاد استخدامه كبداية.</li>
+    </ul>
+  </div>
+  <div class="card reveal">
+    <h3>سؤال 2 — قارن</h3>
+    <ul class="qlist">
+      <li><span class="k">Super vs Sub</span> العام له فرعيات، الفرعي مجموعة جزئية.</li>
+      <li><span class="k">Gen vs Spec</span> Gen من تحت لفوق، Spec من فوق لتحت.</li>
+      <li><span class="k">Disjoint vs Overlap</span> نوع واحد · أكتر من نوع.</li>
+      <li><span class="k">Total vs Partial</span> لازم نوع · ممكن لأ.</li>
+      <li><span class="k">PARTY vs PARTY ROLE</span> الكيان نفسه · الكيان في دور معيّن.</li>
+      <li><span class="k">Entity vs Cluster</span> كيان واحد · مجموعة كيانات مجمّعة.</li>
+    </ul>
+  </div>
+  <div class="card reveal">
+    <h3>أسئلة 3 → 9</h3>
+    <p><b>3) متى super/sub؟</b> صفات أو علاقات بتخص بعض الحالات بس.</p>
+    <p><b>4) سبب الـ clustering:</b> تبسيط الـ ERD · تفكيك هرمي · تركيز على جزء · segments بتركيز مختلف.</p>
+    <p><b>5) مثال:</b> PERSON → EMPLOYEE, CUSTOMER, VENDOR...</p>
+    <p><b>6) Inheritance:</b> الـ subtype بيرث صفات الـ supertype، عشان منكررش.</p>
+    <p><b>7) أمثلة:</b> disjoint → MALE/FEMALE · overlap → INSTRUCTOR/STUDENT.</p>
+    <p><b>8) Business rules في EER:</b> terms · relationship constraints · supertype/subtype.</p>
+    <p><b>9) غرض الـ discriminator:</b> تحديد الـ subtype المستهدف لكل حالة.</p>
+  </div>
+</section>
+
+<footer>
+  <p>بالتوفيق يا أبو عيد 💪 — ذاكر الفرق بين <b>d/o</b> و<b>الخط المفرد/المزدوج</b>، دي قلب الـ EER.</p>
+  <p style="margin-top:.5rem;font-size:.85rem">CSE 301 · Chapter 3 · Enhanced E-R Model · <span class="h">★</span></p>
+</footer>
+
+<script>
+document.querySelectorAll('.navlinks a').forEach(a=>a.addEventListener('click',()=>document.getElementById('nav').classList.remove('open')));
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

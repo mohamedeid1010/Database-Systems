@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شرح الـ E-R Model — مذاكرة الفاينل</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0c;
+  --bg2:#101014;
+  --panel:#16161c;
+  --panel2:#1c1c24;
+  --ink:#08080a;
+  --gold:#e8b964;
+  --gold-bright:#f5d089;
+  --gold-dim:#9c7d44;
+  --text:#e8e6e0;
+  --text-dim:#a09c92;
+  --line:#2a2a33;
+  --green:#7fd1a8;
+  --blue:#7fb0d1;
+  --red:#d98a8a;
+  --shadow:0 20px 60px rgba(0,0,0,.55);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Tajawal',sans-serif;
+  line-height:1.9;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(900px 600px at 85% -5%, rgba(232,185,100,.10), transparent 60%),
+    radial-gradient(700px 500px at 0% 100%, rgba(232,185,100,.06), transparent 55%),
+    var(--bg);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;opacity:.025;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.eng{font-family:'JetBrains Mono',monospace;direction:ltr;unicode-bidi:embed;font-weight:500}
+code.eng{background:rgba(232,185,100,.10);color:var(--gold-bright);padding:.1em .45em;border-radius:5px;font-size:.86em;border:1px solid rgba(232,185,100,.18)}
+
+/* ===== TOP BAR ===== */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(10,10,12,.82);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.7rem 1.4rem;
+}
+.brand{display:flex;align-items:center;gap:.6rem;font-weight:800;color:var(--gold-bright)}
+.brand .dot{width:11px;height:11px;border-radius:50%;background:var(--gold);box-shadow:0 0 14px var(--gold)}
+.navlinks{display:flex;gap:.3rem;flex-wrap:wrap}
+.navlinks a{
+  color:var(--text-dim);text-decoration:none;font-size:.82rem;font-weight:500;
+  padding:.35rem .7rem;border-radius:8px;transition:.2s;white-space:nowrap;
+}
+.navlinks a:hover{color:var(--gold-bright);background:rgba(232,185,100,.08)}
+.menu-btn{display:none;background:none;border:1px solid var(--line);color:var(--gold);padding:.4rem .7rem;border-radius:8px;font-size:1.1rem;cursor:pointer}
+@media(max-width:880px){
+  .navlinks{display:none;position:absolute;top:100%;right:0;left:0;flex-direction:column;background:var(--bg2);padding:.6rem;border-bottom:1px solid var(--line)}
+  .navlinks.open{display:flex}
+  .menu-btn{display:block}
+}
+
+/* ===== HERO ===== */
+.hero{
+  max-width:1000px;margin:0 auto;padding:5rem 1.5rem 3rem;text-align:center;
+}
+.hero .kicker{
+  font-family:'JetBrains Mono',monospace;direction:ltr;color:var(--gold);
+  letter-spacing:.35em;font-size:.78rem;font-weight:700;margin-bottom:1.4rem;opacity:.85;
+}
+.hero h1{
+  font-family:'Aref Ruqaa',serif;font-weight:700;
+  font-size:clamp(2.6rem,7vw,5rem);line-height:1.25;
+  background:linear-gradient(180deg,#fbe7b8,var(--gold) 55%,var(--gold-dim));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  margin-bottom:1.2rem;padding-bottom:.2em;
+}
+.hero p{font-size:1.15rem;color:var(--text-dim);max-width:680px;margin:0 auto 2rem}
+.hero .tag{
+  display:inline-block;background:rgba(232,185,100,.08);border:1px solid rgba(232,185,100,.25);
+  color:var(--gold-bright);padding:.5rem 1.1rem;border-radius:50px;font-weight:700;font-size:.95rem;
+}
+.hero-divider{
+  width:120px;height:2px;margin:2.5rem auto 0;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+
+/* ===== SECTIONS ===== */
+section{max-width:980px;margin:0 auto;padding:3rem 1.5rem;scroll-margin-top:70px}
+.sec-head{display:flex;align-items:center;gap:1rem;margin-bottom:2rem}
+.sec-head .num{
+  font-family:'JetBrains Mono',monospace;direction:ltr;
+  font-size:1rem;font-weight:700;color:var(--ink);
+  background:var(--gold);min-width:42px;height:42px;border-radius:11px;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 0 22px rgba(232,185,100,.35);
+}
+.sec-head h2{font-size:clamp(1.6rem,4vw,2.3rem);font-weight:800;color:var(--gold-bright)}
+.intro-line{color:var(--text-dim);font-size:1.08rem;margin-bottom:1.8rem;border-right:3px solid var(--gold-dim);padding-right:1rem}
+
+/* ===== CARDS ===== */
+.card{
+  background:linear-gradient(160deg,var(--panel),var(--panel2));
+  border:1px solid var(--line);border-radius:18px;padding:1.6rem 1.7rem;margin-bottom:1.3rem;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;
+}
+.card::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(var(--gold),transparent)}
+.card h3{color:var(--gold-bright);font-size:1.3rem;margin-bottom:.7rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.card h3 .badge{font-family:'JetBrains Mono',monospace;direction:ltr;font-size:.72rem;background:rgba(127,176,209,.12);color:var(--blue);padding:.2rem .55rem;border-radius:6px;border:1px solid rgba(127,176,209,.25);font-weight:600}
+.card p{color:var(--text);margin-bottom:.7rem}
+.card .ex{
+  background:var(--ink);border-radius:11px;padding:.9rem 1.1rem;margin-top:.9rem;
+  border:1px dashed rgba(232,185,100,.22);color:var(--text-dim);font-size:.96rem;
+}
+.card .ex b{color:var(--gold)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.3rem}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+
+/* compare boxes */
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:stretch;margin:1rem 0}
+@media(max-width:600px){.vs{grid-template-columns:1fr;text-align:center}}
+.vs .side{background:var(--ink);border:1px solid var(--line);border-radius:13px;padding:1rem 1.1rem}
+.vs .side h4{color:var(--gold-bright);margin-bottom:.4rem;font-size:1.05rem}
+.vs .side.blue h4{color:var(--blue)}
+.vs .side.green h4{color:var(--green)}
+.vs .mid{display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;color:var(--gold);font-weight:700;font-size:1.2rem}
+@media(max-width:600px){.vs .mid{padding:.3rem}}
+
+/* ===== NOTATION CHEAT SHEET ===== */
+.notation-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem}
+.note-item{background:var(--ink);border:1px solid var(--line);border-radius:13px;padding:1rem;text-align:center;transition:.25s}
+.note-item:hover{border-color:var(--gold-dim);transform:translateY(-3px)}
+.note-item svg{height:64px;margin-bottom:.6rem}
+.note-item .lbl{color:var(--gold-bright);font-weight:700;font-size:.95rem}
+.note-item .sub{color:var(--text-dim);font-size:.82rem;direction:ltr;font-family:'JetBrains Mono',monospace}
+
+/* SVG diagram common */
+.diagram-wrap{
+  background:#0e0e12;border:1px solid var(--line);border-radius:16px;padding:1rem;margin:1rem 0;
+  overflow-x:auto;
+}
+.diagram-wrap svg{display:block;margin:0 auto;min-width:520px;width:100%;height:auto}
+.dg-entity{fill:#1a1a22;stroke:var(--gold);stroke-width:2}
+.dg-weak-out{fill:none;stroke:var(--gold);stroke-width:2}
+.dg-rel{fill:#15151c;stroke:var(--blue);stroke-width:1.8}
+.dg-rel-id{fill:#15151c;stroke:var(--blue);stroke-width:1.8}
+.dg-attr{fill:#121218;stroke:var(--text-dim);stroke-width:1.4}
+.dg-attr-derived{fill:#121218;stroke:var(--green);stroke-width:1.4;stroke-dasharray:5 4}
+.dg-line{stroke:#5a5a66;stroke-width:1.5;fill:none}
+.dg-t{fill:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;text-anchor:middle;dominant-baseline:middle}
+.dg-t-ent{fill:var(--gold-bright);font-weight:700;font-size:14px}
+.dg-t-rel{fill:var(--blue);font-size:12px}
+.dg-t-key{fill:var(--gold-bright);text-decoration:underline}
+
+/* ===== STEPS ===== */
+.steps{counter-reset:step;margin:1.2rem 0}
+.step{position:relative;padding:.8rem 0 .8rem 0;padding-right:3rem;border-bottom:1px solid var(--line)}
+.step:last-child{border-bottom:none}
+.step::before{
+  counter-increment:step;content:counter(step);
+  position:absolute;right:0;top:.85rem;width:30px;height:30px;border-radius:9px;
+  background:rgba(232,185,100,.12);border:1px solid var(--gold-dim);color:var(--gold-bright);
+  font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.85rem;
+  display:flex;align-items:center;justify-content:center;
+}
+.step b{color:var(--gold-bright)}
+
+/* problem accordion */
+.problem{background:linear-gradient(160deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;margin-bottom:1.1rem;overflow:hidden;box-shadow:var(--shadow)}
+.problem summary{
+  list-style:none;cursor:pointer;padding:1.2rem 1.4rem;display:flex;align-items:center;gap:.9rem;
+  font-weight:700;color:var(--text);font-size:1.08rem;transition:.2s;
+}
+.problem summary::-webkit-details-marker{display:none}
+.problem summary:hover{background:rgba(232,185,100,.04)}
+.problem summary .qn{
+  font-family:'JetBrains Mono',monospace;direction:ltr;background:var(--gold);color:var(--ink);
+  min-width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0;
+}
+.problem summary .arrow{margin-right:auto;color:var(--gold);transition:.3s;font-size:1.1rem}
+.problem[open] summary .arrow{transform:rotate(90deg)}
+.problem .body{padding:0 1.4rem 1.4rem;border-top:1px solid var(--line)}
+.problem .qtext{color:var(--text-dim);font-style:italic;margin:1rem 0;padding-right:.8rem;border-right:2px solid var(--gold-dim);direction:ltr;text-align:left;font-family:'JetBrains Mono',monospace;font-size:.86rem;line-height:1.7}
+.problem .answer{margin-top:1rem}
+.tag-pill{display:inline-block;font-family:'JetBrains Mono',monospace;direction:ltr;font-size:.72rem;padding:.18rem .5rem;border-radius:6px;margin:.15rem;font-weight:600}
+.tag-ent{background:rgba(232,185,100,.12);color:var(--gold-bright);border:1px solid rgba(232,185,100,.25)}
+.tag-rel{background:rgba(127,176,209,.12);color:var(--blue);border:1px solid rgba(127,176,209,.25)}
+.tag-attr{background:rgba(127,209,168,.10);color:var(--green);border:1px solid rgba(127,209,168,.22)}
+
+.tip{background:rgba(127,176,209,.07);border:1px solid rgba(127,176,209,.22);border-radius:13px;padding:1rem 1.2rem;margin:1rem 0;color:var(--text)}
+.tip b{color:var(--blue)}
+.warn{background:rgba(217,138,138,.07);border:1px solid rgba(217,138,138,.22);border-radius:13px;padding:1rem 1.2rem;margin:1rem 0;color:var(--text)}
+.warn b{color:var(--red)}
+
+.qlist{list-style:none}
+.qlist li{padding:.5rem 0;border-bottom:1px dashed var(--line);display:flex;gap:.6rem}
+.qlist li:last-child{border:none}
+.qlist .k{color:var(--gold-bright);font-weight:700;direction:ltr;font-family:'JetBrains Mono',monospace;font-size:.9rem;flex-shrink:0}
+
+footer{text-align:center;padding:3rem 1.5rem;color:var(--text-dim);border-top:1px solid var(--line);margin-top:2rem}
+footer .heart{color:var(--gold)}
+
+/* reveal on scroll */
+.reveal{opacity:0;transform:translateY(24px);transition:.7s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="dot"></span> E-R Model — مذاكرة</div>
+  <button class="menu-btn" onclick="document.getElementById('nav').classList.toggle('open')">☰</button>
+  <nav class="navlinks" id="nav">
+    <a href="index.html" style="color:var(--gold-bright);font-weight:700">← Back</a>
+    <a href="#concepts">المفاهيم</a>
+    <a href="#keys">المفاتيح</a>
+    <a href="#rel">العلاقات</a>
+    <a href="#card">الـ Cardinality</a>
+    <a href="#notation">الرموز</a>
+    <a href="#method">طريقة الحل</a>
+    <a href="#problems">المسائل المحلولة</a>
+    <a href="#defs">أسئلة التعريفات</a>
+  </nav>
+</div>
+
+<header class="hero">
+  <div class="kicker">CSE 301 · DATABASE SYSTEMS · CHAPTER 2</div>
+  <h1>الـ E-R Model<br>من الصفر للفاينل</h1>
+  <p>الفاينل مسائل؟ تمام. هنا هتفهم كل مفهوم بأبسط شكل، وتتعلم تـرسم الـ <span class="eng">ERD</span> خطوة بخطوة، وفي الآخر هتلاقي كل مسائل الشيت محلولة بالرسم والشرح.</p>
+  <span class="tag">يلا نبدأ من تحت لفوق 👇</span>
+  <div class="hero-divider"></div>
+</header>
+
+<!-- ============ CONCEPTS ============ -->
+<section id="concepts">
+  <div class="sec-head"><span class="num">01</span><h2>المفاهيم الأساسية</h2></div>
+  <p class="intro-line">قبل ما نرسم أي حاجة، لازم نفهم القطع اللي بنبني بيها. أي <span class="eng">ERD</span> مكوّن من 3 حاجات بس: <b>كيانات (Entities)</b> + <b>صفات (Attributes)</b> + <b>علاقات (Relationships)</b>. خلينا ناخدهم واحدة واحدة.</p>
+
+  <div class="card reveal">
+    <h3>إيه هو الـ E-R Model أصلاً؟ <span class="badge">E-R Model</span></h3>
+    <p>تخيل إن عندك شركة، وعايز توصف البيانات بتاعتها على ورقة قبل ما تعمل قاعدة بيانات. الـ <span class="eng">Entity-Relationship Model</span> هو طريقة منطقية بنرسم بيها البيانات دي على شكل <b>كيانات</b> (أنواع البيانات) و<b>علاقات</b> (الروابط بينها).</p>
+    <p>الرسمة نفسها اللي بتطلع اسمها <span class="eng">ERD</span> = <span class="eng">Entity-Relationship Diagram</span>. يعني الـ Model هو الفكرة، والـ ERD هو الرسمة.</p>
+    <div class="ex">📌 <b>اربطها بالجداول:</b> الـ <span class="eng">Entity Type</span> = جدول (Table) · الـ <span class="eng">Entity Instance</span> = صف (Row) · الـ <span class="eng">Attribute</span> = عمود (Column).</div>
+  </div>
+
+  <div class="card reveal">
+    <h3>الكيان — Entity <span class="badge">Entity</span></h3>
+    <p>الـ <span class="eng">Entity</span> هو أي حاجة ليها وجود في عالم اليوزر وإحنا عايزين نخزن عنها بيانات: <b>شخص، مكان، حاجة، حدث، أو مفهوم</b>. زي <code class="eng">STUDENT</code> أو <code class="eng">CAR</code> أو <code class="eng">EMPLOYEE</code>.</p>
+    <div class="vs">
+      <div class="side"><h4>Entity Type</h4><p style="margin:0;font-size:.95rem">النوع نفسه — مجموعة الكيانات اللي بتشترك في نفس الصفات. زي <code class="eng">EMPLOYEE</code>.</p></div>
+      <div class="mid">≠</div>
+      <div class="side"><h4>Entity Instance</h4><p style="margin:0;font-size:.95rem">حالة واحدة بعينها — موظف واحد اسمه «محمد عيد». ده صف واحد.</p></div>
+    </div>
+    <div class="warn">⚠️ <b>الكيان لازم يكون:</b> ليه حالات كتير + ليه أكتر من صفة + حاجة بنمذجها فعلاً.<br><b>ومينفعش يكون:</b> يوزر بيستخدم النظام، أو مخرج من النظام (زي تقرير / Report).</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card reveal">
+      <h3>كيان قوي — Strong Entity <span class="badge">Strong</span></h3>
+      <p>بيعيش لوحده ومستقل، وليه <b>مفتاح خاص بيه</b> (Unique Identifier). بنرسمه بمستطيل عادي، والمفتاح بيتحته خط.</p>
+      <div class="ex"><b>مثال:</b> <code class="eng">EMPLOYEE</code> ليه <code class="eng">Employee_ID</code> — موجود بذاته.</div>
+    </div>
+    <div class="card reveal">
+      <h3>كيان ضعيف — Weak Entity <span class="badge">Weak</span></h3>
+      <p>مبيقدرش يعيش لوحده، بيعتمد على كيان قوي (اسمه <span class="eng">identifying owner</span>). ملوش مفتاح كامل، بس <b>partial identifier</b>. بنرسمه بـ <b>مستطيل مزدوج</b> 🔲.</p>
+      <div class="ex"><b>مثال:</b> <code class="eng">DEPENDENT</code> (المعالين) — لو الموظف اتشال، البيانات بتاعتهم ملهاش معنى.</div>
+    </div>
+  </div>
+  <div class="tip">🔗 <b>Identifying Relationship:</b> هي العلاقة اللي بتربط الكيان الضعيف بصاحبه القوي. بنرسمها بـ <b>معين مزدوج</b>.</div>
+
+  <div class="card reveal">
+    <h3>الصفات — Attributes <span class="badge">Attribute</span></h3>
+    <p>الـ <span class="eng">Attribute</span> هي خاصية أو ميزة للكيان (أو للعلاقة). زي اسم الطالب، رقمه، عنوانه. وفيه 5 تصنيفات لازم تعرفهم كويس عشان الرسم:</p>
+    <div class="vs">
+      <div class="side green"><h4>Required (إجباري)</h4><p style="margin:0;font-size:.93rem">لازم يكون ليه قيمة في كل حالة. زي <code class="eng">Student_ID</code>.</p></div>
+      <div class="mid">/</div>
+      <div class="side blue"><h4>Optional (اختياري)</h4><p style="margin:0;font-size:.93rem">ممكن يكون فاضي. زي <code class="eng">Major</code> (التخصص).</p></div>
+    </div>
+    <div class="vs">
+      <div class="side green"><h4>Simple (بسيطة)</h4><p style="margin:0;font-size:.93rem">مينفعش تتقسم. زي <code class="eng">Age</code>.</p></div>
+      <div class="mid">/</div>
+      <div class="side blue"><h4>Composite (مركبة)</h4><p style="margin:0;font-size:.93rem">ممكن تتقسم لأجزاء ليها معنى. زي <code class="eng">Name</code> → First, Middle, Last.</p></div>
+    </div>
+    <div class="vs">
+      <div class="side green"><h4>Single-valued</h4><p style="margin:0;font-size:.93rem">قيمة واحدة بس. زي <code class="eng">Birth_date</code>.</p></div>
+      <div class="mid">/</div>
+      <div class="side blue"><h4>Multivalued (متعددة)</h4><p style="margin:0;font-size:.93rem">ممكن تاخد أكتر من قيمة. زي <code class="eng">Skill</code> (الموظف ليه أكتر من مهارة). بترسم بـ <b>دايرة مزدوجة</b>.</p></div>
+    </div>
+    <div class="vs">
+      <div class="side green"><h4>Stored (مخزّنة)</h4><p style="margin:0;font-size:.93rem">قيمتها متخزنة فعلاً في الداتابيز.</p></div>
+      <div class="mid">/</div>
+      <div class="side blue"><h4>Derived (مشتقة)</h4><p style="margin:0;font-size:.93rem">قيمتها بتتحسب من صفات تانية، مش متخزنة. زي <code class="eng">Age</code> من <code class="eng">Birth_date</code>، أو <code class="eng">Years_Employed</code>. بترسم بـ <b>دايرة منقطة</b>.</p></div>
+    </div>
+    <div class="warn">🎯 <b>أهم نوع:</b> <b>Identifier (المفتاح)</b> — صفة (أو مجموعة صفات) بتميّز كل حالة عن التانية. بنحطها <u>تحتها خط</u> في الرسمة.</div>
+  </div>
+</section>
+
+<!-- ============ KEYS ============ -->
+<section id="keys">
+  <div class="sec-head"><span class="num">02</span><h2>المفاتيح — Keys</h2></div>
+  <p class="intro-line">دي بتيجي في سؤال «<span class="eng">primary key vs candidate key vs superkey</span>». خلي بالك من الترتيب ده، أسهل طريقة تفتكره.</p>
+
+  <div class="card reveal">
+    <h3>السلّم من الأكبر للأصغر <span class="badge">Keys</span></h3>
+    <div class="steps">
+      <div class="step"><b>Superkey:</b> أي مجموعة أعمدة بتقدر تميّز الصف لوحدها — <b>حتى لو فيها أعمدة زيادة مالهاش لزمة</b>. مثال: <code class="eng">{ID, Name}</code> superkey لأن الـ ID لوحده بيكفي.</div>
+      <div class="step"><b>Candidate Key:</b> <span class="eng">superkey</span> «مكوّك» — يعني لو شلت أي عمود منه يبقى مبيميزش. مفيش جزء منه زيادة. ممكن يكون فيه أكتر من candidate key.</div>
+      <div class="step"><b>Primary Key:</b> الـ <span class="eng">candidate key</span> الواحد اللي إحنا اخترناه رسمياً عشان نميّز بيه. ده اللي بيتحته خط في الرسمة.</div>
+    </div>
+    <div class="ex">🧠 <b>اقفلها في دماغك:</b> كل <span class="eng">primary key</span> هو <span class="eng">candidate key</span>، وكل <span class="eng">candidate key</span> هو <span class="eng">superkey</span>. لكن العكس مش صحيح.</div>
+  </div>
+
+  <div class="card reveal">
+    <h3>معايير اختيار المفتاح <span class="badge">Criteria</span></h3>
+    <p>لما تختار <span class="eng">identifier</span> لكيان، الكتاب بيقولك 4 شروط:</p>
+    <ul class="qlist">
+      <li><span class="k">1</span> اختار حاجة <b>قيمتها متتغيرش</b> طول عمر الحالة.</li>
+      <li><span class="k">2</span> اختار حاجة <b>عمرها ما هتكون فاضية (null)</b>.</li>
+      <li><span class="k">3</span> <b>ابعد عن المفاتيح «الذكية»</b> اللي بتحمل معلومات (زي مكان أو تصنيف ممكن يتغير).</li>
+      <li><span class="k">4</span> لو المفتاح مركّب وطويل، <b>استبدله بمفتاح جديد بسيط</b> (surrogate key).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ RELATIONSHIPS ============ -->
+<section id="rel">
+  <div class="sec-head"><span class="num">03</span><h2>العلاقات — Relationships</h2></div>
+  <p class="intro-line">الـ <span class="eng">Relationship</span> هي ارتباط ليه معنى بين الكيانات. بنرسمها بـ <b>معين (Diamond)</b> وجواه فعل. زي <code class="eng">STUDENT — Registers For — COURSE</code>.</p>
+
+  <div class="card reveal">
+    <h3>درجة العلاقة — Degree <span class="badge">Degree</span></h3>
+    <p>الـ <span class="eng">Degree</span> = عدد أنواع الكيانات المشاركة في العلاقة. تلات أنواع:</p>
+    <ul class="qlist">
+      <li><span class="k">Unary</span> كيان واحد مرتبط بنفسه. زي <code class="eng">EMPLOYEE — Manages — EMPLOYEE</code> (موظف يدير موظف).</li>
+      <li><span class="k">Binary</span> كيانين مختلفين (ده الأشهر والأكتر استخداماً).</li>
+      <li><span class="k">Ternary</span> 3 كيانات مرتبطين مع بعض في علاقة واحدة. زي <code class="eng">VENDOR — PART — WAREHOUSE</code>.</li>
+    </ul>
+    <div class="tip">💡 <b>العلاقة ممكن يكون ليها صفات هي كمان!</b> زي علاقة «الموظف أكمل كورس» ممكن يكون ليها صفة <code class="eng">Date_Completed</code> — التاريخ ده مش تابع للموظف ولا للكورس، تابع للعلاقة نفسها.</div>
+  </div>
+
+  <div class="card reveal">
+    <h3>الكيان الترابطي — Associative Entity <span class="badge">Associative</span></h3>
+    <p>أحياناً العلاقة بتبقى <b>Many-to-Many</b> وليها صفات خاصة بيها كتير، فبنحوّلها لكيان بنفسه عشان نقدر نتعامل معاها. ده اسمه <span class="eng">Associative Entity</span>. زي <code class="eng">ORDER LINE</code> أو <code class="eng">CERTIFICATE</code>.</p>
+    <p>3 شروط بتخليك تحوّل العلاقة لـ associative entity:</p>
+    <ul class="qlist">
+      <li><span class="k">1</span> كل العلاقات للكيان دي تكون «Many».</li>
+      <li><span class="k">2</span> ليها معنى مستقل عند اليوزر، ويفضّل يبقى ليها مفتاح من عمود واحد.</li>
+      <li><span class="k">3</span> ليها صفة أو أكتر غير المفتاح.</li>
+    </ul>
+    <div class="warn">🔁 <b>قاعدة ذهبية:</b> أي علاقة <b>Ternary</b> بنحوّلها دايماً لـ associative entity. وأي <b>M:N</b> ليها صفات بنفك الـ M:N لاتنين <b>1:N</b> حوالين الكيان الجديد.</div>
+  </div>
+
+  <div class="card reveal">
+    <h3>التجميع — Aggregation <span class="badge">Aggregation</span></h3>
+    <p>الـ <span class="eng">Aggregation</span> تجريد بنعامل بيه <b>علاقة كاملة كأنها كيان</b> أعلى مستوى. يعني لو عندك علاقة بين A و B، نعاملها كأنها كيان C ونربطه بكيان تالت.</p>
+    <div class="ex"><b>مثال:</b> «موظف بيشتغل في مشروع» (علاقة works-in) بتحتاج «ماكينات» (machinery). فبنعامل علاقة الشغل دي كوحدة واحدة ونربطها بالماكينة. مثال تاني: المصنّع بيعمل tie-up مع موزّع، والـ tie-up ده بيوزّع منتجات.</div>
+  </div>
+</section>
+
+<!-- ============ CARDINALITY ============ -->
+<section id="card">
+  <div class="sec-head"><span class="num">04</span><h2>الـ Cardinality — أهم جزء في الرسم</h2></div>
+  <p class="intro-line">الـ <span class="eng">Cardinality</span> بتحدد «كام حالة من كيان ممكن (أو لازم) ترتبط بحالة من الكيان التاني». دي اللي بتفرّق بين رسمة صح ورسمة غلط. ركّز هنا كويس.</p>
+
+  <div class="card reveal">
+    <h3>الحد الأدنى والأقصى <span class="badge">Min / Max</span></h3>
+    <div class="vs">
+      <div class="side"><h4>Minimum Cardinality</h4><p style="margin:0;font-size:.95rem">لو = <b>صفر</b> → العلاقة <b>اختيارية (Optional)</b>.<br>لو = <b>واحد أو أكتر</b> → العلاقة <b>إجبارية (Mandatory)</b>.</p></div>
+      <div class="mid">+</div>
+      <div class="side"><h4>Maximum Cardinality</h4><p style="margin:0;font-size:.95rem">أقصى عدد حالات ممكن ترتبط. ده اللي بيحدد <b>One</b> ولا <b>Many</b>.</p></div>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h3>الأنواع التلاتة <span class="badge">Types</span></h3>
+    <ul class="qlist">
+      <li><span class="k">1 : 1</span> <b>One-to-One:</b> كل حالة مرتبطة بحالة واحدة بالظبط. زي <code class="eng">EMPLOYEE — Is Assigned — PARKING SPACE</code>.</li>
+      <li><span class="k">1 : N</span> <b>One-to-Many:</b> حالة في ناحية مرتبطة بكتير، بس اللي في الناحية التانية مرتبط بواحد. زي <code class="eng">PRODUCT LINE — Contains — PRODUCT</code>.</li>
+      <li><span class="k">M : N</span> <b>Many-to-Many:</b> الطرفين مرتبطين بكتير. زي <code class="eng">STUDENT — Registers For — COURSE</code>.</li>
+    </ul>
+  </div>
+
+  <div class="card reveal">
+    <h3>الرموز الأربعة (Crow's Foot) — احفظهم ✍️</h3>
+    <p>دي رموز نهاية الخط اللي بتقول الـ minimum والـ maximum مع بعض:</p>
+    <div class="notation-grid">
+      <div class="note-item">
+        <svg viewBox="0 0 120 60"><line x1="10" y1="30" x2="110" y2="30" stroke="#e8b964" stroke-width="2"/><line x1="78" y1="14" x2="78" y2="46" stroke="#e8b964" stroke-width="2"/><line x1="90" y1="14" x2="90" y2="46" stroke="#e8b964" stroke-width="2"/></svg>
+        <div class="lbl">Mandatory One</div><div class="sub">|| → بالظبط 1</div>
+      </div>
+      <div class="note-item">
+        <svg viewBox="0 0 120 60"><line x1="10" y1="30" x2="110" y2="30" stroke="#e8b964" stroke-width="2"/><circle cx="74" cy="30" r="9" fill="none" stroke="#e8b964" stroke-width="2"/><line x1="92" y1="14" x2="92" y2="46" stroke="#e8b964" stroke-width="2"/></svg>
+        <div class="lbl">Optional One</div><div class="sub">O| → 0 أو 1</div>
+      </div>
+      <div class="note-item">
+        <svg viewBox="0 0 120 60"><line x1="10" y1="30" x2="80" y2="30" stroke="#e8b964" stroke-width="2"/><line x1="62" y1="14" x2="62" y2="46" stroke="#e8b964" stroke-width="2"/><path d="M110 14 L80 30 L110 46" fill="none" stroke="#e8b964" stroke-width="2"/></svg>
+        <div class="lbl">Mandatory Many</div><div class="sub">|&lt; → 1 أو أكتر</div>
+      </div>
+      <div class="note-item">
+        <svg viewBox="0 0 120 60"><line x1="10" y1="30" x2="78" y2="30" stroke="#e8b964" stroke-width="2"/><circle cx="60" cy="30" r="9" fill="none" stroke="#e8b964" stroke-width="2"/><path d="M110 14 L80 30 L110 46" fill="none" stroke="#e8b964" stroke-width="2"/></svg>
+        <div class="lbl">Optional Many</div><div class="sub">O&lt; → 0 أو أكتر</div>
+      </div>
+    </div>
+    <div class="tip">📖 <b>إزاي تقرا العلاقة:</b> امشي من كيان للتاني، والرمز اللي عند الكيان البعيد بيقولك كام منه ممكن يرتبط. مثال: «مريض <b>لازم</b> يكون ليه تاريخ واحد <b>على الأقل</b> وممكن كتير» = Mandatory Many، و«التاريخ بيتسجل لمريض <b>واحد بس</b>» = Mandatory One.</div>
+  </div>
+</section>
+
+<!-- ============ NOTATION ============ -->
+<section id="notation">
+  <div class="sec-head"><span class="num">05</span><h2>رموز الرسم — Chen Notation</h2></div>
+  <p class="intro-line">شيت المسائل بتاعك مرسوم بـ <b>Chen Notation</b> (المستطيلات والمعينات والدوائر). دي الرموز اللي هتستخدمها في الرسم بإيدك في الامتحان. احفظ الشكل بتاع كل واحد:</p>
+
+  <div class="diagram-wrap reveal">
+    <svg viewBox="0 0 760 360" xmlns="http://www.w3.org/2000/svg">
+      <!-- Entity -->
+      <rect x="30" y="30" width="130" height="46" rx="3" class="dg-entity"/>
+      <text x="95" y="53" class="dg-t dg-t-ent">ENTITY</text>
+      <text x="95" y="96" class="dg-t" style="fill:var(--text-dim);font-size:11px">كيان قوي</text>
+
+      <!-- Weak entity -->
+      <rect x="220" y="30" width="130" height="46" rx="3" class="dg-weak-out"/>
+      <rect x="226" y="36" width="118" height="34" rx="2" class="dg-entity"/>
+      <text x="285" y="53" class="dg-t dg-t-ent" style="font-size:12px">WEAK</text>
+      <text x="285" y="96" class="dg-t" style="fill:var(--text-dim);font-size:11px">كيان ضعيف</text>
+
+      <!-- Relationship -->
+      <polygon points="475,30 540,53 475,76 410,53" class="dg-rel"/>
+      <text x="475" y="55" class="dg-t dg-t-rel">REL</text>
+      <text x="475" y="96" class="dg-t" style="fill:var(--text-dim);font-size:11px">علاقة</text>
+
+      <!-- Identifying rel -->
+      <polygon points="655,28 728,53 655,78 582,53" class="dg-rel-id"/>
+      <polygon points="655,38 712,53 655,68 598,53" class="dg-rel-id"/>
+      <text x="655" y="56" class="dg-t dg-t-rel" style="font-size:10px">ID-REL</text>
+      <text x="655" y="98" class="dg-t" style="fill:var(--text-dim);font-size:11px">علاقة تعريفية</text>
+
+      <!-- Attribute -->
+      <ellipse cx="95" cy="190" rx="62" ry="26" class="dg-attr"/>
+      <text x="95" y="190" class="dg-t" style="font-size:12px">attribute</text>
+      <text x="95" y="238" class="dg-t" style="fill:var(--text-dim);font-size:11px">صفة عادية</text>
+
+      <!-- Key attribute -->
+      <ellipse cx="285" cy="190" rx="62" ry="26" class="dg-attr"/>
+      <text x="285" y="190" class="dg-t dg-t-key" style="font-size:12px">key</text>
+      <text x="285" y="238" class="dg-t" style="fill:var(--text-dim);font-size:11px">مفتاح (تحته خط)</text>
+
+      <!-- Multivalued -->
+      <ellipse cx="475" cy="190" rx="62" ry="26" class="dg-attr"/>
+      <ellipse cx="475" cy="190" rx="54" ry="19" class="dg-attr"/>
+      <text x="475" y="190" class="dg-t" style="font-size:11px">multi</text>
+      <text x="475" y="238" class="dg-t" style="fill:var(--text-dim);font-size:11px">متعددة (مزدوجة)</text>
+
+      <!-- Derived -->
+      <ellipse cx="655" cy="190" rx="62" ry="26" class="dg-attr-derived"/>
+      <text x="655" y="190" class="dg-t" style="font-size:11px;fill:var(--green)">derived</text>
+      <text x="655" y="238" class="dg-t" style="fill:var(--text-dim);font-size:11px">مشتقة (منقطة)</text>
+
+      <!-- composite -->
+      <ellipse cx="160" cy="305" rx="60" ry="24" class="dg-attr"/>
+      <text x="160" y="305" class="dg-t" style="font-size:11px">composite</text>
+      <ellipse cx="80" cy="345" rx="40" ry="16" class="dg-attr"/><text x="80" y="345" class="dg-t" style="font-size:9px">part1</text>
+      <ellipse cx="240" cy="345" rx="40" ry="16" class="dg-attr"/><text x="240" y="345" class="dg-t" style="font-size:9px">part2</text>
+      <line x1="120" y1="320" x2="80" y2="332" class="dg-line"/>
+      <line x1="200" y1="320" x2="240" y2="332" class="dg-line"/>
+      <text x="160" y="280" class="dg-t" style="fill:var(--text-dim);font-size:11px">صفة مركّبة</text>
+    </svg>
+  </div>
+  <div class="tip">✏️ <b>ملحوظة:</b> السلايدات بتستخدم notation تاني (Crow's Foot / Visio) بس الشيت كله مرسوم Chen. ذاكر الاتنين بس ركّز على Chen لأنه اللي في حلول الشيت.</div>
+</section>
+
+<!-- ============ METHOD ============ -->
+<section id="method">
+  <div class="sec-head"><span class="num">06</span><h2>طريقة حل أي مسألة رسم — الوصفة 🍳</h2></div>
+  <p class="intro-line">دي أهم حاجة في الموضوع. أي مسألة «<span class="eng">Construct an E-R diagram</span>» بتتحل بنفس الخطوات دي بالظبط. احفظها كـ checklist:</p>
+
+  <div class="card reveal">
+    <div class="steps">
+      <div class="step"><b>اقرا المسألة كويس</b> وحدّد «الأسماء» المهمة. الأسماء غالباً بتبقى الكيانات (Entities). زي customer, car, accident.</div>
+      <div class="step"><b>ارسم الكيانات</b> كمستطيلات. لو فيه كيان مبيقدرش يعيش لوحده (محتاج كيان تاني عشان يتعرّف) اعمله Weak (مستطيل مزدوج).</div>
+      <div class="step"><b>حط الصفات</b> لكل كيان كدوائر. حدّد المفتاح (تحته خط)، والمتعدد (دايرة مزدوجة)، والمشتق (دايرة منقطة). خلي بالك من كلمة «summary / total» في المسألة → دي غالباً <b>derived</b>.</div>
+      <div class="step"><b>هات الأفعال</b> اللي بتربط الكيانات (owns, registers, teaches…). كل فعل = علاقة (معين).</div>
+      <div class="step"><b>حدّد الـ Cardinality</b> لكل علاقة. دوّر على كلمات زي «one or more / each / at least / zero to any number». دي بتقولك 1:1 ولا 1:N ولا M:N، و mandatory ولا optional.</div>
+      <div class="step"><b>لو فيه علاقة M:N ليها صفات</b> أو علاقة Ternary → حوّلها لـ <b>Associative Entity</b>.</div>
+      <div class="step"><b>اكتب أي assumptions</b> فرضتها (المسألة أحياناً بتطلب ده صراحة).</div>
+    </div>
+  </div>
+  <div class="tip">🔑 <b>ترجمة كلمات المسألة لـ Cardinality:</b><br>
+  • «<span class="eng">one or more</span>» / «<span class="eng">at least one</span>» = Mandatory Many (الحد الأدنى 1).<br>
+  • «<span class="eng">zero to any number</span>» / «<span class="eng">may have</span>» = Optional Many (الحد الأدنى 0).<br>
+  • «<span class="eng">exactly one</span>» / «<span class="eng">a single</span>» = One.<br>
+  • «<span class="eng">summary statistics</span>» = Derived attribute.</div>
+</section>
+
+<!-- ============ SOLVED PROBLEMS ============ -->
+<section id="problems">
+  <div class="sec-head"><span class="num">07</span><h2>المسائل المحلولة بالرسم</h2></div>
+  <p class="intro-line">دي مسائل الرسم من الشيت (9 لـ 15) محلولة خطوة بخطوة + الرسمة. اضغط على أي مسألة عشان تفتحها. جرّب تحلها لوحدك الأول قبل ما تبص على الحل!</p>
+
+  <!-- Q9 -->
+  <details class="problem reveal">
+    <summary><span class="qn">9</span> شركة تأمين سيارات <span class="arrow">›</span></summary>
+    <div class="body">
+      <p class="qtext">Construct an E-R diagram for a car-insurance company whose customers own one or more cars each. Each car has associated with it zero to any number of recorded accidents.</p>
+      <div class="answer">
+        <p><b>التفكيك:</b></p>
+        <span class="tag-pill tag-ent">PERSON</span><span class="tag-pill tag-ent">CAR</span><span class="tag-pill tag-ent">ACCIDENT</span>
+        <span class="tag-pill tag-rel">owns</span><span class="tag-pill tag-rel">participated</span>
+        <p style="margin-top:.8rem">• العميل (person) بيمتلك سيارة أو أكتر → <code class="eng">owns</code> علاقة <b>1:N</b> (واحد لكتير) و mandatory (one or more).<br>
+        • السيارة ممكن تكون اتعملها <b>صفر لأي عدد</b> حوادث → علاقة <code class="eng">participated</code> بين <code class="eng">CAR</code> و<code class="eng">ACCIDENT</code>، optional many.<br>
+        • العلاقة <code class="eng">participated</code> ليها صفة <code class="eng">driver</code> و<code class="eng">damage-amount</code> (مين كان بيسوق وكام الضرر) — دي صفات للعلاقة نفسها.</p>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+            <!-- person -->
+            <rect x="60" y="150" width="120" height="44" rx="3" class="dg-entity"/><text x="120" y="172" class="dg-t dg-t-ent" style="font-size:13px">person</text>
+            <ellipse cx="60" cy="80" rx="44" ry="20" class="dg-attr"/><text x="60" y="80" class="dg-t dg-t-key" style="font-size:11px">driver-id</text>
+            <ellipse cx="160" cy="70" rx="44" ry="20" class="dg-attr"/><text x="160" y="70" class="dg-t" style="font-size:11px">address</text>
+            <ellipse cx="120" cy="95" rx="40" ry="18" class="dg-attr"/><text x="120" y="95" class="dg-t" style="font-size:11px">name</text>
+            <line x1="70" y1="150" x2="62" y2="98" class="dg-line"/><line x1="130" y1="150" x2="155" y2="88" class="dg-line"/><line x1="118" y1="150" x2="120" y2="112" class="dg-line"/>
+            <!-- owns -->
+            <polygon points="280,172 330,150 380,172 330,194" class="dg-rel"/><text x="330" y="174" class="dg-t dg-t-rel" style="font-size:11px">owns</text>
+            <line x1="180" y1="172" x2="280" y2="172" class="dg-line"/>
+            <!-- car -->
+            <rect x="470" y="150" width="110" height="44" rx="3" class="dg-entity"/><text x="525" y="172" class="dg-t dg-t-ent" style="font-size:13px">car</text>
+            <line x1="380" y1="172" x2="470" y2="172" class="dg-line"/>
+            <ellipse cx="470" cy="80" rx="40" ry="18" class="dg-attr"/><text x="470" y="80" class="dg-t dg-t-key" style="font-size:11px">license</text>
+            <ellipse cx="565" cy="75" rx="36" ry="18" class="dg-attr"/><text x="565" y="75" class="dg-t" style="font-size:11px">model</text>
+            <ellipse cx="630" cy="110" rx="32" ry="17" class="dg-attr"/><text x="630" y="110" class="dg-t" style="font-size:11px">year</text>
+            <line x1="490" y1="150" x2="475" y2="96" class="dg-line"/><line x1="540" y1="150" x2="560" y2="91" class="dg-line"/><line x1="565" y1="150" x2="615" y2="124" class="dg-line"/>
+            <!-- participated -->
+            <polygon points="380,300 460,275 540,300 460,325" class="dg-rel"/><text x="460" y="302" class="dg-t dg-t-rel" style="font-size:10px">participated</text>
+            <line x1="525" y1="194" x2="495" y2="278" class="dg-line"/>
+            <!-- accident -->
+            <rect x="600" y="278" width="120" height="44" rx="3" class="dg-entity"/><text x="660" y="300" class="dg-t dg-t-ent" style="font-size:12px">accident</text>
+            <line x1="540" y1="300" x2="600" y2="300" class="dg-line"/>
+            <ellipse cx="620" cy="370" rx="50" ry="19" class="dg-attr"/><text x="620" y="370" class="dg-t dg-t-key" style="font-size:10px">report-number</text>
+            <ellipse cx="715" cy="365" rx="32" ry="17" class="dg-attr"/><text x="715" y="365" class="dg-t" style="font-size:11px">date</text>
+            <line x1="640" y1="322" x2="625" y2="351" class="dg-line"/><line x1="695" y1="322" x2="710" y2="349" class="dg-line"/>
+            <!-- rel attrs -->
+            <ellipse cx="300" cy="300" rx="48" ry="19" class="dg-attr"/><text x="300" y="300" class="dg-t" style="font-size:11px">driver</text>
+            <line x1="380" y1="300" x2="348" y2="300" class="dg-line"/>
+            <ellipse cx="460" cy="385" rx="60" ry="20" class="dg-attr"/><text x="460" y="385" class="dg-t" style="font-size:10px">damage-amount</text>
+            <line x1="460" y1="325" x2="460" y2="365" class="dg-line"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Q10 -->
+  <details class="problem reveal">
+    <summary><span class="qn">10</span> مستشفى (مرضى وأطباء وفحوصات) <span class="arrow">›</span></summary>
+    <div class="body">
+      <p class="qtext">Construct an E-R diagram for a hospital with a set of patients and a set of medical doctors. Associate with each patient a log of the various tests and examinations conducted.</p>
+      <div class="answer">
+        <span class="tag-pill tag-ent">patients</span><span class="tag-pill tag-ent">doctors</span><span class="tag-pill tag-ent">test</span>
+        <span class="tag-pill tag-rel">test-log</span><span class="tag-pill tag-rel">Dr-Patient</span><span class="tag-pill tag-rel">performed_by</span>
+        <p style="margin-top:.8rem">• 3 كيانات: <code class="eng">patients</code> + <code class="eng">doctors</code> + <code class="eng">test</code>.<br>
+        • <code class="eng">test-log</code> بتربط المريض بالفحوصات اللي اتعملتله (log = سجل).<br>
+        • <code class="eng">Dr-Patient</code> بتربط الطبيب بالمريض.<br>
+        • <code class="eng">performed_by</code> بتقول الفحص ده اتعمل بواسطة أنهي طبيب.</p>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 760 440" xmlns="http://www.w3.org/2000/svg">
+            <!-- patients -->
+            <rect x="320" y="170" width="120" height="42" rx="3" class="dg-entity"/><text x="380" y="191" class="dg-t dg-t-ent" style="font-size:12px">patients</text>
+            <ellipse cx="300" cy="60" rx="30" ry="16" class="dg-attr"/><text x="300" y="60" class="dg-t dg-t-key" style="font-size:11px">ss#</text>
+            <ellipse cx="380" cy="48" rx="34" ry="16" class="dg-attr"/><text x="380" y="48" class="dg-t" style="font-size:11px">name</text>
+            <ellipse cx="478" cy="62" rx="46" ry="17" class="dg-attr"/><text x="478" y="62" class="dg-t" style="font-size:10px">insurance</text>
+            <ellipse cx="560" cy="100" rx="52" ry="17" class="dg-attr"/><text x="560" y="100" class="dg-t" style="font-size:9px">date-admitted</text>
+            <line x1="345" y1="170" x2="305" y2="76" class="dg-line"/><line x1="375" y1="170" x2="380" y2="64" class="dg-line"/><line x1="400" y1="170" x2="465" y2="78" class="dg-line"/><line x1="430" y1="170" x2="540" y2="115" class="dg-line"/>
+            <!-- test-log -->
+            <polygon points="160,191 230,168 300,191 230,214" class="dg-rel"/><text x="230" y="193" class="dg-t dg-t-rel" style="font-size:10px">test-log</text>
+            <line x1="300" y1="191" x2="320" y2="191" class="dg-line"/>
+            <!-- test -->
+            <rect x="240" y="300" width="100" height="42" rx="3" class="dg-entity"/><text x="290" y="321" class="dg-t dg-t-ent" style="font-size:12px">test</text>
+            <line x1="230" y1="214" x2="280" y2="300" class="dg-line"/>
+            <ellipse cx="110" cy="300" rx="40" ry="17" class="dg-attr"/><text x="110" y="300" class="dg-t dg-t-key" style="font-size:11px">test_id</text>
+            <line x1="240" y1="321" x2="150" y2="305" class="dg-line"/>
+            <ellipse cx="200" cy="390" rx="42" ry="17" class="dg-attr"/><text x="200" y="390" class="dg-t" style="font-size:10px">test_name</text>
+            <ellipse cx="285" cy="400" rx="28" ry="15" class="dg-attr"/><text x="285" y="400" class="dg-t" style="font-size:10px">date</text>
+            <ellipse cx="360" cy="395" rx="28" ry="15" class="dg-attr"/><text x="360" y="395" class="dg-t" style="font-size:10px">result</text>
+            <line x1="270" y1="342" x2="215" y2="375" class="dg-line"/><line x1="290" y1="342" x2="287" y2="385" class="dg-line"/><line x1="315" y1="342" x2="352" y2="381" class="dg-line"/>
+            <!-- performed_by -->
+            <polygon points="400,321 480,298 560,321 480,344" class="dg-rel"/><text x="480" y="323" class="dg-t dg-t-rel" style="font-size:9px">performed_by</text>
+            <line x1="340" y1="321" x2="400" y2="321" class="dg-line"/>
+            <!-- doctors -->
+            <rect x="610" y="300" width="110" height="42" rx="3" class="dg-entity"/><text x="665" y="321" class="dg-t dg-t-ent" style="font-size:12px">doctors</text>
+            <line x1="560" y1="321" x2="610" y2="321" class="dg-line"/>
+            <!-- Dr-Patient -->
+            <polygon points="540,191 615,168 690,191 615,214" class="dg-rel"/><text x="615" y="193" class="dg-t dg-t-rel" style="font-size:9px">Dr-Patient</text>
+            <line x1="440" y1="191" x2="540" y2="191" class="dg-line"/>
+            <line x1="650" y1="300" x2="625" y2="214" class="dg-line"/>
+            <ellipse cx="600" cy="400" rx="30" ry="15" class="dg-attr"/><text x="600" y="400" class="dg-t dg-t-key" style="font-size:11px">dss#</text>
+            <ellipse cx="670" cy="405" rx="30" ry="15" class="dg-attr"/><text x="670" y="405" class="dg-t" style="font-size:10px">name</text>
+            <ellipse cx="730" cy="390" rx="28" ry="15" class="dg-attr"/><text x="730" y="390" class="dg-t" style="font-size:8px">special.</text>
+            <line x1="640" y1="342" x2="608" y2="386" class="dg-line"/><line x1="665" y1="342" x2="668" y2="390" class="dg-line"/><line x1="695" y1="342" x2="722" y2="377" class="dg-line"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Q11 -->
+  <details class="problem reveal">
+    <summary><span class="qn">11</span> مكتب تسجيل الجامعة <span class="arrow">›</span></summary>
+    <div class="body">
+      <p class="qtext">A university registrar's office maintains data about courses, course offerings, students, and instructors. The enrollment of students in courses and grades awarded must be modeled. Construct an E-R diagram & document assumptions.</p>
+      <div class="answer">
+        <span class="tag-pill tag-ent">student</span><span class="tag-pill tag-ent">course</span><span class="tag-pill tag-ent">course-offering (weak)</span><span class="tag-pill tag-ent">instructor</span>
+        <p style="margin-top:.8rem">• الكيان <code class="eng">course-offering</code> (عرض الكورس في سيمستر معيّن) <b>weak entity</b> بيعتمد على <code class="eng">course</code> — لأنه ملوش معنى من غير الكورس الأصلي.<br>
+        • <code class="eng">enrols</code> بين student و course-offering وليها صفة <code class="eng">grade</code> (الدرجة).<br>
+        • <code class="eng">teaches</code> بين instructor و course-offering.<br>
+        • <code class="eng">requires</code> علاقة unary على course نفسها (prerequisite / المتطلب السابق).</p>
+        <p><b>الـ Assumptions:</b> (المسألة طالباها صراحة)</p>
+        <ul class="qlist">
+          <li><span class="k">a</span> الـ class بيتعمل في مكان وزمن واحد بس (مينفعش نفس العرض في أماكن مختلفة).</li>
+          <li><span class="k">b</span> مفيش ضمان إن مفيش كلاسين بيتعملوا في نفس المكان والزمن.</li>
+        </ul>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 760 470" xmlns="http://www.w3.org/2000/svg">
+            <!-- student -->
+            <rect x="40" y="160" width="110" height="42" rx="3" class="dg-entity"/><text x="95" y="181" class="dg-t dg-t-ent" style="font-size:12px">student</text>
+            <ellipse cx="55" cy="70" rx="26" ry="15" class="dg-attr"/><text x="55" y="70" class="dg-t dg-t-key" style="font-size:11px">sid</text>
+            <ellipse cx="125" cy="60" rx="32" ry="15" class="dg-attr"/><text x="125" y="60" class="dg-t" style="font-size:10px">name</text>
+            <ellipse cx="80" cy="280" rx="40" ry="16" class="dg-attr"/><text x="80" y="280" class="dg-t" style="font-size:10px">program</text>
+            <line x1="70" y1="160" x2="58" y2="85" class="dg-line"/><line x1="105" y1="160" x2="122" y2="75" class="dg-line"/><line x1="85" y1="202" x2="82" y2="264" class="dg-line"/>
+            <!-- enrols -->
+            <polygon points="180,181 240,160 300,181 240,202" class="dg-rel"/><text x="240" y="183" class="dg-t dg-t-rel" style="font-size:10px">enrols</text>
+            <line x1="150" y1="181" x2="180" y2="181" class="dg-line"/>
+            <ellipse cx="240" cy="270" rx="30" ry="15" class="dg-attr"/><text x="240" y="270" class="dg-t" style="font-size:10px">grade</text>
+            <line x1="240" y1="202" x2="240" y2="255" class="dg-line"/>
+            <!-- course-offering (weak) -->
+            <rect x="330" y="155" width="130" height="52" rx="3" class="dg-weak-out"/>
+            <rect x="336" y="161" width="118" height="40" rx="2" class="dg-entity"/>
+            <text x="395" y="181" class="dg-t dg-t-ent" style="font-size:11px">course-offering</text>
+            <line x1="300" y1="181" x2="330" y2="181" class="dg-line"/>
+            <ellipse cx="350" cy="65" rx="28" ry="15" class="dg-attr"/><text x="350" y="65" class="dg-t" style="font-size:10px">time</text>
+            <ellipse cx="420" cy="50" rx="30" ry="15" class="dg-attr"/><text x="420" y="50" class="dg-t" style="font-size:9px">secno</text>
+            <ellipse cx="490" cy="65" rx="28" ry="15" class="dg-attr"/><text x="490" y="65" class="dg-t" style="font-size:10px">room</text>
+            <ellipse cx="370" cy="255" rx="28" ry="15" class="dg-attr"/><text x="370" y="255" class="dg-t" style="font-size:10px">year</text>
+            <ellipse cx="445" cy="255" rx="38" ry="15" class="dg-attr"/><text x="445" y="255" class="dg-t" style="font-size:9px">semester</text>
+            <line x1="365" y1="155" x2="352" y2="80" class="dg-line"/><line x1="400" y1="155" x2="418" y2="65" class="dg-line"/><line x1="435" y1="155" x2="485" y2="80" class="dg-line"/>
+            <line x1="385" y1="207" x2="372" y2="240" class="dg-line"/><line x1="420" y1="207" x2="440" y2="240" class="dg-line"/>
+            <!-- teaches -->
+            <polygon points="490,181 550,160 610,181 550,202" class="dg-rel"/><text x="550" y="183" class="dg-t dg-t-rel" style="font-size:9px">teaches</text>
+            <line x1="460" y1="181" x2="490" y2="181" class="dg-line"/>
+            <!-- instructor -->
+            <rect x="640" y="160" width="110" height="42" rx="3" class="dg-entity"/><text x="695" y="181" class="dg-t dg-t-ent" style="font-size:11px">instructor</text>
+            <line x1="610" y1="181" x2="640" y2="181" class="dg-line"/>
+            <ellipse cx="660" cy="70" rx="24" ry="14" class="dg-attr"/><text x="660" y="70" class="dg-t dg-t-key" style="font-size:11px">iid</text>
+            <ellipse cx="725" cy="62" rx="30" ry="14" class="dg-attr"/><text x="725" y="62" class="dg-t" style="font-size:10px">name</text>
+            <ellipse cx="665" cy="265" rx="26" ry="14" class="dg-attr"/><text x="665" y="265" class="dg-t" style="font-size:10px">dept</text>
+            <ellipse cx="730" cy="265" rx="26" ry="14" class="dg-attr"/><text x="730" y="265" class="dg-t" style="font-size:10px">title</text>
+            <line x1="675" y1="160" x2="662" y2="84" class="dg-line"/><line x1="715" y1="160" x2="722" y2="76" class="dg-line"/>
+            <line x1="680" y1="202" x2="668" y2="251" class="dg-line"/><line x1="710" y1="202" x2="725" y2="251" class="dg-line"/>
+            <!-- is offered (identifying) -->
+            <polygon points="395,300 450,322 395,344 340,322" class="dg-rel-id"/>
+            <polygon points="395,308 432,322 395,336 358,322" class="dg-rel-id"/>
+            <text x="395" y="324" class="dg-t dg-t-rel" style="font-size:9px">is-offered</text>
+            <line x1="395" y1="207" x2="395" y2="300" class="dg-line"/>
+            <!-- course -->
+            <rect x="340" y="380" width="110" height="42" rx="3" class="dg-entity"/><text x="395" y="401" class="dg-t dg-t-ent" style="font-size:12px">course</text>
+            <line x1="395" y1="344" x2="395" y2="380" class="dg-line"/>
+            <ellipse cx="300" cy="360" rx="36" ry="15" class="dg-attr"/><text x="300" y="360" class="dg-t" style="font-size:9px">syllabus</text>
+            <ellipse cx="510" cy="365" rx="38" ry="15" class="dg-attr"/><text x="510" y="365" class="dg-t dg-t-key" style="font-size:9px">courseno</text>
+            <ellipse cx="540" cy="405" rx="26" ry="14" class="dg-attr"/><text x="540" y="405" class="dg-t" style="font-size:10px">title</text>
+            <ellipse cx="430" cy="450" rx="32" ry="15" class="dg-attr"/><text x="430" y="450" class="dg-t" style="font-size:10px">credits</text>
+            <line x1="355" y1="380" x2="315" y2="372" class="dg-line"/><line x1="450" y1="392" x2="485" y2="372" class="dg-line"/><line x1="450" y1="400" x2="515" y2="403" class="dg-line"/><line x1="410" y1="422" x2="425" y2="436" class="dg-line"/>
+            <!-- requires (unary prereq) -->
+            <polygon points="225,401 280,380 225,401 225,401" class="dg-rel" style="display:none"/>
+            <polygon points="240,401 195,380 150,401 195,422" class="dg-rel"/><text x="195" y="403" class="dg-t dg-t-rel" style="font-size:9px">requires</text>
+            <line x1="340" y1="401" x2="240" y2="401" class="dg-line"/>
+            <text x="285" y="392" class="dg-t" style="fill:var(--text-dim);font-size:9px">prereq.</text>
+          </svg>
+        </div>
+        <div class="tip">📝 العلاقة <code class="eng">requires</code> دي <b>Unary</b> على الكورس نفسه (كورس بيتطلب كورس تاني). و<code class="eng">is-offered</code> هي الـ identifying relationship للكيان الضعيف.</div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Q12 -->
+  <details class="problem reveal">
+    <summary><span class="qn">12</span> درجات الطلاب في امتحانات الكورسات <span class="arrow">›</span></summary>
+    <div class="body">
+      <p class="qtext">Record marks students get in different exams of different course offerings. (a) Model exams as entities using a ternary relationship. (b) Alternative using only a binary relationship between students & course-offerings.</p>
+      <div class="answer">
+        <p><b>الفكرة:</b> المسألة عايزة تسجّل درجة (mark) طالب في امتحان معيّن لعرض كورس معيّن. ده ارتباط بين 3 حاجات: <code class="eng">student</code> + <code class="eng">course-offering</code> + <code class="eng">exam</code>.</p>
+        <p><b>(a) الحل بالـ Ternary:</b> علاقة <code class="eng">takes</code> واحدة بتربط التلاتة مع بعض، وليها صفة <code class="eng">marks</code>. الـ <code class="eng">exam</code> كيان عادي ليه <code class="eng">eid, name, place, time</code>.</p>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 760 360" xmlns="http://www.w3.org/2000/svg">
+            <rect x="60" y="90" width="110" height="42" rx="3" class="dg-entity"/><text x="115" y="111" class="dg-t dg-t-ent" style="font-size:12px">student</text>
+            <ellipse cx="70" cy="40" rx="24" ry="13" class="dg-attr"/><text x="70" y="40" class="dg-t dg-t-key" style="font-size:10px">sid</text>
+            <ellipse cx="135" cy="35" rx="28" ry="13" class="dg-attr"/><text x="135" y="35" class="dg-t" style="font-size:10px">name</text>
+            <ellipse cx="75" cy="170" rx="36" ry="14" class="dg-attr"/><text x="75" y="170" class="dg-t" style="font-size:9px">program</text>
+            <line x1="80" y1="90" x2="72" y2="53" class="dg-line"/><line x1="125" y1="90" x2="132" y2="48" class="dg-line"/><line x1="90" y1="132" x2="78" y2="156" class="dg-line"/>
+            <!-- takes -->
+            <polygon points="240,111 300,90 360,111 300,132" class="dg-rel"/><text x="300" y="113" class="dg-t dg-t-rel" style="font-size:10px">takes</text>
+            <line x1="170" y1="111" x2="240" y2="111" class="dg-line"/>
+            <ellipse cx="300" cy="175" rx="32" ry="14" class="dg-attr"/><text x="300" y="175" class="dg-t" style="font-size:10px">marks</text>
+            <line x1="300" y1="132" x2="300" y2="161" class="dg-line"/>
+            <!-- course-offering -->
+            <rect x="430" y="88" width="130" height="46" rx="3" class="dg-entity"/><text x="495" y="111" class="dg-t dg-t-ent" style="font-size:10px">course-offering</text>
+            <line x1="360" y1="111" x2="430" y2="111" class="dg-line"/>
+            <ellipse cx="450" cy="40" rx="24" ry="13" class="dg-attr"/><text x="450" y="40" class="dg-t" style="font-size:10px">time</text>
+            <ellipse cx="520" cy="35" rx="28" ry="13" class="dg-attr"/><text x="520" y="35" class="dg-t" style="font-size:9px">secno</text>
+            <ellipse cx="630" cy="100" rx="40" ry="15" class="dg-attr"/><text x="630" y="100" class="dg-t" style="font-size:9px">courseno</text>
+            <ellipse cx="500" cy="175" rx="26" ry="13" class="dg-attr"/><text x="500" y="175" class="dg-t" style="font-size:10px">year</text>
+            <line x1="465" y1="88" x2="452" y2="53" class="dg-line"/><line x1="500" y1="88" x2="518" y2="48" class="dg-line"/><line x1="560" y1="105" x2="590" y2="102" class="dg-line"/><line x1="500" y1="134" x2="500" y2="162" class="dg-line"/>
+            <!-- exam -->
+            <rect x="345" y="270" width="110" height="42" rx="3" class="dg-entity"/><text x="400" y="291" class="dg-t dg-t-ent" style="font-size:12px">exam</text>
+            <line x1="300" y1="132" x2="395" y2="270" class="dg-line"/>
+            <ellipse cx="270" cy="270" rx="24" ry="13" class="dg-attr"/><text x="270" y="270" class="dg-t dg-t-key" style="font-size:10px">eid</text>
+            <ellipse cx="540" cy="275" rx="28" ry="13" class="dg-attr"/><text x="540" y="275" class="dg-t" style="font-size:10px">time</text>
+            <ellipse cx="350" cy="335" rx="28" ry="13" class="dg-attr"/><text x="350" y="335" class="dg-t" style="font-size:10px">name</text>
+            <ellipse cx="450" cy="335" rx="28" ry="13" class="dg-attr"/><text x="450" y="335" class="dg-t" style="font-size:10px">place</text>
+            <line x1="345" y1="291" x2="294" y2="273" class="dg-line"/><line x1="455" y1="291" x2="512" y2="278" class="dg-line"/><line x1="375" y1="312" x2="355" y2="322" class="dg-line"/><line x1="425" y1="312" x2="445" y2="322" class="dg-line"/>
+          </svg>
+        </div>
+        <p style="margin-top:1rem"><b>(b) الحل البديل (Binary):</b> بنخلي <code class="eng">takes</code> علاقة عادية بين student و course-offering (مرة واحدة بس)، و<code class="eng">exam</code> يبقى weak entity مرتبط بـ course-offering عن طريق <code class="eng">examof</code>، والدرجات تتسجل في علاقة <code class="eng">marks</code> بين student والـ exam. كده بنضمن علاقة واحدة بس بين كل طالب وعرض كورس.</p>
+        <div class="tip">🎯 <b>ليه نعمل البديل؟</b> عشان لو استخدمت ternary مباشرة ممكن يحصل تكرار. الـ binary version بتفصل «الطالب أخد الكورس» عن «درجاته في كل امتحان».</div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Q13/14 -->
+  <details class="problem reveal">
+    <summary><span class="qn">13</span> فريقك الرياضي المفضّل (+ امتداده Q14) <span class="arrow">›</span></summary>
+    <div class="body">
+      <p class="qtext">Design an E-R diagram to track your favorite sports team: matches played, scores in each match, players in each match, individual player statistics per match. Summary statistics should be modeled as derived attributes. (Q14) Extend to all teams in a league.</p>
+      <div class="answer">
+        <span class="tag-pill tag-ent">match</span><span class="tag-pill tag-ent">player</span><span class="tag-pill tag-ent">team (Q14)</span>
+        <span class="tag-pill tag-rel">played</span>
+        <span class="tag-pill tag-attr">season_score (derived)</span>
+        <p style="margin-top:.8rem"><b>Q13 (فريق واحد):</b><br>
+        • <code class="eng">match</code> ليه <code class="eng">matchid</code> (key), <code class="eng">date, stadium, opponent, own_score, opp_score</code>.<br>
+        • <code class="eng">player</code> ليه <code class="eng">name, age</code> و<code class="eng">season_score</code> <b>derived</b> (بيتحسب من مجموع scores اللاعب) → دايرة منقطة.<br>
+        • <code class="eng">played</code> علاقة M:N بين match و player، وليها صفة <code class="eng">score</code> (نقاط اللاعب في الماتش ده).</p>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 760 320" xmlns="http://www.w3.org/2000/svg">
+            <!-- match -->
+            <rect x="180" y="130" width="120" height="44" rx="3" class="dg-entity"/><text x="240" y="152" class="dg-t dg-t-ent" style="font-size:13px">match</text>
+            <ellipse cx="150" cy="55" rx="30" ry="15" class="dg-attr"/><text x="150" y="55" class="dg-t" style="font-size:10px">date</text>
+            <ellipse cx="240" cy="45" rx="34" ry="15" class="dg-attr"/><text x="240" y="45" class="dg-t dg-t-key" style="font-size:9px">matchid</text>
+            <ellipse cx="330" cy="55" rx="34" ry="15" class="dg-attr"/><text x="330" y="55" class="dg-t" style="font-size:9px">stadium</text>
+            <ellipse cx="70" cy="152" rx="40" ry="16" class="dg-attr"/><text x="70" y="152" class="dg-t" style="font-size:9px">opponent</text>
+            <ellipse cx="150" cy="250" rx="42" ry="16" class="dg-attr"/><text x="150" y="250" class="dg-t" style="font-size:8px">own_score</text>
+            <ellipse cx="270" cy="255" rx="42" ry="16" class="dg-attr"/><text x="270" y="255" class="dg-t" style="font-size:8px">opp_score</text>
+            <line x1="200" y1="130" x2="160" y2="70" class="dg-line"/><line x1="240" y1="130" x2="240" y2="60" class="dg-line"/><line x1="280" y1="130" x2="322" y2="70" class="dg-line"/>
+            <line x1="180" y1="152" x2="110" y2="152" class="dg-line"/><line x1="210" y1="174" x2="160" y2="234" class="dg-line"/><line x1="260" y1="174" x2="268" y2="239" class="dg-line"/>
+            <!-- played -->
+            <polygon points="360,152 420,130 480,152 420,174" class="dg-rel"/><text x="420" y="154" class="dg-t dg-t-rel" style="font-size:10px">played</text>
+            <line x1="300" y1="152" x2="360" y2="152" class="dg-line"/>
+            <ellipse cx="420" cy="245" rx="30" ry="15" class="dg-attr"/><text x="420" y="245" class="dg-t" style="font-size:10px">score</text>
+            <line x1="420" y1="174" x2="420" y2="230" class="dg-line"/>
+            <!-- player -->
+            <rect x="540" y="130" width="120" height="44" rx="3" class="dg-entity"/><text x="600" y="152" class="dg-t dg-t-ent" style="font-size:13px">player</text>
+            <line x1="480" y1="152" x2="540" y2="152" class="dg-line"/>
+            <ellipse cx="560" cy="50" rx="30" ry="15" class="dg-attr"/><text x="560" y="50" class="dg-t" style="font-size:10px">name</text>
+            <ellipse cx="650" cy="50" rx="26" ry="15" class="dg-attr"/><text x="650" y="50" class="dg-t" style="font-size:10px">age</text>
+            <ellipse cx="650" cy="245" rx="50" ry="18" class="dg-attr-derived"/><text x="650" y="245" class="dg-t" style="font-size:9px;fill:var(--green)">season_score</text>
+            <line x1="580" y1="130" x2="562" y2="65" class="dg-line"/><line x1="620" y1="130" x2="648" y2="65" class="dg-line"/><line x1="630" y1="174" x2="648" y2="227" class="dg-line"/>
+          </svg>
+        </div>
+        <p style="margin-top:1rem"><b>Q14 (كل الفرق في الدوري):</b> بنضيف كيان <code class="eng">team</code> (ليه <code class="eng">name</code> و<code class="eng">ranking</code> derived). و2 علاقات جديدة: <code class="eng">team_played</code> (بين match و team، وليها <code class="eng">score, result</code>) و<code class="eng">player_of</code> (بين player و team). ملحوظة المسألة: اللاعب بيكون في فريق واحد بس في الموسم.</p>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 760 360" xmlns="http://www.w3.org/2000/svg">
+            <rect x="200" y="80" width="110" height="42" rx="3" class="dg-entity"/><text x="255" y="101" class="dg-t dg-t-ent" style="font-size:12px">match</text>
+            <ellipse cx="180" cy="35" rx="30" ry="13" class="dg-attr"/><text x="180" y="35" class="dg-t dg-t-key" style="font-size:9px">matchid</text>
+            <ellipse cx="280" cy="30" rx="32" ry="13" class="dg-attr"/><text x="280" y="30" class="dg-t" style="font-size:9px">stadium</text>
+            <ellipse cx="110" cy="100" rx="28" ry="13" class="dg-attr"/><text x="110" y="100" class="dg-t" style="font-size:10px">date</text>
+            <line x1="215" y1="80" x2="183" y2="48" class="dg-line"/><line x1="275" y1="80" x2="278" y2="43" class="dg-line"/><line x1="200" y1="101" x2="138" y2="100" class="dg-line"/>
+            <!-- played -->
+            <polygon points="360,101 415,80 470,101 415,122" class="dg-rel"/><text x="415" y="103" class="dg-t dg-t-rel" style="font-size:10px">played</text>
+            <line x1="310" y1="101" x2="360" y2="101" class="dg-line"/>
+            <ellipse cx="415" cy="35" rx="28" ry="13" class="dg-attr"/><text x="415" y="35" class="dg-t" style="font-size:10px">score</text>
+            <line x1="415" y1="80" x2="415" y2="48" class="dg-line"/>
+            <!-- player -->
+            <rect x="540" y="80" width="110" height="42" rx="3" class="dg-entity"/><text x="595" y="101" class="dg-t dg-t-ent" style="font-size:12px">player</text>
+            <line x1="470" y1="101" x2="540" y2="101" class="dg-line"/>
+            <ellipse cx="560" cy="35" rx="28" ry="13" class="dg-attr"/><text x="560" y="35" class="dg-t" style="font-size:10px">name</text>
+            <ellipse cx="640" cy="35" rx="24" ry="13" class="dg-attr"/><text x="640" y="35" class="dg-t" style="font-size:10px">age</text>
+            <ellipse cx="700" cy="135" rx="46" ry="16" class="dg-attr-derived"/><text x="700" y="135" class="dg-t" style="font-size:8px;fill:var(--green)">season_score</text>
+            <line x1="575" y1="80" x2="562" y2="48" class="dg-line"/><line x1="625" y1="80" x2="638" y2="48" class="dg-line"/><line x1="650" y1="115" x2="680" y2="128" class="dg-line"/>
+            <!-- team_played -->
+            <polygon points="255,210 320,232 255,254 190,232" class="dg-rel"/><text x="255" y="234" class="dg-t dg-t-rel" style="font-size:8px">team_played</text>
+            <line x1="255" y1="122" x2="255" y2="210" class="dg-line"/>
+            <ellipse cx="120" cy="232" rx="28" ry="13" class="dg-attr"/><text x="120" y="232" class="dg-t" style="font-size:10px">score</text>
+            <ellipse cx="170" cy="290" rx="30" ry="13" class="dg-attr"/><text x="170" y="290" class="dg-t" style="font-size:10px">result</text>
+            <line x1="190" y1="232" x2="148" y2="232" class="dg-line"/><line x1="215" y1="245" x2="190" y2="280" class="dg-line"/>
+            <!-- player_of -->
+            <polygon points="560,210 625,232 560,254 495,232" class="dg-rel"/><text x="560" y="234" class="dg-t dg-t-rel" style="font-size:9px">player_of</text>
+            <line x1="595" y1="122" x2="565" y2="210" class="dg-line"/>
+            <!-- team -->
+            <rect x="350" y="290" width="120" height="42" rx="3" class="dg-entity"/><text x="410" y="311" class="dg-t dg-t-ent" style="font-size:12px">team</text>
+            <line x1="290" y1="245" x2="375" y2="290" class="dg-line"/>
+            <line x1="545" y1="245" x2="460" y2="290" class="dg-line"/>
+            <ellipse cx="360" cy="350" rx="28" ry="13" class="dg-attr"/><text x="360" y="350" class="dg-t" style="font-size:10px">name</text>
+            <ellipse cx="450" cy="350" rx="38" ry="14" class="dg-attr-derived"/><text x="450" y="350" class="dg-t" style="font-size:9px;fill:var(--green)">ranking</text>
+            <line x1="390" y1="332" x2="365" y2="340" class="dg-line"/><line x1="430" y1="332" x2="448" y2="338" class="dg-line"/>
+          </svg>
+        </div>
+        <div class="tip">⭐ <b>النقطة المهمة في الامتحان:</b> أي إحصائية «مجمّعة» (season_score, ranking) لازم تكون <b>derived</b> = دايرة منقطة، لأنها بتتحسب من بيانات تانية.</div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Q15 -->
+  <details class="problem reveal">
+    <summary><span class="qn">15</span> التجميع — Aggregation <span class="arrow">›</span></summary>
+    <div class="body">
+      <p class="qtext">Define aggregation. Give two examples where this concept is useful.</p>
+      <div class="answer">
+        <p><b>التعريف:</b> الـ <span class="eng">Aggregation</span> تجريد بنعامل بيه <b>علاقة</b> كأنها <b>كيان</b> أعلى مستوى. يعني العلاقة بين A و B نعاملها كأنها entity اسمه C عشان نقدر نربطها بكيان تالت.</p>
+        <p><b>مثال 1:</b> «الموظفين بيشتغلوا في مشاريع» (<code class="eng">works-in</code>). الموظف اللي شغال في مشروع معيّن بيستخدم ماكينات. فبنعامل علاقة (employee + project) كوحدة، ونربطها بـ <code class="eng">machinery</code> عن طريق <code class="eng">requires</code>.</p>
+        <p><b>مثال 2:</b> «المصنّعين عندهم اتفاقيات (<code class="eng">tie-up</code>) مع موزّعين». كل اتفاقية محدد ليها مجموعة منتجات. فنعامل علاقة (manufacturer + distributor) كوحدة ونربطها بـ <code class="eng">product</code> عن طريق <code class="eng">distribute</code>.</p>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 600 340" xmlns="http://www.w3.org/2000/svg">
+            <!-- aggregation box -->
+            <rect x="40" y="40" width="500" height="120" rx="8" fill="none" stroke="#5a5a66" stroke-width="1.4" stroke-dasharray="6 5"/>
+            <rect x="80" y="80" width="120" height="42" rx="3" class="dg-entity"/><text x="140" y="101" class="dg-t dg-t-ent" style="font-size:12px">employee</text>
+            <ellipse cx="140" cy="55" rx="32" ry="13" class="dg-attr" style="display:none"/>
+            <polygon points="260,101 320,80 380,101 320,122" class="dg-rel"/><text x="320" y="103" class="dg-t dg-t-rel" style="font-size:10px">works-in</text>
+            <line x1="200" y1="101" x2="260" y2="101" class="dg-line"/>
+            <rect x="420" y="80" width="100" height="42" rx="3" class="dg-entity"/><text x="470" y="101" class="dg-t dg-t-ent" style="font-size:12px">project</text>
+            <line x1="380" y1="101" x2="420" y2="101" class="dg-line"/>
+            <ellipse cx="320" cy="50" rx="38" ry="14" class="dg-attr"/><text x="320" y="50" class="dg-t" style="font-size:9px">deadline</text>
+            <line x1="320" y1="80" x2="320" y2="64" class="dg-line"/>
+            <!-- requires -->
+            <polygon points="290,210 350,190 410,210 350,230" class="dg-rel"/><text x="350" y="212" class="dg-t dg-t-rel" style="font-size:10px">requires</text>
+            <line x1="290" y1="160" x2="350" y2="190" class="dg-line"/>
+            <!-- machinery -->
+            <rect x="290" y="270" width="120" height="42" rx="3" class="dg-entity"/><text x="350" y="291" class="dg-t dg-t-ent" style="font-size:11px">machinery</text>
+            <line x1="350" y1="230" x2="350" y2="270" class="dg-line"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </details>
+</section>
+
+<!-- ============ DEFINITIONS ============ -->
+<section id="defs">
+  <div class="sec-head"><span class="num">08</span><h2>أسئلة التعريفات (مراجعة سريعة)</h2></div>
+  <p class="intro-line">دي تعريفات سؤال 1 و 2 من الشيت، جاهزة للحفظ. لو الامتحان مسائل بس، التعريفات دي بتفيدك تفهم المسائل صح وممكن تيجي كجزء من الحل.</p>
+
+  <div class="card reveal">
+    <h3>سؤال 1 — عرّف المصطلحات دي</h3>
+    <ul class="qlist">
+      <li><span class="k">Entity type</span> مجموعة كيانات بتشترك في نفس الصفات.</li>
+      <li><span class="k">E-R model</span> تمثيل منطقي لبيانات المؤسسة أو لمجال شغل معيّن.</li>
+      <li><span class="k">Entity instance</span> حالة واحدة بعينها من الـ entity type.</li>
+      <li><span class="k">Attribute</span> خاصية أو ميزة للكيان بتهم المؤسسة.</li>
+      <li><span class="k">Relationship type</span> ارتباط ليه معنى بين (أو وسط) أنواع الكيانات.</li>
+      <li><span class="k">Identifier</span> صفة (أو مجموعة) بتميّز كل حالة من الكيان.</li>
+      <li><span class="k">Multivalued attr</span> صفة ممكن تاخد أكتر من قيمة للحالة الواحدة.</li>
+      <li><span class="k">Associative entity</span> كيان بيربط حالات كيانات تانية وفيه صفات خاصة بالعلاقة.</li>
+      <li><span class="k">Cardinality constraint</span> بتحدد كام حالة من كيان ممكن (أو لازم) ترتبط بحالة من كيان تاني.</li>
+      <li><span class="k">Weak entity</span> كيان وجوده بيعتمد على كيان تاني.</li>
+      <li><span class="k">Identifying rel</span> العلاقة بين الكيان الضعيف وصاحبه.</li>
+      <li><span class="k">Derived attr</span> صفة قيمتها بتتحسب من صفات تانية.</li>
+      <li><span class="k">Business rule</span> جملة بتعرّف أو بتقيّد جزء من الشغل.</li>
+    </ul>
+  </div>
+
+  <div class="card reveal">
+    <h3>سؤال 2 — قارن بين المصطلحات</h3>
+    <ul class="qlist">
+      <li><span class="k">Stored vs Derived</span> المخزّنة قيمتها في الداتابيز، المشتقة بتتحسب من غيرها.</li>
+      <li><span class="k">Type vs Instance</span> النوع مجموعة كاملة، الـ instance حالة واحدة منها.</li>
+      <li><span class="k">Simple vs Composite</span> البسيطة مبتتقسمش، المركّبة بتتقسم لأجزاء.</li>
+      <li><span class="k">Entity vs Relationship</span> الكيان مجموعة كيانات، العلاقة ارتباط بين كيانات.</li>
+      <li><span class="k">Strong vs Weak</span> القوي مستقل، الضعيف وجوده معتمد على كيان تاني.</li>
+      <li><span class="k">Degree vs Cardinality</span> الـ degree عدد الكيانات في العلاقة، الـ cardinality عدد الحالات اللي ممكن ترتبط.</li>
+    </ul>
+  </div>
+
+  <div class="card reveal">
+    <h3>أسئلة نظرية مهمة (3 → 8)</h3>
+    <p><b>3) ليه data modeling أهم جزء؟</b> (أ) خصائص الداتا بتتحدد هنا وبتأثر على تصميم كل النظام. (ب) الداتا أهم من العمليات في الأنظمة الحديثة. (ج) الداتا أثبت من العمليات فعمرها أطول.</p>
+    <p><b>4) 6 إرشادات لتسمية الداتا:</b> تتعلق بالشغل لا التقنية · لها معنى وشبه توثيقية · فريدة · مقروءة · من قائمة كلمات معتمدة · قابلة للتكرار (نفس الشخص يطلع نفس الاسم).</p>
+    <p><b>5) 4 معايير لاختيار المفتاح:</b> قيمته متتغيرش · مايبقاش null · ابعد عن المفاتيح الذكية · استبدل المركّب الطويل بمفتاح بسيط.</p>
+    <p><b>6) 3 شروط للـ associative entity:</b> كل علاقاته many · ليه معنى مستقل ويفضّل مفتاح من عمود · ليه صفة أو أكتر غير المفتاح.</p>
+    <p><b>7) 4 أنواع cardinality:</b> Optional one · Mandatory one · Optional many · Mandatory many. (راجع الرموز فوق ☝️)</p>
+    <p><b>8) Primary vs Candidate vs Superkey:</b> الـ superkey أي مجموعة بتميّز (حتى لو فيها زيادة) · الـ candidate أصغر superkey مفيهوش زيادة · الـ primary هو الـ candidate اللي اخترناه رسمياً.</p>
+  </div>
+</section>
+
+<footer>
+  <p>بالتوفيق في الفاينل يا أبو عيد 💪 — ذاكر <b>طريقة الحل</b> كويس وارسم بإيدك المسائل دي مرة من غير ما تبص.</p>
+  <p style="margin-top:.6rem;font-size:.85rem">صُنع بـ <span class="heart">★</span> · CSE 301 · Chapter 2 · E-R Model</p>
+</footer>
+
+<script>
+// mobile nav close on click
+document.querySelectorAll('.navlinks a').forEach(a=>a.addEventListener('click',()=>document.getElementById('nav').classList.remove('open')));
+// reveal on scroll
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
