@@ -169,9 +169,61 @@
     </div>
 
     <footer>
-      M.U.S.T. University
+      <span id="footer-text">M.U.S.T. University</span>
+      <div id="visitor-count" style="display: none; margin-top: 0.8rem; color: var(--accent-ch2); font-size: 0.85rem; font-weight: 600; font-family: 'IBM Plex Mono', monospace;">
+        Visitor Count: <span id="count-val">...</span>
+      </div>
     </footer>
   </div>
 
+  <script>
+    let clickCount = 0;
+    let totalVisits = null;
+
+    // Increment and fetch visits using CounterAPI
+    fetch('https://api.counterapi.dev/v1/must_cse301_mohamed/visits/up')
+      .then(res => res.json())
+      .then(data => {
+        totalVisits = data.count;
+        checkReveal();
+      })
+      .catch(err => console.error('Error fetching counter:', err));
+
+    function checkReveal() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('admin') === 'true' || clickCount >= 3) {
+        showCount();
+      }
+    }
+
+    function showCount() {
+      const countEl = document.getElementById('visitor-count');
+      const valEl = document.getElementById('count-val');
+      if (countEl && valEl && totalVisits !== null) {
+        valEl.innerText = totalVisits;
+        countEl.style.display = 'block';
+      }
+    }
+
+    // Secret: Click footer text 3 times to reveal counter
+    const footerText = document.getElementById('footer-text');
+    if (footerText) {
+      footerText.style.cursor = 'pointer';
+      footerText.addEventListener('click', () => {
+        clickCount++;
+        if (clickCount >= 3) {
+          showCount();
+        }
+      });
+    }
+
+    // Check query param immediately on load
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('admin') === 'true') {
+      if (totalVisits !== null) {
+        showCount();
+      }
+    }
+  </script>
 </body>
 </html>
