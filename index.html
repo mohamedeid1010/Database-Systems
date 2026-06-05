@@ -179,29 +179,35 @@
   <script>
     let clickCount = 0;
     let totalVisits = null;
+    let isCounterVisible = false;
 
     // Increment and fetch visits using CounterAPI
     fetch('https://api.counterapi.dev/v1/must_cse301_mohamed/visits/up')
       .then(res => res.json())
       .then(data => {
         totalVisits = data.count;
-        checkReveal();
+        updateUI();
       })
-      .catch(err => console.error('Error fetching counter:', err));
-
-    function checkReveal() {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('admin') === 'true' || clickCount >= 3) {
-        showCount();
-      }
-    }
+      .catch(err => {
+        console.error('Error fetching counter:', err);
+        totalVisits = "Unavailable";
+        updateUI();
+      });
 
     function showCount() {
+      isCounterVisible = true;
       const countEl = document.getElementById('visitor-count');
-      const valEl = document.getElementById('count-val');
-      if (countEl && valEl && totalVisits !== null) {
-        valEl.innerText = totalVisits;
+      if (countEl) {
         countEl.style.display = 'block';
+      }
+      updateUI();
+    }
+
+    function updateUI() {
+      if (!isCounterVisible) return;
+      const valEl = document.getElementById('count-val');
+      if (valEl) {
+        valEl.innerText = totalVisits !== null ? totalVisits : "Loading...";
       }
     }
 
@@ -220,9 +226,7 @@
     // Check query param immediately on load
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('admin') === 'true') {
-      if (totalVisits !== null) {
-        showCount();
-      }
+      showCount();
     }
   </script>
 </body>
