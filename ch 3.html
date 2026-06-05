@@ -451,6 +451,386 @@ html[dir="rtl"] .branch:last-child::after{left:50%;right:-18px}
     font-size: 0.72rem;
   }
 }
+
+/* ===== INTERACTIVE EXAM PRACTICE WORKSPACE ===== */
+.practice-header-btn {
+  background: rgba(224, 181, 106, 0.12);
+  border: 1px dashed var(--gold-dim);
+  color: var(--gold2);
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: auto;
+  font-family: 'Tajawal', sans-serif;
+}
+.practice-header-btn:hover {
+  background: rgba(224, 181, 106, 0.25);
+  border-color: var(--gold);
+}
+
+.quiz-container {
+  background: #111116;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1.25rem;
+  margin-top: 1rem;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  direction: rtl;
+  position: relative;
+}
+
+.quiz-progress-bar-bg {
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.quiz-progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--gold);
+  transition: width 0.3s ease;
+}
+
+.quiz-step-info {
+  font-size: 0.78rem;
+  color: var(--dim);
+  display: flex;
+  justify-content: space-between;
+}
+
+.quiz-question-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.quiz-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-top: 0.5rem;
+}
+
+.quiz-option-card {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  padding: 0.9rem 1.1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  color: var(--dim);
+  text-align: right;
+  position: relative;
+  overflow: hidden;
+}
+.quiz-option-card:hover {
+  border-color: var(--gold-dim);
+  color: var(--text);
+  background: rgba(224, 181, 106, 0.03);
+  transform: translateX(-4px);
+}
+.quiz-option-card.correct {
+  background: rgba(131, 211, 170, 0.08) !important;
+  border-color: var(--green) !important;
+  color: var(--green) !important;
+}
+.quiz-option-card.wrong {
+  background: rgba(220, 140, 140, 0.08) !important;
+  border-color: var(--red) !important;
+  color: var(--red) !important;
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+.quiz-option-card .badge-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.quiz-hint-panel {
+  background: rgba(220, 140, 140, 0.06);
+  border: 1px solid rgba(220, 140, 140, 0.18);
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  color: #f7a8a8;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin-top: 0.5rem;
+  display: none;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Drawing Canvas & Sketchpad Workspace */
+.sketchpad-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  width: 100%;
+}
+
+.sketchpad-guidelines {
+  background: rgba(224, 181, 106, 0.04);
+  border: 1px dashed rgba(224, 181, 106, 0.25);
+  border-radius: 10px;
+  padding: 1rem;
+}
+.sketchpad-guidelines h4 {
+  color: var(--gold2);
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.sketchpad-guidelines ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.sketchpad-guidelines li {
+  font-size: 0.85rem;
+  color: var(--dim);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.sketchpad-guidelines li::before {
+  content: "✏️";
+  font-size: 0.75rem;
+  margin-top: 0.15rem;
+}
+
+.canvas-board-wrapper {
+  position: relative;
+  background-color: #121217;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 0);
+  background-size: 20px 20px;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.canvas-board {
+  display: block;
+  width: 100%;
+  height: 360px;
+  cursor: crosshair;
+  touch-action: none; /* Crucial for mobile drawing scroll lock */
+}
+
+.canvas-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #191922;
+  border-top: 1px solid var(--line);
+  padding: 0.6rem 0.8rem;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  direction: rtl;
+}
+
+.canvas-tools-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.canvas-tool-btn {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  color: var(--dim);
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.2s ease;
+  font-family: 'Tajawal', sans-serif;
+}
+.canvas-tool-btn:hover, .canvas-tool-btn.active {
+  border-color: var(--gold);
+  color: var(--gold2);
+  background: rgba(224, 181, 106, 0.05);
+}
+
+.canvas-color-swatches {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.canvas-color-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.15s ease;
+}
+.canvas-color-dot:hover, .canvas-color-dot.active {
+  transform: scale(1.25);
+  border-color: #fff;
+}
+
+/* Split screen view */
+.practice-split-view {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  width: 100%;
+  margin-top: 1rem;
+  align-items: start;
+}
+.practice-split-view .split-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.practice-split-view .split-header {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--gold);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.2rem;
+}
+
+@media(max-width: 900px) {
+  .practice-split-view {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Success Card */
+.quiz-success-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  padding: 1.5rem 1rem;
+}
+
+.success-icon-badge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(140deg, var(--gold2), var(--gold-dim));
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  box-shadow: 0 8px 24px rgba(224, 181, 106, 0.3);
+  animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.quiz-success-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--gold);
+}
+
+.quiz-success-text {
+  font-size: 0.95rem;
+  color: var(--dim);
+  max-width: 450px;
+  line-height: 1.6;
+}
+
+.quiz-action-buttons {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.quiz-action-btn {
+  background: var(--gold);
+  color: var(--ink);
+  border: none;
+  padding: 0.6rem 1.3rem;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.88rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.quiz-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(224,181,106,0.3);
+}
+.quiz-action-btn.secondary {
+  background: var(--panel2);
+  color: var(--dim);
+  border: 1px solid var(--line);
+}
+.quiz-action-btn.secondary:hover {
+  background: rgba(255,255,255,0.03);
+  color: var(--text);
+  border-color: var(--dim);
+}
+
+/* Confetti canvas */
+.confetti-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
 </style>
 </head>
 <body>
@@ -696,58 +1076,68 @@ html[dir="rtl"] .branch:last-child::after{left:50%;right:-18px}
   <div class="sec-head"><span class="num">07</span><h2>المسائل المحلولة</h2></div>
   <p class="lead">جرّب تحلها لوحدك الأول. ركّز على d/o والخط المفرد/المزدوج في كل واحدة.</p>
 
-  <details class="prob reveal">
+  <details class="prob reveal" id="prob-10">
     <summary><span class="qn">10</span> هرم الجامعة — اكتب صفاتك أنت <span class="ar">›</span></summary>
     <div class="body">
-      <p class="qtext">As a GRADUATE student, list all attributes that apply to you (via inheritance) and your data value for each.</p>
-      <p>بفضل <b>الوراثة</b>، طالب الـ Graduate بيرث صفات PERSON + STUDENT + نوعه:</p>
-      <ul class="qlist">
-        <li><span class="k">SSN</span> 32017158</li>
-        <li><span class="k">Name</span> Mostafa Mohamed</li>
-        <li><span class="k">Address</span> Nasr City, Cairo</li>
-        <li><span class="k">Gender</span> male</li>
-        <li><span class="k">Date Of Birth</span> Oct 23, 1997</li>
-        <li><span class="k">Major Dept</span> Computer Science</li>
-        <li><span class="k">Test Score</span> 986</li>
-      </ul>
-      <div class="tip">🎓 لو Undergrad: بدل <code class="en">Test Score</code> يبقى <code class="en">Class Standing</code>.</div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; direction: rtl;">
+        <button class="practice-header-btn" onclick="startPractice('10', event)">🎯 حل خطوة بخطوة</button>
+        <p class="qtext" style="margin: 0; text-align: left; direction: ltr; flex-grow: 1;">As a GRADUATE student, list all attributes that apply to you (via inheritance) and your data value for each.</p>
+      </div>
+      <div class="solution-content">
+        <p>بفضل <b>الوراثة</b>، طالب الـ Graduate بيرث صفات PERSON + STUDENT + نوعه:</p>
+        <ul class="qlist">
+          <li><span class="k">SSN</span> 32017158</li>
+          <li><span class="k">Name</span> Mostafa Mohamed</li>
+          <li><span class="k">Address</span> Nasr City, Cairo</li>
+          <li><span class="k">Gender</span> male</li>
+          <li><span class="k">Date Of Birth</span> Oct 23, 1997</li>
+          <li><span class="k">Major Dept</span> Computer Science</li>
+          <li><span class="k">Test Score</span> 986</li>
+        </ul>
+        <div class="tip">🎓 لو Undergrad: بدل <code class="en">Test Score</code> يبقى <code class="en">Class Standing</code>.</div>
+      </div>
     </div>
   </details>
 
-  <details class="prob reveal">
+  <details class="prob reveal" id="prob-11">
     <summary><span class="qn">11</span> هرم الجامعة + الـ Discriminators (3 مستويات) <span class="ar">›</span></summary>
     <div class="body">
-      <p class="qtext">Add subtype discriminators. PERSON: Person Type (Employee? Alumnus? Student?) · EMPLOYEE: Employee Type (Faculty, Staff) · STUDENT: Student Type (Grad, Undergrad).</p>
-      <span class="tagp t-e">PERSON</span><span class="tagp t-s">EMPLOYEE</span><span class="tagp t-s">ALUMNUS</span><span class="tagp t-s">STUDENT</span>
-      <ul class="qlist" style="margin-top:.7rem">
-        <li><span class="k">PERSON</span> <b>o (overlap)</b> — ممكن موظف وخريج. discriminator مركّب.</li>
-        <li><span class="k">EMPLOYEE</span> <b>d</b> — Faculty أو Staff.</li>
-        <li><span class="k">STUDENT</span> <b>d</b> — Grad أو Undergrad.</li>
-      </ul>
-      <div class="diagram">
-        <div class="diagram-inner">
-          <div class="eer">
-            <div class="ent"><div class="nm">PERSON</div><div class="at"><span class="key">SSN</span><span>Name, Address</span><span>Gender, Date Of Birth</span><span class="disc">Person Type (disc.)</span></div></div>
-            <div class="spine"><span class="ln"></span><span class="circ">o</span><span class="ln2"></span></div>
-            <div class="branches">
-              <div class="branch"><span class="blbl">Emp?="Y"</span>
-                <div class="eer">
-                  <div class="ent sub"><div class="nm">EMPLOYEE</div><div class="at"><span>Date Hired, Salary</span><span class="disc">Employee Type</span></div></div>
-                  <div class="spine"><span class="ln"></span><span class="circ">d</span><span class="ln2"></span></div>
-                  <div class="branches">
-                    <div class="branch"><span class="blbl">"Faculty"</span><div class="ent sub"><div class="nm">FACULTY</div><div class="at"><span>Rank</span></div></div></div>
-                    <div class="branch"><span class="blbl">"Staff"</span><div class="ent sub"><div class="nm">STAFF</div><div class="at"><span>Position</span></div></div></div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; direction: rtl;">
+        <button class="practice-header-btn" onclick="startPractice('11', event)">🎯 حل خطوة بخطوة</button>
+        <p class="qtext" style="margin: 0; text-align: left; direction: ltr; flex-grow: 1;">Add subtype discriminators. PERSON: Person Type (Employee? Alumnus? Student?) · EMPLOYEE: Employee Type (Faculty, Staff) · STUDENT: Student Type (Grad, Undergrad).</p>
+      </div>
+      <div class="solution-content">
+        <span class="tagp t-e">PERSON</span><span class="tagp t-s">EMPLOYEE</span><span class="tagp t-s">ALUMNUS</span><span class="tagp t-s">STUDENT</span>
+        <ul class="qlist" style="margin-top:.7rem">
+          <li><span class="k">PERSON</span> <b>o (overlap)</b> — ممكن موظف وخريج. discriminator مركّب.</li>
+          <li><span class="k">EMPLOYEE</span> <b>d</b> — Faculty أو Staff.</li>
+          <li><span class="k">STUDENT</span> <b>d</b> — Grad أو Undergrad.</li>
+        </ul>
+        <div class="diagram">
+          <div class="diagram-inner">
+            <div class="eer">
+              <div class="ent"><div class="nm">PERSON</div><div class="at"><span class="key">SSN</span><span>Name, Address</span><span>Gender, Date Of Birth</span><span class="disc">Person Type (disc.)</span></div></div>
+              <div class="spine"><span class="ln"></span><span class="circ">o</span><span class="ln2"></span></div>
+              <div class="branches">
+                <div class="branch"><span class="blbl">Emp?="Y"</span>
+                  <div class="eer">
+                    <div class="ent sub"><div class="nm">EMPLOYEE</div><div class="at"><span>Date Hired, Salary</span><span class="disc">Employee Type</span></div></div>
+                    <div class="spine"><span class="ln"></span><span class="circ">d</span><span class="ln2"></span></div>
+                    <div class="branches">
+                      <div class="branch"><span class="blbl">"Faculty"</span><div class="ent sub"><div class="nm">FACULTY</div><div class="at"><span>Rank</span></div></div></div>
+                      <div class="branch"><span class="blbl">"Staff"</span><div class="ent sub"><div class="nm">STAFF</div><div class="at"><span>Position</span></div></div></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="branch"><span class="blbl">Alum?="Y"</span><div class="ent sub"><div class="nm">ALUMNUS</div><div class="at"><span>{Degree (Date,</span><span>Year, Designation)}</span></div></div></div>
-              <div class="branch"><span class="blbl">Stu?="Y"</span>
-                <div class="eer">
-                  <div class="ent sub"><div class="nm">STUDENT</div><div class="at"><span>Major Dept</span><span class="disc">Student Type</span></div></div>
-                  <div class="spine"><span class="ln"></span><span class="circ">d</span><span class="ln2"></span></div>
-                  <div class="branches">
-                    <div class="branch"><span class="blbl">"Grad"</span><div class="ent sub"><div class="nm">GRAD STUDENT</div><div class="at"><span>Test Score</span></div></div></div>
-                    <div class="branch"><span class="blbl">"Undergrad"</span><div class="ent sub"><div class="nm">UNDERGRAD</div><div class="at"><span>Class Standing</span></div></div></div>
+                <div class="branch"><span class="blbl">Alum?="Y"</span><div class="ent sub"><div class="nm">ALUMNUS</div><div class="at"><span>{Degree (Date,</span><span>Year, Designation)}</span></div></div></div>
+                <div class="branch"><span class="blbl">Stu?="Y"</span>
+                  <div class="eer">
+                    <div class="ent sub"><div class="nm">STUDENT</div><div class="at"><span>Major Dept</span><span class="disc">Student Type</span></div></div>
+                    <div class="spine"><span class="ln"></span><span class="circ">d</span><span class="ln2"></span></div>
+                    <div class="branches">
+                      <div class="branch"><span class="blbl">"Grad"</span><div class="ent sub"><div class="nm">GRAD STUDENT</div><div class="at"><span>Test Score</span></div></div></div>
+                      <div class="branch"><span class="blbl">"Undergrad"</span><div class="ent sub"><div class="nm">UNDERGRAD</div><div class="at"><span>Class Standing</span></div></div></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -758,140 +1148,160 @@ html[dir="rtl"] .branch:last-child::after{left:50%;right:-18px}
     </div>
   </details>
 
-  <details class="prob reveal">
+  <details class="prob reveal" id="prob-12">
     <summary><span class="qn">12</span> منظمة غير ربحية — كلاسيك ⭐ <span class="ar">›</span></summary>
     <div class="body">
-      <p class="qtext">PERSON → EMPLOYEE (Date Hired), VOLUNTEER (Skill), DONOR. DONOR Donates ITEM (donor: 1+ items, item: 0+ donors). A person may belong to two or more groups, and need not belong to any.</p>
-      <span class="tagp t-e">PERSON</span><span class="tagp t-s">EMPLOYEE</span><span class="tagp t-s">VOLUNTEER</span><span class="tagp t-s">DONOR</span><span class="tagp t-r">Donates</span><span class="tagp t-e">ITEM</span>
-      <ul class="qlist" style="margin-top:.7rem">
-        <li><span class="k">o (overlap)</span> «may belong to two or more» → موظف ومتبرّع.</li>
-        <li><span class="k">Partial</span> «need not belong to any» → خط مفرد.</li>
-        <li><span class="k">Donates</span> على الـ subtype DONOR بس.</li>
-      </ul>
-      <div class="diagram">
-        <div class="diagram-inner">
-          <div class="eer">
-            <div class="ent"><div class="nm">PERSON</div><div class="at"><span class="key">SSN</span><span>Name, Address, City</span><span>State, Zip, Telephone</span></div></div>
-            <div class="spine"><span class="ln"></span><span class="circ">o</span><span class="ln2"></span></div>
-            <div class="branches">
-              <div class="branch"><div class="ent sub"><div class="nm">EMPLOYEE</div><div class="at"><span>Date Hired</span></div></div></div>
-              <div class="branch"><div class="ent sub"><div class="nm">VOLUNTEER</div><div class="at"><span>{Skill}</span></div></div></div>
-              <div class="branch">
-                <div class="col">
-                  <div class="ent sub nofields"><div class="nm">DONOR</div></div>
-                  <span class="vln"></span>
-                  <div class="rel">Donates<span class="sub-t">1+ / 0+</span></div>
-                  <span class="vln"></span>
-                  <div class="ent nofields"><div class="nm">ITEM</div></div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; direction: rtl;">
+        <button class="practice-header-btn" onclick="startPractice('12', event)">🎯 حل خطوة بخطوة</button>
+        <p class="qtext" style="margin: 0; text-align: left; direction: ltr; flex-grow: 1;">PERSON → EMPLOYEE (Date Hired), VOLUNTEER (Skill), DONOR. DONOR Donates ITEM (donor: 1+ items, item: 0+ donors). A person may belong to two or more groups, and need not belong to any.</p>
+      </div>
+      <div class="solution-content">
+        <span class="tagp t-e">PERSON</span><span class="tagp t-s">EMPLOYEE</span><span class="tagp t-s">VOLUNTEER</span><span class="tagp t-s">DONOR</span><span class="tagp t-r">Donates</span><span class="tagp t-e">ITEM</span>
+        <ul class="qlist" style="margin-top:.7rem">
+          <li><span class="k">o (overlap)</span> «may belong to two or more» → موظف ومتبرّع.</li>
+          <li><span class="k">Partial</span> «need not belong to any» → خط مفرد.</li>
+          <li><span class="k">Donates</span> على الـ subtype DONOR بس.</li>
+        </ul>
+        <div class="diagram">
+          <div class="diagram-inner">
+            <div class="eer">
+              <div class="ent"><div class="nm">PERSON</div><div class="at"><span class="key">SSN</span><span>Name, Address, City</span><span>State, Zip, Telephone</span></div></div>
+              <div class="spine"><span class="ln"></span><span class="circ">o</span><span class="ln2"></span></div>
+              <div class="branches">
+                <div class="branch"><div class="ent sub"><div class="nm">EMPLOYEE</div><div class="at"><span>Date Hired</span></div></div></div>
+                <div class="branch"><div class="ent sub"><div class="nm">VOLUNTEER</div><div class="at"><span>{Skill}</span></div></div></div>
+                <div class="branch">
+                  <div class="col">
+                    <div class="ent sub nofields"><div class="nm">DONOR</div></div>
+                    <span class="vln"></span>
+                    <div class="rel">Donates<span class="sub-t">1+ / 0+</span></div>
+                    <span class="vln"></span>
+                    <div class="ent nofields"><div class="nm">ITEM</div></div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          <p class="dcap2">single line = Partial · circle o = Overlap · Donates on DONOR only</p>
         </div>
-        <p class="dcap2">single line = Partial · circle o = Overlap · Donates on DONOR only</p>
       </div>
     </div>
   </details>
 
-  <details class="prob reveal">
+  <details class="prob reveal" id="prob-13">
     <summary><span class="qn">13</span> شركة Fin &amp; Finicky للأمن — Disjoint <span class="ar">›</span></summary>
     <div class="body">
-      <p class="qtext">A CONSULTANT is either Business or Technical, not both. BUSINESS prepares ESTIMATE; TECHNICAL does SERVICE PERFORMED.</p>
-      <span class="tagp t-e">CONSULTANT</span><span class="tagp t-s">BUSINESS</span><span class="tagp t-s">TECHNICAL</span>
-      <ul class="qlist" style="margin-top:.7rem">
-        <li><span class="k">d (disjoint)</span> «either ... not both». discriminator = Consultant Type "B"/"T".</li>
-        <li><span class="k">subtype rels</span> BUSINESS → ESTIMATE · TECHNICAL → SERVICE PERFORMED.</li>
-      </ul>
-      <div class="diagram">
-        <div class="diagram-inner">
-          <div class="eer">
-            <div class="ent"><div class="nm">CONSULTANT</div><div class="at"><span class="key">Emp ID</span><span>Emp Name, Address, Phone</span><span>Emp DOB, [Age], {Degree}</span><span class="disc">Consultant Type ← disc.</span></div></div>
-            <div class="spine"><span class="ln"></span><span class="circ">d</span><span class="disc">Consultant Type =</span><span class="ln2"></span></div>
-            <div class="branches">
-              <div class="branch"><span class="blbl">"B"</span>
-                <div class="col">
-                  <div class="ent sub"><div class="nm">BUSINESS</div><div class="at"><span>{Bus Exper}</span></div></div>
-                  <span class="vln"></span>
-                  <div class="ent assoc"><div class="nm">ESTIMATE</div><div class="at"><span>Est Date</span><span>Est Amount</span></div></div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; direction: rtl;">
+        <button class="practice-header-btn" onclick="startPractice('13', event)">🎯 حل خطوة بخطوة</button>
+        <p class="qtext" style="margin: 0; text-align: left; direction: ltr; flex-grow: 1;">A CONSULTANT is either Business or Technical, not both. BUSINESS prepares ESTIMATE; TECHNICAL does SERVICE PERFORMED.</p>
+      </div>
+      <div class="solution-content">
+        <span class="tagp t-e">CONSULTANT</span><span class="tagp t-s">BUSINESS</span><span class="tagp t-s">TECHNICAL</span>
+        <ul class="qlist" style="margin-top:.7rem">
+          <li><span class="k">d (disjoint)</span> «either ... not both». discriminator = Consultant Type "B"/"T".</li>
+          <li><span class="k">subtype rels</span> BUSINESS → ESTIMATE · TECHNICAL → SERVICE PERFORMED.</li>
+        </ul>
+        <div class="diagram">
+          <div class="diagram-inner">
+            <div class="eer">
+              <div class="ent"><div class="nm">CONSULTANT</div><div class="at"><span class="key">Emp ID</span><span>Emp Name, Address, Phone</span><span>Emp DOB, [Age], {Degree}</span><span class="disc">Consultant Type ← disc.</span></div></div>
+              <div class="spine"><span class="ln"></span><span class="circ">d</span><span class="disc">Consultant Type =</span><span class="ln2"></span></div>
+              <div class="branches">
+                <div class="branch"><span class="blbl">"B"</span>
+                  <div class="col">
+                    <div class="ent sub"><div class="nm">BUSINESS</div><div class="at"><span>{Bus Exper}</span></div></div>
+                    <span class="vln"></span>
+                    <div class="ent assoc"><div class="nm">ESTIMATE</div><div class="at"><span>Est Date</span><span>Est Amount</span></div></div>
+                  </div>
                 </div>
-              </div>
-              <div class="branch"><span class="blbl">"T"</span>
-                <div class="col">
-                  <div class="ent sub"><div class="nm">TECHNICAL</div><div class="at"><span>{Tech Skill}</span></div></div>
-                  <span class="vln"></span>
-                  <div class="ent assoc"><div class="nm">SERVICE PERFORMED</div><div class="at"><span>SP Date</span><span>SP Amount</span></div></div>
+                <div class="branch"><span class="blbl">"T"</span>
+                  <div class="col">
+                    <div class="ent sub"><div class="nm">TECHNICAL</div><div class="at"><span>{Tech Skill}</span></div></div>
+                    <span class="vln"></span>
+                    <div class="ent assoc"><div class="nm">SERVICE PERFORMED</div><div class="at"><span>SP Date</span><span>SP Amount</span></div></div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          <p class="dcap2">+ entities: CUSTOMER (Maintains LOCATION), SERVICE linked to ESTIMATE / SERVICE PERFORMED</p>
         </div>
-        <p class="dcap2">+ entities: CUSTOMER (Maintains LOCATION), SERVICE linked to ESTIMATE / SERVICE PERFORMED</p>
       </div>
     </div>
   </details>
 
-  <details class="prob reveal">
+  <details class="prob reveal" id="prob-15">
     <summary><span class="qn">15</span> سلسلة سينمات — Theatre Chain <span class="ar">›</span></summary>
     <div class="body">
-      <p class="qtext">THEATRE Contains SCREEN, SCREEN Utilizes TIMESLOT, MOVIE Schedule TIMESLOT. Track attendance & price per timeslot; Movie Seq No = order of movies in a slot.</p>
-      <span class="tagp t-e">THEATRE</span><span class="tagp t-e">SCREEN</span><span class="tagp t-e">TIMESLOT</span><span class="tagp t-e">MOVIE</span><span class="tagp t-r">SCHEDULE</span>
-      <p style="margin-top:.6rem">سلسلة علاقات 1:M (مفيهاش super/sub):</p>
-      <div class="diagram">
-        <div class="diagram-inner">
-          <div class="flow">
-            <div class="ent"><div class="nm">MOVIE</div><div class="at"><span class="key">Movie ID</span><span>Title, Duration, Type</span></div></div>
-            <div class="edge"><span class="card-lbl">M:1</span><span class="ln"></span></div>
-            <div class="rel">SCHEDULE<span class="sub-t">Movie Seq No</span></div>
-            <div class="edge"><span class="card-lbl">1:M</span><span class="ln"></span></div>
-            <div class="ent"><div class="nm">TIMESLOT</div><div class="at"><span class="key">Slot ID</span><span>Slot Date</span><span>Start / End Time</span><span class="disc">Price Charged</span><span class="disc">Attendance</span></div></div>
-            <div class="edge"><span class="card-lbl">Utilizes M:1</span><span class="ln"></span></div>
-            <div class="ent"><div class="nm">SCREEN</div><div class="at"><span class="key">Screen No</span><span>Seating Capacity</span></div></div>
-            <div class="edge"><span class="card-lbl">Contains M:1</span><span class="ln"></span></div>
-            <div class="ent"><div class="nm">THEATRE</div><div class="at"><span class="key">Theatre ID</span><span>Name, Location</span></div></div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; direction: rtl;">
+        <button class="practice-header-btn" onclick="startPractice('15', event)">🎯 حل خطوة بخطوة</button>
+        <p class="qtext" style="margin: 0; text-align: left; direction: ltr; flex-grow: 1;">THEATRE Contains SCREEN, SCREEN Utilizes TIMESLOT, MOVIE Schedule TIMESLOT. Track attendance & price per timeslot; Movie Seq No = order of movies in a slot.</p>
+      </div>
+      <div class="solution-content">
+        <span class="tagp t-e">THEATRE</span><span class="tagp t-e">SCREEN</span><span class="tagp t-e">TIMESLOT</span><span class="tagp t-e">MOVIE</span><span class="tagp t-r">SCHEDULE</span>
+        <p style="margin-top:.6rem">سلسلة علاقات 1:M (مفيهاش super/sub):</p>
+        <div class="diagram">
+          <div class="diagram-inner">
+            <div class="flow">
+              <div class="ent"><div class="nm">MOVIE</div><div class="at"><span class="key">Movie ID</span><span>Title, Duration, Type</span></div></div>
+              <div class="edge"><span class="card-lbl">M:1</span><span class="ln"></span></div>
+              <div class="rel">SCHEDULE<span class="sub-t">Movie Seq No</span></div>
+              <div class="edge"><span class="card-lbl">1:M</span><span class="ln"></span></div>
+              <div class="ent"><div class="nm">TIMESLOT</div><div class="at"><span class="key">Slot ID</span><span>Slot Date</span><span>Start / End Time</span><span class="disc">Price Charged</span><span class="disc">Attendance</span></div></div>
+              <div class="edge"><span class="card-lbl">Utilizes M:1</span><span class="ln"></span></div>
+              <div class="ent"><div class="nm">SCREEN</div><div class="at"><span class="key">Screen No</span><span>Seating Capacity</span></div></div>
+              <div class="edge"><span class="card-lbl">Contains M:1</span><span class="ln"></span></div>
+              <div class="ent"><div class="nm">THEATRE</div><div class="at"><span class="key">Theatre ID</span><span>Name, Location</span></div></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </details>
 
-  <details class="prob reveal">
+  <details class="prob reveal" id="prob-16">
     <summary><span class="qn">16</span> نموذج PARTY العالمي <span class="ar">›</span></summary>
     <div class="body">
-      <p class="qtext">Universal PARTY model. PERSON in EMPLOYMENT may hold multiple POSITIONs (0:M); a POSITION may be filled by multiple EMPLOYMENT instances (0:M).</p>
-      <ul class="qlist">
-        <li><span class="k">PARTY</span> → PERSON + ORGANIZATION (الكيان نفسه).</li>
-        <li><span class="k">PARTY ROLE</span> → PERSON ROLE / ORG ROLE / CUSTOMER ROLE (الدور).</li>
-        <li><span class="k">PARTY RELATIONSHIP</span> → بيربط الأدوار (زي EMPLOYMENT). وليه From/Thru Date.</li>
-      </ul>
-      <div class="diagram">
-        <p class="dcap">الصناديق المنقطة = entity clusters · جواها supertype/subtype</p>
-        <div class="diagram-inner" style="gap:1rem">
-          <div class="cluster">
-            <div class="ctitle">PARTY RELATIONSHIP — (From / Thru Date)</div>
-            <div class="row">
-              <div class="ent sub nofields"><div class="nm">EMPLOYMENT</div></div>
-              <div class="ent sub nofields"><div class="nm">PARTNERSHIP</div></div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; direction: rtl;">
+        <button class="practice-header-btn" onclick="startPractice('16', event)">🎯 حل خطوة بخطوة</button>
+        <p class="qtext" style="margin: 0; text-align: left; direction: ltr; flex-grow: 1;">Universal PARTY model. PERSON in EMPLOYMENT may hold multiple POSITIONs (0:M); a POSITION may be filled by multiple EMPLOYMENT instances (0:M).</p>
+      </div>
+      <div class="solution-content">
+        <ul class="qlist">
+          <li><span class="k">PARTY</span> → PERSON + ORGANIZATION (الكيان نفسه).</li>
+          <li><span class="k">PARTY ROLE</span> → PERSON ROLE / ORG ROLE / CUSTOMER ROLE (الدور).</li>
+          <li><span class="k">PARTY RELATIONSHIP</span> → بيربط الأدوار (زي EMPLOYMENT). وليه From/Thru Date.</li>
+        </ul>
+        <div class="diagram">
+          <p class="dcap">الصناديق المنقطة = entity clusters · جواها supertype/subtype</p>
+          <div class="diagram-inner" style="gap:1rem">
+            <div class="cluster">
+              <div class="ctitle">PARTY RELATIONSHIP — (From / Thru Date)</div>
+              <div class="row">
+                <div class="ent sub nofields"><div class="nm">EMPLOYMENT</div></div>
+                <div class="ent sub nofields"><div class="nm">PARTNERSHIP</div></div>
+              </div>
+            </div>
+            <span class="vln"></span>
+            <div class="cluster b">
+              <div class="ctitle">PARTY ROLE</div>
+              <div class="row">
+                <div class="ent sub nofields"><div class="nm">PERSON ROLE</div></div>
+                <div class="ent sub nofields"><div class="nm">ORG ROLE</div></div>
+                <div class="ent sub nofields"><div class="nm">CUSTOMER ROLE</div></div>
+              </div>
+            </div>
+            <span class="vln"></span>
+            <div class="cluster">
+              <div class="ctitle">PARTY — (Party ID)</div>
+              <div class="row">
+                <div class="ent sub nofields"><div class="nm">PERSON</div></div>
+                <div class="ent sub nofields"><div class="nm">ORGANIZATION</div></div>
+              </div>
             </div>
           </div>
-          <span class="vln"></span>
-          <div class="cluster b">
-            <div class="ctitle">PARTY ROLE</div>
-            <div class="row">
-              <div class="ent sub nofields"><div class="nm">PERSON ROLE</div></div>
-              <div class="ent sub nofields"><div class="nm">ORG ROLE</div></div>
-              <div class="ent sub nofields"><div class="nm">CUSTOMER ROLE</div></div>
-            </div>
-          </div>
-          <span class="vln"></span>
-          <div class="cluster">
-            <div class="ctitle">PARTY — (Party ID)</div>
-            <div class="row">
-              <div class="ent sub nofields"><div class="nm">PERSON</div></div>
-              <div class="ent sub nofields"><div class="nm">ORGANIZATION</div></div>
-            </div>
-          </div>
+          <p class="dcap2">EMPLOYMENT ↔ POSITION : 0:M / 0:M</p>
         </div>
-        <p class="dcap2">EMPLOYMENT ↔ POSITION : 0:M / 0:M</p>
       </div>
     </div>
   </details>
@@ -1255,6 +1665,671 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
   // Init
   initAudio();
+})();
+</script>
+
+<script>
+// Solved Problems Practice Quiz Engine
+(function() {
+  const problemsData = {
+    "10": {
+      title: "هرم الجامعة — اكتب صفاتك أنت",
+      steps: [
+        {
+          question: "بفضل الوراثة (Attribute Inheritance)، ما هي الكيانات التي يرث منها طالب الدراسات العليا (GRADUATE student) صفاته؟",
+          options: [
+            "يرث من STUDENT فقط.",
+            "يرث من PERSON فقط.",
+            "يرث من كل من PERSON و STUDENT معاً."
+          ],
+          correct: 2,
+          hint: "طالب الدراسات العليا يرث مباشرة من STUDENT، وبما أن STUDENT يرث من PERSON، فإن طالب الدراسات العليا يرث صفات الاثنين معاً (مثل الرقم القومي والاسم والكلية)."
+        },
+        {
+          question: "ما هي الصفة الفريدة التي يتميز بها طالب الدراسات العليا (GRADUATE) وتفرقه عن طالب البكالوريوس (UNDERGRAD)؟",
+          options: [
+            "الرقم القومي (SSN)",
+            "درجة اختبار القبول (Test Score)",
+            "المستوى الدراسي الحالي (Class Standing)"
+          ],
+          correct: 1,
+          hint: "الصفة الفريدة للـ GRAD STUDENT هي درجة اختبار القبول (Test Score)، بينما الـ UNDERGRAD يتميز بالمستوى الدراسي (Class Standing)."
+        }
+      ],
+      checklist: [
+        "رسم مستطيل للكيان العام (Supertype) وتسميته PERSON.",
+        "رسم مستطيل للكيان الفرعي (Subtype) وتسميته STUDENT وربطه بـ PERSON بدائرة disjoint (d) وخط مزدوج (Total).",
+        "رسم مستطيل للكيان الفرعي المتخصص وتسميته GRAD STUDENT وتوصيله بـ STUDENT بدائرة disjoint (d).",
+        "تأكد من وراثة الصفات تلقائياً (SSN, Name, Address من PERSON، و Major Dept من STUDENT).",
+        "إضافة صفة Test Score الخاصة بالـ GRAD STUDENT فقط."
+      ]
+    },
+    "11": {
+      title: "هرم الجامعة + الـ Discriminators",
+      steps: [
+        {
+          question: "ما نوع قيد التداخل (Disjointness) للكيان الرئيسي PERSON مع الفروع الثلاثة (EMPLOYEE, ALUMNUS, STUDENT)؟",
+          options: [
+            "Disjoint (d) — الشخص ينتمي لنوع واحد فقط في نفس الوقت.",
+            "Overlap (o) — يمكن للشخص أن يكون طالباً وخريجاً وموظفاً معاً."
+          ],
+          correct: 1,
+          hint: "يمكن للشخص أن يجمع أكثر من دور في نفس الوقت (مثل أن يكون معيداً يدرس وطالباً في نفس الوقت أو خريجاً يعمل بالجامعة)، لذلك العلاقة Overlap (o)."
+        },
+        {
+          question: "ما نوع قيد التداخل للكيان EMPLOYEE مع فروع العمل الأكاديمية والإدارية (FACULTY, STAFF)؟",
+          options: [
+            "Disjoint (d) — الموظف إما أكاديمي أو إداري، ولا يمكن الجمع بينهما.",
+            "Overlap (o) — يمكن للموظف أن يكون Faculty و Staff معاً."
+          ],
+          correct: 0,
+          hint: "في هذه المؤسسة، الموظف إما عضو هيئة تدريس أو إداري، ولا يمكن لشخص واحد أن يشغل الخيارين معاً، لذلك العلاقة منفصلة Disjoint (d)."
+        },
+        {
+          question: "بما أن قيد التداخل لـ PERSON هو Overlap (o)، فكيف نحدد المميز (Subtype Discriminator)؟",
+          options: [
+            "صفة بسيطة (حقل واحد يحدد خياراً واحداً فقط).",
+            "صفة مركبة (Composite) تحتوي على حقول فرعية ثنائية (نعم/لا) لكل نوع فرعي."
+          ],
+          correct: 1,
+          hint: "مع علاقات التداخل (Overlap)، قد تنطبق أكثر من قيمة في نفس الوقت، لذلك نستخدم صفة مركبة تحتوي على عدة أسئلة ثنائية مثل (هل هو موظف؟ هل هو طالب؟)."
+        }
+      ],
+      checklist: [
+        "رسم الكيان الرئيسي PERSON بمفتاح أساسي SSN.",
+        "رسم دائرة تداخل تحتوي الحرف 'o' تربط PERSON بكل من (EMPLOYEE, ALUMNUS, STUDENT).",
+        "رسم خط مفرد (Partial) يصل PERSON بالدائرة (لأن الشخص قد لا يكون أياً منها).",
+        "تحديد المميز لـ PERSON كصفة مركبة: Person Type (Emp?, Alum?, Stu?).",
+        "توصيل EMPLOYEE بـ FACULTY و STAFF بدائرة disjoint 'd' بخط مزدوج (Total) مع مميز بسيط Employee Type."
+      ]
+    },
+    "12": {
+      title: "منظمة غير ربحية",
+      steps: [
+        {
+          question: "يذكر النص: 'A person may belong to two or more groups, and need not belong to any'. ما هي القيود المناسبة لـ PERSON؟",
+          options: [
+            "Disjoint & Total (حرف d وخط مزدوج)",
+            "Overlap & Partial (حرف o وخط مفرد)",
+            "Overlap & Total (حرف o وخط مزدوج)"
+          ],
+          correct: 1,
+          hint: "عبارة 'two or more' تعني التداخل Overlap (o)، وعبارة 'need not belong to any' تعني الاختيارية Partial (خط مفرد)."
+        },
+        {
+          question: "يذكر النص أن المتبرع فقط (DONOR) هو من يقوم بعملية التبرع بـ ITEM. أين نربط علاقة التبرع (Donates)؟",
+          options: [
+            "نربط علاقة Donates بالكيان العام PERSON.",
+            "نربط علاقة Donates بالكيان الفرعي المتخصص DONOR فقط."
+          ],
+          correct: 1,
+          hint: "نربط علاقات التبرع بالكيان الفرعي DONOR فقط، لأن الموظفين والمتطوعين الآخرين لا يشترط تبرعهم، وللحفاظ على دقة الجداول والبيانات."
+        }
+      ],
+      checklist: [
+        "رسم الكيان العام PERSON بمفتاحه الأساسي SSN والصفات المشتركة.",
+        "رسم دائرة تداخل تحتوي على الحرف 'o' موصلة بـ (EMPLOYEE, VOLUNTEER, DONOR).",
+        "توصيل PERSON بالدائرة بخط مفرد (Partial) لأن الشخص قد يكون عادياً خارج الفئات.",
+        "رسم الكيانات الفرعية الثلاثة وتعيين الصفات الفريدة (Date Hired للموظف، Skill للمتطوع).",
+        "رسم الكيان ITEM وعلاقته المتعددة (Donates) مع الكيان الفرعي DONOR فقط."
+      ]
+    },
+    "13": {
+      title: "شركة Fin & Finicky للأمن",
+      steps: [
+        {
+          question: "يذكر النص: 'A CONSULTANT is either Business or Technical, not both'. ما هو القيد المناسب هنا؟",
+          options: [
+            "Disjoint (d) — إما هذا أو ذاك ولا يمكن الجمع بينهما.",
+            "Overlap (o) — يمكن أن يكون الاثنين معاً."
+          ],
+          correct: 0,
+          hint: "عبارة 'either ... not both' تعني بوضوح الاختيار المنفصل التام، لذلك القيد الصحيح هو Disjoint (d)."
+        },
+        {
+          question: "يذكر النص: 'BUSINESS prepares ESTIMATE; TECHNICAL does SERVICE PERFORMED'. كيف نربط هذه الكيانات الفرعية؟",
+          options: [
+            "نربط الكيانين بالكيان العام CONSULTANT.",
+            "نربط ESTIMATE بالكيان BUSINESS، ونربط SERVICE PERFORMED بالكيان TECHNICAL."
+          ],
+          correct: 1,
+          hint: "التقديرات يعدها المستشار التجاري BUSINESS فقط، والخدمات ينفذها المستشار الفني TECHNICAL فقط، لذلك نربط كل علاقة بكيانها الفرعي المناسب."
+        }
+      ],
+      checklist: [
+        "رسم الكيان العام CONSULTANT بالمفتاح الأساسي Emp ID وباقي الصفات.",
+        "رسم دائرة تصنيف منفصل تحتوي الحرف 'd' موصلة بالكيانات الفرعية BUSINESS و TECHNICAL.",
+        "وضع مميز الفئة Consultant Type على الخط الفاصل.",
+        "ربط الكيان BUSINESS بعلاقته الخاصة (prepares ESTIMATE).",
+        "ربط الكيان TECHNICAL بعلاقته الخاصة (does SERVICE PERFORMED)."
+      ]
+    },
+    "15": {
+      title: "سلسلة سينمات",
+      steps: [
+        {
+          question: "هل تحتوي مسألة دور السينما على علاقة فئة عامة وفرعية (Supertype/Subtype)؟",
+          options: [
+            "نعم، لأن هناك علاقة وراثة بين دور العرض والسينما.",
+            "لا، المسألة تصف علاقات عادية متعددة 1:M بين كيانات مستقلة."
+          ],
+          correct: 1,
+          hint: "المسألة تصف تسلسلاً هيكلياً تقليدياً (السينما تضم شاشات، والشاشات تضم فترات عرض، والأفلام تعين لفترات)، ولا يوجد تصنيف فرعي لكيان واحد."
+        },
+        {
+          question: "يطلب النص تتبع الحضور وسعر التذكرة لكل فترة عرض. أين نضع صفتي الحضور (Attendance) وسعر التذكرة؟",
+          options: [
+            "في كيان شاشة العرض SCREEN.",
+            "في كيان فترة العرض TIMESLOT نفسه.",
+            "في كيان الأفلام MOVIE."
+          ],
+          correct: 1,
+          hint: "الحضور والأسعار تختلف من فترة عرض لأخرى (مثلاً حفلة الصباح للفيلم نفسه تختلف أسعارها وحضورها عن حفلة الليل)، لذلك توضع في TIMESLOT."
+        }
+      ],
+      checklist: [
+        "رسم الكيانات الأربعة: THEATRE, SCREEN, TIMESLOT, MOVIE.",
+        "ربط THEATRE بالـ SCREEN بعلاقة 1:M (السينما الواحدة تحتوي على عدة شاشات).",
+        "ربط SCREEN بالـ TIMESLOT بعلاقة 1:M (الشاشة تستخدم لعدة فترات عرض).",
+        "ربط MOVIE بالـ TIMESLOT بعلاقة جدولة M:N أو علاقة 1:M لجدولة العروض.",
+        "إضافة صفتي Attendance و Price Charged لكيان TIMESLOT."
+      ]
+    },
+    "16": {
+      title: "نموذج PARTY العالمي",
+      steps: [
+        {
+          question: "ما الفائدة الأساسية من استخدام نموذج الطرف العالمي (Universal PARTY Model)؟",
+          options: [
+            "لتقليل عدد الجداول في قاعدة البيانات فقط.",
+            "لفصل الكيان الفعلي (شخص/مؤسسة) عن الدور الذي يقوم به لتسهيل تعديل الأدوار وتجنب تكرار البيانات الأساسية."
+          ],
+          correct: 1,
+          hint: "الهدف هو الفصل المرن، بحيث يمكن لنفس الكيان (طرف) أن يلعب دور موظف، عميل، ومورد في نفس الوقت دون تكرار اسمه وعنوانه في كل جدول."
+        },
+        {
+          question: "في نموذج PARTY، ما الكيان الذي يمثل علاقة التوظيف (EMPLOYMENT) بين الشخص والمؤسسة؟",
+          options: [
+            "كيان الدور PARTY ROLE.",
+            "كيان علاقة الأطراف PARTY RELATIONSHIP."
+          ],
+          correct: 1,
+          hint: "علاقة التوظيف هي علاقة بين طرفين (شخص ومؤسسة)، لذلك تمثل ككيان فرعي تحت الكيان المجمع PARTY RELATIONSHIP."
+        }
+      ],
+      checklist: [
+        "تحديد التجميع الهيكلي (Entity Clusters) لتنظيم الرسم.",
+        "رسم الكيان العام PARTY وتفريعه إلى PERSON و ORGANIZATION بدائرة disjoint.",
+        "رسم الكيان العام PARTY ROLE وتفريعه إلى الأدوار (PERSON ROLE, ORG ROLE, CUSTOMER ROLE).",
+        "رسم الكيان المجمع PARTY RELATIONSHIP وتفريعه إلى (EMPLOYMENT, PARTNERSHIP).",
+        "توضيح العلاقات المتبادلة وتواريخ البداية والنهاية (From / Thru Date) على العلاقات."
+      ]
+    }
+  };
+
+  const activeStates = {};
+
+  window.startPractice = function(problemId, event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    const probContainer = document.getElementById(`prob-${problemId}`);
+    if (!probContainer) return;
+
+    const body = probContainer.querySelector('.body');
+    const solutionContent = body.querySelector('.solution-content');
+
+    // Hide standard solution
+    if (solutionContent) {
+      solutionContent.style.display = 'none';
+    }
+
+    // Hide start button while active
+    const toggleBtn = body.querySelector('.practice-header-btn');
+    if (toggleBtn) {
+      toggleBtn.style.display = 'none';
+    }
+
+    // Clean old quiz if exists
+    let quizDiv = body.querySelector('.quiz-container');
+    if (quizDiv) {
+      quizDiv.remove();
+    }
+
+    // Create new quiz container
+    quizDiv = document.createElement('div');
+    quizDiv.className = 'quiz-container';
+    body.appendChild(quizDiv);
+
+    // Initialize state
+    activeStates[problemId] = {
+      currentStep: 0,
+      container: quizDiv,
+      originalSolution: solutionContent,
+      toggleBtn: toggleBtn,
+      data: problemsData[problemId],
+      drawColor: '#e0b56a',
+      drawSize: 3,
+      isDrawing: false,
+      lastX: 0,
+      lastY: 0
+    };
+
+    renderQuizStep(problemId);
+  };
+
+  function renderQuizStep(problemId) {
+    const state = activeStates[problemId];
+    const quizDiv = state.container;
+    const stepData = state.data.steps[state.currentStep];
+    const totalSteps = state.data.steps.length;
+
+    const percent = (state.currentStep / totalSteps) * 100;
+
+    quizDiv.innerHTML = `
+      <canvas class="confetti-canvas" id="canvas-${problemId}"></canvas>
+      <div class="quiz-progress-bar-bg">
+        <div class="quiz-progress-bar-fill" style="width: ${percent}%;"></div>
+      </div>
+      <div class="quiz-step-info">
+        <span>استخراج معطيات السؤال: الخطوة ${state.currentStep + 1} من ${totalSteps}</span>
+        <span>تحدي: ${state.data.title}</span>
+      </div>
+      <div class="quiz-question-text">${stepData.question}</div>
+      <div class="quiz-options-list">
+        ${stepData.options.map((opt, index) => `
+          <div class="quiz-option-card" onclick="selectQuizOption('${problemId}', ${index})">
+            <div class="badge-icon">${String.fromCharCode(65 + index)}</div>
+            <div>${opt}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="quiz-hint-panel"></div>
+    `;
+  }
+
+  window.selectQuizOption = function(problemId, optionIndex) {
+    const state = activeStates[problemId];
+    if (!state) return;
+
+    const stepData = state.data.steps[state.currentStep];
+    const quizDiv = state.container;
+    const optionCards = quizDiv.querySelectorAll('.quiz-option-card');
+    const hintPanel = quizDiv.querySelector('.quiz-hint-panel');
+
+    optionCards.forEach(card => {
+      card.classList.remove('correct', 'wrong');
+    });
+
+    if (optionIndex === stepData.correct) {
+      optionCards[optionIndex].classList.add('correct');
+      hintPanel.style.display = 'none';
+      optionCards.forEach(card => card.style.pointerEvents = 'none');
+
+      setTimeout(() => {
+        state.currentStep++;
+        if (state.currentStep < state.data.steps.length) {
+          renderQuizStep(problemId);
+        } else {
+          renderDrawingStage(problemId);
+        }
+      }, 1000);
+    } else {
+      optionCards[optionIndex].classList.add('wrong');
+      hintPanel.innerHTML = `💡 <b>توجيه للمذاكرة:</b> ${stepData.hint}`;
+      hintPanel.style.display = 'block';
+    }
+  };
+
+  function renderDrawingStage(problemId) {
+    const state = activeStates[problemId];
+    const quizDiv = state.container;
+
+    // Set progress bar to 100%
+    const fill = quizDiv.querySelector('.quiz-progress-bar-fill');
+    if (fill) fill.style.width = '100%';
+
+    quizDiv.innerHTML = `
+      <canvas class="confetti-canvas" id="canvas-${problemId}"></canvas>
+      <div class="sketchpad-container">
+        
+        <div class="sketchpad-guidelines">
+          <h4>📋 دليل الرسم للامتحان الورقي (${state.data.title})</h4>
+          <p style="font-size:0.85rem; color:var(--gold2); margin-bottom:0.6rem;">بناءً على معطيات السؤال التي استخرجتها، يجب أن ترسم في ورقتك ما يلي:</p>
+          <ul>
+            ${state.data.checklist.map(item => `<li>${item}</li>`).join('')}
+          </ul>
+        </div>
+
+        <div style="font-size:0.95rem; font-weight:700; color:var(--text); margin-top:0.4rem;">
+          ✏️ جرب رسم المخطط (EER Diagram) على اللوحة التفاعلية لمحاكاة الامتحان:
+        </div>
+
+        <div class="canvas-board-wrapper">
+          <canvas class="canvas-board" id="paint-${problemId}"></canvas>
+          <div class="canvas-toolbar">
+            <div class="canvas-tools-group">
+              <button class="canvas-tool-btn active" id="tool-pen-${problemId}" onclick="setTool('${problemId}', 'pen')">✏️ قلم</button>
+              <button class="canvas-tool-btn" id="tool-eraser-${problemId}" onclick="setTool('${problemId}', 'eraser')">🧽 ممحاة</button>
+              <button class="canvas-tool-btn" onclick="clearBoard('${problemId}')">🗑️ مسح الكل</button>
+            </div>
+            
+            <div class="canvas-tools-group">
+              <span style="font-size:0.75rem; color:var(--dim);">حجم الفرشاة:</span>
+              <button class="canvas-tool-btn" style="padding:0.2rem 0.4rem; font-size:0.75rem;" onclick="setSize('${problemId}', 2)">رقيق</button>
+              <button class="canvas-tool-btn active" style="padding:0.2rem 0.4rem; font-size:0.75rem;" id="size-med-${problemId}" onclick="setSize('${problemId}', 4)">متوسط</button>
+              <button class="canvas-tool-btn" style="padding:0.2rem 0.4rem; font-size:0.75rem;" onclick="setSize('${problemId}', 8)">سميك</button>
+            </div>
+
+            <div class="canvas-color-swatches">
+              <div class="canvas-color-dot active" style="background:#e0b56a;" onclick="setColor('${problemId}', '#e0b56a', this)"></div>
+              <div class="canvas-color-dot" style="background:#82b4d6;" onclick="setColor('${problemId}', '#82b4d6', this)"></div>
+              <div class="canvas-color-dot" style="background:#83d3aa;" onclick="setColor('${problemId}', '#83d3aa', this)"></div>
+              <div class="canvas-color-dot" style="background:#ffffff;" onclick="setColor('${problemId}', '#ffffff', this)"></div>
+              <div class="canvas-color-dot" style="background:#dc8c8c;" onclick="setColor('${problemId}', '#dc8c8c', this)"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quiz-action-buttons">
+          <button class="quiz-action-btn" onclick="revealSplitSolution('${problemId}')">👁️ مقارنة رسمتي بالحل النموذجي</button>
+          <button class="quiz-action-btn secondary" onclick="restartQuiz('${problemId}')">🔄 إعادة التجربة</button>
+        </div>
+      </div>
+    `;
+
+    setupCanvasDrawing(problemId);
+  }
+
+  function setupCanvasDrawing(problemId) {
+    const state = activeStates[problemId];
+    const canvas = document.getElementById(`paint-${problemId}`);
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    
+    // Size the canvas to matching wrapper bounds
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = 360; // Locked height for standard layout
+
+    ctx.strokeStyle = state.drawColor;
+    ctx.lineWidth = state.drawSize;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    function getCoords(e) {
+      const crect = canvas.getBoundingClientRect();
+      if (e.touches && e.touches.length > 0) {
+        return {
+          x: e.touches[0].clientX - crect.left,
+          y: e.touches[0].clientY - crect.top
+        };
+      } else {
+        return {
+          x: e.clientX - crect.left,
+          y: e.clientY - crect.top
+        };
+      }
+    }
+
+    function startDraw(e) {
+      state.isDrawing = true;
+      const coords = getCoords(e);
+      state.lastX = coords.x;
+      state.lastY = coords.y;
+    }
+
+    function draw(e) {
+      if (!state.isDrawing) return;
+      
+      const coords = getCoords(e);
+      ctx.beginPath();
+      ctx.moveTo(state.lastX, state.lastY);
+      ctx.lineTo(coords.x, coords.y);
+      ctx.stroke();
+
+      state.lastX = coords.x;
+      state.lastY = coords.y;
+    }
+
+    function stopDraw() {
+      state.isDrawing = false;
+    }
+
+    // Mouse Listeners
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDraw);
+    canvas.addEventListener('mouseleave', stopDraw);
+
+    // Touch Listeners - with passive:false to lock scroll during draw
+    canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      startDraw(e);
+    }, { passive: false });
+
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      draw(e);
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      stopDraw();
+    }, { passive: false });
+
+    // Store context in state for toolbar access
+    state.canvasCtx = ctx;
+    state.canvasElement = canvas;
+  }
+
+  window.setTool = function(problemId, tool) {
+    const state = activeStates[problemId];
+    if (!state || !state.canvasCtx) return;
+
+    const btnPen = document.getElementById(`tool-pen-${problemId}`);
+    const btnEraser = document.getElementById(`tool-eraser-${problemId}`);
+
+    btnPen.classList.remove('active');
+    btnEraser.classList.remove('active');
+
+    if (tool === 'pen') {
+      btnPen.classList.add('active');
+      state.canvasCtx.strokeStyle = state.drawColor;
+      state.canvasCtx.globalCompositeOperation = 'source-over';
+    } else {
+      btnEraser.classList.add('active');
+      // Set eraser mode using destination-out composite
+      state.canvasCtx.globalCompositeOperation = 'destination-out';
+      state.canvasCtx.strokeStyle = 'rgba(0,0,0,1)';
+    }
+  };
+
+  window.clearBoard = function(problemId) {
+    const state = activeStates[problemId];
+    if (!state || !state.canvasElement || !state.canvasCtx) return;
+    state.canvasCtx.clearRect(0, 0, state.canvasElement.width, state.canvasElement.height);
+  };
+
+  window.setSize = function(problemId, size, btn) {
+    const state = activeStates[problemId];
+    if (!state || !state.canvasCtx) return;
+    state.drawSize = size;
+    state.canvasCtx.lineWidth = size;
+
+    // Toggle active sizes buttons inside the problem container
+    const sizeBtns = state.container.querySelectorAll('.canvas-tools-group button');
+    sizeBtns.forEach(b => {
+      if (b.textContent.includes('رقيق') && size === 2) b.classList.add('active');
+      else if (b.textContent.includes('متوسط') && size === 4) b.classList.add('active');
+      else if (b.textContent.includes('سميك') && size === 8) b.classList.add('active');
+      else if (b.textContent.includes('رقيق') || b.textContent.includes('متوسط') || b.textContent.includes('سميك')) {
+        b.classList.remove('active');
+      }
+    });
+  };
+
+  window.setColor = function(problemId, color, element) {
+    const state = activeStates[problemId];
+    if (!state || !state.canvasCtx) return;
+    state.drawColor = color;
+    state.canvasCtx.strokeStyle = color;
+    
+    // Switch to pen mode automatically when choosing color
+    setTool(problemId, 'pen');
+
+    const dots = state.container.querySelectorAll('.canvas-color-dot');
+    dots.forEach(d => d.classList.remove('active'));
+    element.classList.add('active');
+  };
+
+  window.revealSplitSolution = function(problemId) {
+    const state = activeStates[problemId];
+    if (!state) return;
+
+    // Freeze canvas by disabling pointers
+    const canvasWrapper = state.container.querySelector('.canvas-board-wrapper');
+    if (canvasWrapper) {
+      canvasWrapper.style.pointerEvents = 'none';
+      canvasWrapper.style.opacity = '0.85';
+    }
+
+    // Hide draw toolbar
+    const drawToolbar = state.container.querySelector('.canvas-toolbar');
+    if (drawToolbar) {
+      drawToolbar.style.display = 'none';
+    }
+
+    // Hide bottom action buttons of drawing mode
+    const actionBtns = state.container.querySelector('.quiz-action-buttons');
+    if (actionBtns) {
+      actionBtns.style.display = 'none';
+    }
+
+    // Fire Confetti!
+    const canvasConf = document.getElementById(`canvas-${problemId}`);
+    if (canvasConf) {
+      fireConfetti(canvasConf);
+    }
+
+    // Create split layout container
+    const splitContainer = document.createElement('div');
+    splitContainer.className = 'practice-split-view';
+
+    // Move sketchpad content to left column
+    const leftCol = document.createElement('div');
+    leftCol.className = 'split-column';
+    leftCol.innerHTML = `<div class="split-header">✏️ رسمتك وملاحظاتك</div>`;
+    
+    const sketchpad = state.container.querySelector('.sketchpad-container');
+    leftCol.appendChild(sketchpad);
+
+    // Create right column for model solution
+    const rightCol = document.createElement('div');
+    rightCol.className = 'split-column';
+    rightCol.innerHTML = `<div class="split-header">🏆 الرسمة والحل النموذجي</div>`;
+    
+    // Append a copy of original solution content
+    const solCopy = state.originalSolution.cloneNode(true);
+    solCopy.style.display = 'block';
+    rightCol.appendChild(solCopy);
+
+    splitContainer.appendChild(leftCol);
+    splitContainer.appendChild(rightCol);
+
+    // Append split container and clean wizard inner
+    state.container.innerHTML = '';
+    state.container.appendChild(splitContainer);
+
+    // Add controls at the very bottom
+    const bottomControls = document.createElement('div');
+    bottomControls.className = 'quiz-action-buttons';
+    bottomControls.style.marginTop = '1.2rem';
+    bottomControls.innerHTML = `
+      <button class="quiz-action-btn" onclick="closeWorkspace('${problemId}')">✔️ إنهاء التدريب والعودة للصفحة</button>
+      <button class="quiz-action-btn secondary" onclick="startPractice('${problemId}')">🔄 إعادة محاولة الحل</button>
+    `;
+    state.container.appendChild(bottomControls);
+  };
+
+  window.closeWorkspace = function(problemId) {
+    const state = activeStates[problemId];
+    if (!state) return;
+
+    state.container.remove();
+    state.originalSolution.style.display = 'block';
+    
+    if (state.toggleBtn) {
+      state.toggleBtn.style.display = 'inline-block';
+      state.toggleBtn.textContent = '🔄 أعد تدريب نفسك';
+    }
+
+    delete activeStates[problemId];
+  };
+
+  window.restartQuiz = function(problemId) {
+    startPractice(problemId);
+  };
+
+  // Vanilla Confetti Cannon
+  function fireConfetti(canvas) {
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight;
+
+    const colors = ['#e0b56a', '#82b4d6', '#83d3aa', '#dc8c8c', '#bd9fd8'];
+    const particles = [];
+
+    for (let i = 0; i < 60; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: canvas.height + Math.random() * 20,
+        r: Math.random() * 6 + 4,
+        d: Math.random() * canvas.height,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        tilt: Math.random() * 10 - 5,
+        tiltAngleIncremental: Math.random() * 0.07 + 0.02,
+        tiltAngle: 0,
+        vx: Math.random() * 4 - 2,
+        vy: -Math.random() * 6 - 4
+      });
+    }
+
+    let animationId;
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let active = false;
+
+      particles.forEach(p => {
+        p.tiltAngle += p.tiltAngleIncremental;
+        p.y += p.vy;
+        p.x += p.vx;
+        p.vy += 0.15; // gravity
+
+        ctx.beginPath();
+        ctx.lineWidth = p.r;
+        ctx.strokeStyle = p.color;
+        ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+        ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+        ctx.stroke();
+
+        if (p.y < canvas.height + 10) {
+          active = true;
+        }
+      });
+
+      if (active) {
+        animationId = requestAnimationFrame(draw);
+      } else {
+        cancelAnimationFrame(animationId);
+      }
+    }
+
+    draw();
+  }
 })();
 </script>
 </body>
