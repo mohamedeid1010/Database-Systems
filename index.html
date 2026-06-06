@@ -206,7 +206,13 @@
     };
 
     const script = document.createElement('script');
-    script.src = 'https://abacus.jasoncameron.dev/hit/must_cse301_mohamed/visits?callback=handleVisitsCallback';
+    const hasVisited = localStorage.getItem('has_visited_must_cse301');
+    let endpoint = 'get';
+    if (!hasVisited) {
+      localStorage.setItem('has_visited_must_cse301', 'true');
+      endpoint = 'hit';
+    }
+    script.src = `https://abacus.jasoncameron.dev/${endpoint}/must_cse301_mohamed/visits?callback=handleVisitsCallback`;
     script.onerror = function() {
       totalVisits = "Unavailable";
       updateUI();
