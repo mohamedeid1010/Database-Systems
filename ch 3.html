@@ -1117,23 +1117,23 @@ html[dir="rtl"] .branch:last-child::after{left:50%;right:-18px}
           <div class="diagram-inner">
             <div class="eer">
               <div class="ent"><div class="nm">PERSON</div><div class="at"><span class="key">SSN</span><span>Name, Address</span><span>Gender, Date Of Birth</span><span class="disc">Person Type (disc.)</span></div></div>
-              <div class="spine"><span class="ln"></span><span class="circ">o</span><span class="ln2"></span></div>
+              <div class="spine total"><span class="ln"></span><span class="circ">o</span><span class="disc" style="left: 42px; right: auto;">Person Type:</span><span class="ln2"></span></div>
               <div class="branches">
-                <div class="branch"><span class="blbl">Emp?="Y"</span>
+                <div class="branch"><span class="blbl">Employee?="Y"</span>
                   <div class="eer">
                     <div class="ent sub"><div class="nm">EMPLOYEE</div><div class="at"><span>Date Hired, Salary</span><span class="disc">Employee Type</span></div></div>
-                    <div class="spine"><span class="ln"></span><span class="circ">d</span><span class="ln2"></span></div>
+                    <div class="spine"><span class="ln"></span><span class="circ">d</span><span class="disc" style="left: 42px; right: auto;">Employee Type =</span><span class="ln2"></span></div>
                     <div class="branches">
                       <div class="branch"><span class="blbl">"Faculty"</span><div class="ent sub"><div class="nm">FACULTY</div><div class="at"><span>Rank</span></div></div></div>
                       <div class="branch"><span class="blbl">"Staff"</span><div class="ent sub"><div class="nm">STAFF</div><div class="at"><span>Position</span></div></div></div>
                     </div>
                   </div>
                 </div>
-                <div class="branch"><span class="blbl">Alum?="Y"</span><div class="ent sub"><div class="nm">ALUMNUS</div><div class="at"><span>{Degree (Date,</span><span>Year, Designation)}</span></div></div></div>
-                <div class="branch"><span class="blbl">Stu?="Y"</span>
+                <div class="branch"><span class="blbl">Alumnus?="Y"</span><div class="ent sub"><div class="nm">ALUMNUS</div><div class="at"><span>{Degree (Date,</span><span>Year, Designation)}</span></div></div></div>
+                <div class="branch"><span class="blbl">Student?="Y"</span>
                   <div class="eer">
                     <div class="ent sub"><div class="nm">STUDENT</div><div class="at"><span>Major Dept</span><span class="disc">Student Type</span></div></div>
-                    <div class="spine"><span class="ln"></span><span class="circ">d</span><span class="ln2"></span></div>
+                    <div class="spine total"><span class="ln"></span><span class="circ">d</span><span class="disc" style="left: 42px; right: auto;">Student Type =</span><span class="ln2"></span></div>
                     <div class="branches">
                       <div class="branch"><span class="blbl">"Grad"</span><div class="ent sub"><div class="nm">GRAD STUDENT</div><div class="at"><span>Test Score</span></div></div></div>
                       <div class="branch"><span class="blbl">"Undergrad"</span><div class="ent sub"><div class="nm">UNDERGRAD</div><div class="at"><span>Class Standing</span></div></div></div>
@@ -1165,7 +1165,7 @@ html[dir="rtl"] .branch:last-child::after{left:50%;right:-18px}
         <div class="diagram">
           <div class="diagram-inner">
             <div class="eer">
-              <div class="ent"><div class="nm">PERSON</div><div class="at"><span class="key">SSN</span><span>Name, Address, City</span><span>State, Zip, Telephone</span></div></div>
+              <div class="ent"><div class="nm">PERSON</div><div class="at"><span class="key">SSN</span><span>Name</span><span>Address</span><span>City</span><span>State</span><span>Zip Code</span><span>Telephone</span></div></div>
               <div class="spine"><span class="ln"></span><span class="circ">o</span><span class="ln2"></span></div>
               <div class="branches">
                 <div class="branch"><div class="ent sub"><div class="nm">EMPLOYEE</div><div class="at"><span>Date Hired</span></div></div></div>
@@ -1173,9 +1173,27 @@ html[dir="rtl"] .branch:last-child::after{left:50%;right:-18px}
                 <div class="branch">
                   <div class="col">
                     <div class="ent sub nofields"><div class="nm">DONOR</div></div>
-                    <span class="vln"></span>
-                    <div class="rel">Donates<span class="sub-t">1+ / 0+</span></div>
-                    <span class="vln"></span>
+                    <div style="position: relative; width: 100%; display: flex; justify-content: center; align-items: center; height: 80px; margin: 0.2rem 0;">
+                      <svg width="20" height="80" style="display: block; overflow: visible;">
+                        <!-- Vertical line -->
+                        <line x1="10" y1="0" x2="10" y2="80" stroke="var(--cn)" stroke-width="2" />
+                        
+                        <!-- Top crow's foot (near DONOR) -->
+                        <line x1="10" y1="0" x2="4" y2="10" stroke="var(--cn)" stroke-width="2" />
+                        <line x1="10" y1="0" x2="16" y2="10" stroke="var(--cn)" stroke-width="2" />
+                        
+                        <!-- Circle near the top (optional) -->
+                        <circle cx="10" cy="18" r="4" fill="#0c0c11" stroke="var(--cn)" stroke-width="2" />
+                        
+                        <!-- Crossbar near the bottom (mandatory) -->
+                        <line x1="4" y1="64" x2="16" y2="64" stroke="var(--cn)" stroke-width="2" />
+                        
+                        <!-- Crow's foot at the bottom (near ITEM) -->
+                        <line x1="10" y1="80" x2="4" y2="70" stroke="var(--cn)" stroke-width="2" />
+                        <line x1="10" y1="80" x2="16" y2="70" stroke="var(--cn)" stroke-width="2" />
+                      </svg>
+                      <span style="position: absolute; left: calc(50% + 14px); top: 50%; transform: translateY(-50%); font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: var(--dim); white-space: nowrap;">Donates</span>
+                    </div>
                     <div class="ent nofields"><div class="nm">ITEM</div></div>
                   </div>
                 </div>
@@ -1191,9 +1209,14 @@ html[dir="rtl"] .branch:last-child::after{left:50%;right:-18px}
   <details class="prob reveal" id="prob-13">
     <summary><span class="qn">13</span> شركة Fin &amp; Finicky للأمن — Disjoint <span class="ar">›</span></summary>
     <div class="body">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; direction: rtl;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; direction: rtl;">
         <button class="practice-header-btn" onclick="startPractice('13', event)">🎯 حل خطوة بخطوة</button>
-        <p class="qtext" style="margin: 0; text-align: left; direction: ltr; flex-grow: 1;">A CONSULTANT is either Business or Technical, not both. BUSINESS prepares ESTIMATE; TECHNICAL does SERVICE PERFORMED.</p>
+        <div class="qtext" style="margin: 0; text-align: left; direction: ltr; flex-grow: 1; font-size: 0.95rem; line-height: 1.5;">
+          <p style="margin: 0 0 0.6rem 0; font-weight: 600; color: var(--ink);">3-34. Develop an EER model for the following situation using the traditional EER notation, the Visio notation, or the subtypes inside supertypes notation, as specified by your instructor:</p>
+          <p style="margin: 0 0 0.6rem 0;">Wally Los Gatos and his partner Henry Chordate have formed a new limited partnership, Fin and Finicky Security Consultants. Fin and Finicky consults with corporations to determine their security needs. You have been hired by Wally and Henry to design a database management system to help them manage their business.</p>
+          <p style="margin: 0 0 0.6rem 0;">Due to a recent increase in business, Fin and Finicky has decided to automate its client tracking system. You and your team have done a preliminary analysis and come up with the following set of entities, attributes, and business rules:</p>
+          <p style="margin: 0; padding-left: 0.8rem; border-left: 2px solid var(--gold); color: var(--dim); font-style: italic;">A CONSULTANT is either Business or Technical, not both. BUSINESS prepares ESTIMATE; TECHNICAL does SERVICE PERFORMED.</p>
+        </div>
       </div>
       <div class="solution-content">
         <span class="tagp t-e">CONSULTANT</span><span class="tagp t-s">BUSINESS</span><span class="tagp t-s">TECHNICAL</span>
@@ -1201,30 +1224,155 @@ html[dir="rtl"] .branch:last-child::after{left:50%;right:-18px}
           <li><span class="k">d (disjoint)</span> «either ... not both». discriminator = Consultant Type "B"/"T".</li>
           <li><span class="k">subtype rels</span> BUSINESS → ESTIMATE · TECHNICAL → SERVICE PERFORMED.</li>
         </ul>
-        <div class="diagram">
-          <div class="diagram-inner">
-            <div class="eer">
-              <div class="ent"><div class="nm">CONSULTANT</div><div class="at"><span class="key">Emp ID</span><span>Emp Name, Address, Phone</span><span>Emp DOB, [Age], {Degree}</span><span class="disc">Consultant Type ← disc.</span></div></div>
-              <div class="spine"><span class="ln"></span><span class="circ">d</span><span class="disc">Consultant Type =</span><span class="ln2"></span></div>
-              <div class="branches">
-                <div class="branch"><span class="blbl">"B"</span>
-                  <div class="col">
-                    <div class="ent sub"><div class="nm">BUSINESS</div><div class="at"><span>{Bus Exper}</span></div></div>
-                    <span class="vln"></span>
-                    <div class="ent assoc"><div class="nm">ESTIMATE</div><div class="at"><span>Est Date</span><span>Est Amount</span></div></div>
-                  </div>
-                </div>
-                <div class="branch"><span class="blbl">"T"</span>
-                  <div class="col">
-                    <div class="ent sub"><div class="nm">TECHNICAL</div><div class="at"><span>{Tech Skill}</span></div></div>
-                    <span class="vln"></span>
-                    <div class="ent assoc"><div class="nm">SERVICE PERFORMED</div><div class="at"><span>SP Date</span><span>SP Amount</span></div></div>
-                  </div>
-                </div>
-              </div>
+        <div class="diagram" style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+          <img src="13.png" alt="Question 13 Diagram" style="max-width: 680px; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--line); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45); display: block; margin: 0.5rem auto;">
+          <p class="dcap2" style="margin-top: 1rem;">الرسمة الكاملة لـ EER Notation — Consulting Firm</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details class="prob reveal" id="prob-14">
+    <summary><span class="qn">14</span> تعريف الكيانات والصفات والعلاقات (Consulting Firm) <span class="ar">›</span></summary>
+    <div class="body">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; direction: rtl;">
+        <p class="qtext" style="margin: 0; text-align: left; direction: ltr; flex-grow: 1;">Based on the EER diagram constructed for Problem and Exercise 3-34 (Question 13), develop a sample definition for each entity type, attribute, and relationship in the diagram.</p>
+      </div>
+      <div class="solution-content">
+        <span class="tagp t-e">Entity Definitions</span><span class="tagp t-s">Attributes Metadata</span><span class="tagp t-r">Relationship Rules</span>
+        
+        <p style="margin-top: 1rem;">قاموس البيانات للـ EER Diagram الخاص بشركة الاستشارات (Consulting Firm):</p>
+        
+        <div class="card" style="margin-top: 1.2rem; background: rgba(224,181,106,0.02); border-color: rgba(224,181,106,0.15);">
+          <h3 style="color: var(--gold2); display: flex; align-items: center; gap: 0.5rem; margin-top: 0;">
+            <span class="tagp t-e" style="font-size: 0.85rem; padding: 0.3rem 0.6rem;">ENTITIES</span> الكيانات وأنواعها الفرعية
+          </h3>
+          <ul class="qlist" style="margin-top: 0.8rem;">
+            <li>
+              <span class="k">CONSULTANT</span> 
+              <b>(Supertype Entity):</b> الموظف الاستشاري لدى الشركة الذي يقدم خدمات للعملاء.
+            </li>
+            <li>
+              <span class="k" style="color: var(--blue)">BUSINESS</span> 
+              <b>(Subtype of Consultant):</b> استشاري متخصص في تحليل الأعمال، كتابة المتطلبات، وتقدير تكاليف الخدمات (Estimates).
+            </li>
+            <li>
+              <span class="k" style="color: var(--blue)">TECHNICAL</span> 
+              <b>(Subtype of Consultant):</b> استشاري متخصص في الجوانب التقنية، مثل البرمجة، إدارة قواعد البيانات، وتنفيذ الخدمات (Service Performed).
+            </li>
+            <li>
+              <span class="k">CUSTOMER</span> 
+              <b>(Regular Entity):</b> الشركة أو العميل الذي يتعاقد مع شركة الاستشارات للحصول على خدمات.
+            </li>
+            <li>
+              <span class="k">LOCATION</span> 
+              <b>(Regular Entity):</b> موقع جغرافي أو فرع تابع للعميل يتم تقديم الخدمات فيه أو له.
+            </li>
+            <li>
+              <span class="k" style="color: var(--purp)">SERVICE</span> 
+              <b>(Regular Entity):</b> نوع الخدمة المعيارية التي تقدمها الشركة (مثل: تصميم قاعدة بيانات، فحص أمان الشبكة).
+            </li>
+            <li>
+              <span class="k" style="color: var(--gold)">ESTIMATE</span> 
+              <b>(Associative Entity):</b> تقدير مالي وزمني يربط بين (Business Consultant) و (Customer Location) و (Service)، ويوثق تفاصيل العرض المقترح.
+            </li>
+            <li>
+              <span class="k" style="color: var(--gold)">SERVICE PERFORMED</span> 
+              <b>(Associative Entity):</b> الخدمة الفعلية التي تم إنجازها بواسطة (Technical Consultant) لصالح (Customer Location) لخدمة (Service) محددة.
+            </li>
+          </ul>
+        </div>
+        
+        <div class="card" style="margin-top: 1.2rem; background: rgba(130,180,214,0.02); border-color: rgba(130,180,214,0.15);">
+          <h3 style="color: var(--blue); display: flex; align-items: center; gap: 0.5rem; margin-top: 0;">
+            <span class="tagp t-s" style="font-size: 0.85rem; padding: 0.3rem 0.6rem;">ATTRIBUTES</span> الصفات وحقول البيانات
+          </h3>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 0.8rem;">
+            <div>
+              <h4 style="color: var(--gold2); margin-bottom: 0.5rem; font-size: 0.9rem;">📍 صفات Consultant:</h4>
+              <ul class="qlist" style="font-size: 0.85rem; padding-right: 1rem;">
+                <li><span class="k">Emp ID</span> معرف فريد لكل استشاري (Primary Key).</li>
+                <li><span class="k">Emp Name</span> الاسم الكامل للاستشاري.</li>
+                <li><span class="k">Emp Address</span> عنوان السكن (صفة مركبة: شارع، مدينة، ولاية، رمز بريدي).</li>
+                <li><span class="k">Emp Phone</span> رقم هاتف الاستشاري.</li>
+                <li><span class="k">Emp DOB</span> تاريخ الميلاد (يستخدم لحساب السن).</li>
+                <li><span class="k">[Age]</span> السن بالسنوات (صفة مشتقة Derived).</li>
+                <li><span class="k">{Degree}</span> المؤهلات والشهادات العلمية (صفة متعددة القيم Multivalued).</li>
+                <li><span class="k">Consultant Type</span> نوع الاستشاري (Discriminator: "B" أو "T").</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 style="color: var(--blue); margin-bottom: 0.5rem; font-size: 0.9rem;">📍 صفات Subtypes:</h4>
+              <ul class="qlist" style="font-size: 0.85rem; padding-right: 1rem;">
+                <li><span class="k">Bus Exper</span> خبرات الأعمال للاستشاري التجاري (صفة مركبة ومتعددة القيم: نوع العمل وسنوات الخبرة).</li>
+                <li><span class="k">{Tech Skill}</span> المهارات التقنية للاستشاري التقني (صفة متعددة القيم).</li>
+              </ul>
+              
+              <h4 style="color: var(--gold); margin-bottom: 0.5rem; font-size: 0.9rem; margin-top: 0.8rem;">📍 صفات Estimate &amp; Service Performed:</h4>
+              <ul class="qlist" style="font-size: 0.85rem; padding-right: 1rem;">
+                <li><span class="k">Est Date</span> تاريخ تقديم العرض المالي والتقديري.</li>
+                <li><span class="k">Est Amount</span> القيمة المالية التقديرية للخدمة المقترحة.</li>
+                <li><span class="k">SP Date</span> تاريخ إتمام تقديم الخدمة فعلياً.</li>
+                <li><span class="k">SP Amount</span> التكلفة الفعلية المفروضة والمفوترة للخدمة المنجزة.</li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 style="color: var(--ink); margin-bottom: 0.5rem; font-size: 0.9rem;">📍 صفات Customer &amp; Location &amp; Service:</h4>
+              <ul class="qlist" style="font-size: 0.85rem; padding-right: 1rem;">
+                <li><span class="k">Customer ID</span> معرف فريد لكل عميل (Primary Key).</li>
+                <li><span class="k">Company Name</span> اسم الشركة المتعاقدة.</li>
+                <li><span class="k">Cust Address</span> عنوان مقر الشركة الرئيسي (صفة مركبة).</li>
+                <li><span class="k">Loc ID</span> معرف فريد لكل موقع تابع للعميل.</li>
+                <li><span class="k">Loc Address</span> عنوان فرع العميل بالتفصيل (صفة مركبة).</li>
+                <li><span class="k">Service ID</span> معرف فريد لكل نوع خدمة بالكتالوج (Primary Key).</li>
+                <li><span class="k">Serv Desc</span> وصف تفصيلي لطبيعة الخدمة ومخرجاتها.</li>
+                <li><span class="k">Serv Cost</span> التكلفة المعيارية أو الساعة للخدمة.</li>
+              </ul>
             </div>
           </div>
-          <p class="dcap2">+ entities: CUSTOMER (Maintains LOCATION), SERVICE linked to ESTIMATE / SERVICE PERFORMED</p>
+        </div>
+
+        <div class="card" style="margin-top: 1.2rem; background: rgba(180,140,230,0.02); border-color: rgba(180,140,230,0.15);">
+          <h3 style="color: var(--purp); display: flex; align-items: center; gap: 0.5rem; margin-top: 0;">
+            <span class="tagp t-r" style="font-size: 0.85rem; padding: 0.3rem 0.6rem;">RELATIONSHIPS</span> العلاقات وقواعد عملها (Business Rules)
+          </h3>
+          <ul class="qlist" style="margin-top: 0.8rem;">
+            <li>
+              <span class="k">Maintains</span> 
+              <b>(Customer 1:M Location):</b> العميل الواحد يمكن أن يمتلك ويدير موقعاً واحداً أو أكثر (Locations)، بينما كل موقع مسجل يتبع لعميل واحد فقط.
+            </li>
+            <li>
+              <span class="k">Prepares</span> 
+              <b>(Business Consultant 1:M Estimate):</b> مستشار الأعمال يقوم بإعداد وتقديم صفر أو أكثر من التقديرات المالية، وكل تقدير يتم إعداده بواسطة مستشار أعمال واحد فقط.
+            </li>
+            <li>
+              <span class="k">Target of Estimate</span> 
+              <b>(Estimate M:1 Location):</b> كل تقدير مالي يستهدف موقعاً جغرافياً واحداً محدداً تابعاً للعميل.
+            </li>
+            <li>
+              <span class="k">For Service</span> 
+              <b>(Estimate M:1 Service):</b> كل تقدير مالي يخص ويصف خدمة واحدة معينة من قائمة الخدمات المعيارية للشركة.
+            </li>
+            <li>
+              <span class="k">Performs</span> 
+              <b>(Technical Consultant 1:M Service Performed):</b> المستشار التقني يقوم بتنفيذ وإنجاز صفر أو أكثر من الخدمات الفعلية، وكل خدمة منجزة تنفذ بواسطة مستشار تقني واحد.
+            </li>
+            <li>
+              <span class="k">At Location</span> 
+              <b>(Service Performed M:1 Location):</b> كل خدمة منجزة يتم تنفيذها في موقع جغرافي واحد محدد.
+            </li>
+            <li>
+              <span class="k">Performs Service</span> 
+              <b>(Service Performed M:1 Service):</b> كل خدمة تم تنفيذها ترتبط بنوع خدمة معيارية واحدة محددة مسجلة في كتالوج الشركة.
+            </li>
+          </ul>
+        </div>
+        
+        <div class="tip" style="margin-top: 1.2rem;">
+          💡 <b>ملاحظة هامة:</b> علاقات الـ Subtypes (مثل Prepares و Performs) خاصة بكل فئة فقط، وهذا يمنع المستشار التقني مثلاً من تقديم Estimates، ويمنع مستشار الأعمال من تسجيل تنفيذ الخدمات الفعلية (Service Performed).
         </div>
       </div>
     </div>
@@ -1233,27 +1381,21 @@ html[dir="rtl"] .branch:last-child::after{left:50%;right:-18px}
   <details class="prob reveal" id="prob-15">
     <summary><span class="qn">15</span> سلسلة سينمات — Theatre Chain <span class="ar">›</span></summary>
     <div class="body">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; direction: rtl;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; direction: rtl;">
         <button class="practice-header-btn" onclick="startPractice('15', event)">🎯 حل خطوة بخطوة</button>
-        <p class="qtext" style="margin: 0; text-align: left; direction: ltr; flex-grow: 1;">THEATRE Contains SCREEN, SCREEN Utilizes TIMESLOT, MOVIE Schedule TIMESLOT. Track attendance & price per timeslot; Movie Seq No = order of movies in a slot.</p>
+        <div class="qtext" style="margin: 0; text-align: left; direction: ltr; flex-grow: 1; font-size: 0.95rem; line-height: 1.5;">
+          <p style="margin: 0 0 0.6rem 0; font-weight: 600; color: var(--ink);">Draw an EER diagram for the following situation:</p>
+          <p style="margin: 0 0 0.6rem 0;">TomKat Entertainment is a chain of theaters owned by former husband and wife actors/entertainers who, for some reason, can’t get a job performing anymore. The owners want a database to track what is playing or has played on each screen in each theater of their chain at different times of the day. A theater (identified by a Theater ID and described by a theater name and location) contains one or more screens for viewing various movies. Within each theater each screen is identified by its number and is described by the seating capacity for viewing the screen.</p>
+          <p style="margin: 0 0 0.6rem 0;">Movies are scheduled for showing in time slots each day. Each screen can have different time slots on different days (i.e., not all screens in the same theater have movies starting at the same time, and even on different days the same movie may play at different times on the same screen). For each time slot, the owners also want to know the end time of the time slot (assume all slots end on the same day the slot begins), attendance during that time slot, and the price charged for attendance in that time slot.</p>
+          <p style="margin: 0;">Each movie (which can be either a trailer, feature, or commercial) is identified by a Movie ID and further described by its title, duration, and type (i.e., trailer, feature, or commercial). In each time slot, one or more movies are shown. The owners want to also keep track of in what sequence the movies are shown (e.g., in a time slot there might be two trailers, followed by two commercials, followed by a feature film, and closed with another commercial).</p>
+        </div>
       </div>
       <div class="solution-content">
         <span class="tagp t-e">THEATRE</span><span class="tagp t-e">SCREEN</span><span class="tagp t-e">TIMESLOT</span><span class="tagp t-e">MOVIE</span><span class="tagp t-r">SCHEDULE</span>
         <p style="margin-top:.6rem">سلسلة علاقات 1:M (مفيهاش super/sub):</p>
-        <div class="diagram">
-          <div class="diagram-inner">
-            <div class="flow">
-              <div class="ent"><div class="nm">MOVIE</div><div class="at"><span class="key">Movie ID</span><span>Title, Duration, Type</span></div></div>
-              <div class="edge"><span class="card-lbl">M:1</span><span class="ln"></span></div>
-              <div class="rel">SCHEDULE<span class="sub-t">Movie Seq No</span></div>
-              <div class="edge"><span class="card-lbl">1:M</span><span class="ln"></span></div>
-              <div class="ent"><div class="nm">TIMESLOT</div><div class="at"><span class="key">Slot ID</span><span>Slot Date</span><span>Start / End Time</span><span class="disc">Price Charged</span><span class="disc">Attendance</span></div></div>
-              <div class="edge"><span class="card-lbl">Utilizes M:1</span><span class="ln"></span></div>
-              <div class="ent"><div class="nm">SCREEN</div><div class="at"><span class="key">Screen No</span><span>Seating Capacity</span></div></div>
-              <div class="edge"><span class="card-lbl">Contains M:1</span><span class="ln"></span></div>
-              <div class="ent"><div class="nm">THEATRE</div><div class="at"><span class="key">Theatre ID</span><span>Name, Location</span></div></div>
-            </div>
-          </div>
+        <div class="diagram" style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+          <img src="15.png" alt="Question 15 Diagram" style="max-width: 680px; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--line); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45); display: block; margin: 0.5rem auto;">
+          <p class="dcap2" style="margin-top: 1rem;">الرسمة الكاملة لـ EER Notation — Theatre Chain</p>
         </div>
       </div>
     </div>
@@ -1262,9 +1404,14 @@ html[dir="rtl"] .branch:last-child::after{left:50%;right:-18px}
   <details class="prob reveal" id="prob-16">
     <summary><span class="qn">16</span> نموذج PARTY العالمي <span class="ar">›</span></summary>
     <div class="body">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; direction: rtl;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; direction: rtl;">
         <button class="practice-header-btn" onclick="startPractice('16', event)">🎯 حل خطوة بخطوة</button>
-        <p class="qtext" style="margin: 0; text-align: left; direction: ltr; flex-grow: 1;">Universal PARTY model. PERSON in EMPLOYMENT may hold multiple POSITIONs (0:M); a POSITION may be filled by multiple EMPLOYMENT instances (0:M).</p>
+        <div class="qtext" style="margin: 0; text-align: left; direction: ltr; flex-grow: 1; font-size: 0.95rem; line-height: 1.5;">
+          <p style="margin: 0 0 0.6rem 0; font-weight: 600; color: var(--ink);">Add the following to Figure 3-16:</p>
+          <p style="margin: 0 0 0.6rem 0;">An EMPLOYMENT party relationship is further explained by the positions and assignments to positions during the time a person is employed. A position is defined by an organization unit, and a unit may define many positions over time.</p>
+          <p style="margin: 0 0 0.6rem 0;">Over time, positions are assigned to various employment relationships (i.e., somebody employed by some organization unit is assigned a particular position). For example, a position of Business Analyst is defined by the Systems Development organization unit. Carl Gerber, while employed by the Data Warehousing organization unit, is assigned the position of Systems Analyst.</p>
+          <p style="margin: 0;">In the spirit of universal data modeling, enhance Figure 3-16 for the most general case consistent with this description.</p>
+        </div>
       </div>
       <div class="solution-content">
         <ul class="qlist">
@@ -1272,35 +1419,9 @@ html[dir="rtl"] .branch:last-child::after{left:50%;right:-18px}
           <li><span class="k">PARTY ROLE</span> → PERSON ROLE / ORG ROLE / CUSTOMER ROLE (الدور).</li>
           <li><span class="k">PARTY RELATIONSHIP</span> → بيربط الأدوار (زي EMPLOYMENT). وليه From/Thru Date.</li>
         </ul>
-        <div class="diagram">
-          <p class="dcap">الصناديق المنقطة = entity clusters · جواها supertype/subtype</p>
-          <div class="diagram-inner" style="gap:1rem">
-            <div class="cluster">
-              <div class="ctitle">PARTY RELATIONSHIP — (From / Thru Date)</div>
-              <div class="row">
-                <div class="ent sub nofields"><div class="nm">EMPLOYMENT</div></div>
-                <div class="ent sub nofields"><div class="nm">PARTNERSHIP</div></div>
-              </div>
-            </div>
-            <span class="vln"></span>
-            <div class="cluster b">
-              <div class="ctitle">PARTY ROLE</div>
-              <div class="row">
-                <div class="ent sub nofields"><div class="nm">PERSON ROLE</div></div>
-                <div class="ent sub nofields"><div class="nm">ORG ROLE</div></div>
-                <div class="ent sub nofields"><div class="nm">CUSTOMER ROLE</div></div>
-              </div>
-            </div>
-            <span class="vln"></span>
-            <div class="cluster">
-              <div class="ctitle">PARTY — (Party ID)</div>
-              <div class="row">
-                <div class="ent sub nofields"><div class="nm">PERSON</div></div>
-                <div class="ent sub nofields"><div class="nm">ORGANIZATION</div></div>
-              </div>
-            </div>
-          </div>
-          <p class="dcap2">EMPLOYMENT ↔ POSITION : 0:M / 0:M</p>
+        <div class="diagram" style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+          <img src="16.png" alt="Question 16 Diagram" style="max-width: 680px; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--line); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45); display: block; margin: 0.5rem auto;">
+          <p class="dcap2" style="margin-top: 1rem;">الرسمة الكاملة لـ EER Notation — Revision to Figure 3-16 (PARTY Model)</p>
         </div>
       </div>
     </div>
