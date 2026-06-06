@@ -188,7 +188,7 @@
 
     <footer>
       <span id="footer-text">M.U.S.T. University</span>
-      <div id="visitor-count" style="margin-top: 0.8rem; color: var(--accent-ch2); font-size: 0.85rem; font-weight: 600; font-family: 'IBM Plex Mono', monospace;">
+      <div id="visitor-count" style="display: none; margin-top: 0.8rem; color: var(--accent-ch2); font-size: 0.85rem; font-weight: 600; font-family: 'IBM Plex Mono', monospace;">
         Visitor Count: <span id="count-val">...</span>
       </div>
     </footer>
@@ -197,7 +197,7 @@
   <script>
     let clickCount = 0;
     let totalVisits = null;
-    let isCounterVisible = true;
+    let isCounterVisible = false;
 
     // Increment and fetch visits using JSONP (bypasses CORS and tracking blockers)
     window.handleVisitsCallback = function(response) {
