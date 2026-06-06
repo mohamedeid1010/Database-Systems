@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 5 — Physical Database Design & Performance — مذاكرة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Tajawal:wght@400;500;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0b0f;--bg2:#101016;--panel:#15151c;--panel2:#1a1a22;--ink:#0c0c11;--gold:#e0b56a;--gold2:#f3d49a;--gold-dim:#8f7440;--text:#eceae4;--dim:#9b978d;--faint:#6b6860;--line:#26262f;--blue:#82b4d6;--green:#83d3aa;--red:#dc8c8c;--purp:#bd9fd8;--cn:#54545f;--sh:0 24px 70px -20px rgba(0,0,0,.7);--r:18px;}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;line-height:1.85;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(1100px 700px at 88% -8%,rgba(224,181,106,.11),transparent 58%),radial-gradient(800px 600px at -5% 105%,rgba(130,180,214,.05),transparent 55%),var(--bg)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;opacity:.022;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.en{font-family:'IBM Plex Mono',monospace;direction:ltr;unicode-bidi:embed;font-weight:500}
+code.en{background:rgba(224,181,106,.10);color:var(--gold2);padding:.08em .42em;border-radius:5px;font-size:.84em;border:1px solid rgba(224,181,106,.16)}
+.topbar{position:sticky;top:0;z-index:200;background:rgba(11,11,15,.78);backdrop-filter:blur(16px) saturate(1.2);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.4rem;gap:1rem}
+.brand{display:flex;align-items:center;gap:.6rem;font-weight:800;color:var(--gold2);white-space:nowrap}
+.brand .mk{width:26px;height:26px;border-radius:8px;background:linear-gradient(140deg,var(--gold2),var(--gold-dim));display:grid;place-items:center;color:var(--ink);font-family:'IBM Plex Mono';font-weight:700;font-size:.8rem}
+.navlinks{display:flex;gap:.1rem;flex-wrap:wrap}
+.navlinks a{color:var(--dim);text-decoration:none;font-size:.78rem;font-weight:600;padding:.4rem .6rem;border-radius:9px;transition:.18s;white-space:nowrap}
+.navlinks a:hover{color:var(--gold2);background:rgba(224,181,106,.08)}
+.menu-btn{display:none;background:none;border:1px solid var(--line);color:var(--gold);padding:.45rem .7rem;border-radius:9px;font-size:1.05rem;cursor:pointer}
+@media(max-width:1080px){.navlinks{display:none;position:absolute;top:100%;right:0;left:0;flex-direction:column;background:var(--bg2);padding:.5rem;border-bottom:1px solid var(--line);max-height:70vh;overflow:auto}.navlinks.open{display:flex}.menu-btn{display:block}}
+.hero{max-width:1000px;margin:0 auto;padding:5rem 1.5rem 2.5rem;text-align:center}
+.kicker{font-family:'IBM Plex Mono';direction:ltr;color:var(--gold);letter-spacing:.32em;font-size:.74rem;font-weight:600;margin-bottom:1.4rem;opacity:.9}
+.hero h1{font-family:'Aref Ruqaa',serif;font-weight:700;font-size:clamp(2.4rem,6.5vw,4.6rem);line-height:1.25;background:linear-gradient(176deg,#fce8c0,var(--gold) 52%,var(--gold-dim));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:1.2rem;padding-bottom:.18em}
+.hero p{font-size:1.12rem;color:var(--dim);max-width:680px;margin:0 auto 2rem}
+.hero .pill{display:inline-block;background:rgba(224,181,106,.07);border:1px solid rgba(224,181,106,.24);color:var(--gold2);padding:.55rem 1.2rem;border-radius:50px;font-weight:700;font-size:.93rem}
+.hdiv{width:130px;height:1px;margin:2.4rem auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+section{max-width:1000px;margin:0 auto;padding:3rem 1.5rem;scroll-margin-top:74px}
+.sec-head{display:flex;align-items:center;gap:1rem;margin-bottom:1.7rem}
+.sec-head .num{font-family:'IBM Plex Mono';direction:ltr;font-size:.95rem;font-weight:700;color:var(--ink);background:linear-gradient(140deg,var(--gold2),var(--gold-dim));min-width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px -6px rgba(224,181,106,.5)}
+.sec-head h2{font-size:clamp(1.5rem,4vw,2.1rem);font-weight:800;color:var(--gold2)}
+.lead{color:var(--dim);font-size:1.05rem;margin-bottom:1.7rem;border-right:3px solid var(--gold-dim);padding-right:1rem}
+.card{background:linear-gradient(165deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);padding:1.5rem 1.6rem;margin-bottom:1.1rem;box-shadow:var(--sh);position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(180deg,var(--gold),transparent 80%)}
+.card h3{color:var(--gold2);font-size:1.2rem;margin-bottom:.55rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.badge{font-family:'IBM Plex Mono';direction:ltr;font-size:.68rem;background:rgba(130,180,214,.12);color:var(--blue);padding:.2rem .55rem;border-radius:6px;border:1px solid rgba(130,180,214,.24);font-weight:600}
+.card p{color:var(--text);margin-bottom:.6rem}
+.ex{background:var(--ink);border-radius:12px;padding:.8rem 1rem;margin-top:.8rem;border:1px dashed rgba(224,181,106,.2);color:var(--dim);font-size:.93rem}
+.ex b{color:var(--gold)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:stretch;margin:1rem 0}
+@media(max-width:600px){.vs{grid-template-columns:1fr;text-align:center}.vs .mid{padding:.2rem}}
+.vs .side{background:var(--ink);border:1px solid var(--line);border-radius:13px;padding:1rem 1.1rem}
+.vs .side h4{color:var(--gold2);margin-bottom:.35rem;font-size:1rem}
+.vs .side.b h4{color:var(--blue)} .vs .side.g h4{color:var(--green)} .vs .side.r h4{color:var(--red)}
+.vs .side p{font-size:.92rem;margin:0;color:var(--text)}
+.vs .mid{display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono';color:var(--gold);font-weight:700;font-size:1.1rem}
+.qlist{list-style:none}
+.qlist li{padding:.48rem 0;border-bottom:1px dashed var(--line);display:flex;gap:.6rem}
+.qlist li:last-child{border:none}
+.qlist .k{color:var(--gold2);font-weight:700;direction:ltr;font-family:'IBM Plex Mono';font-size:.84rem;flex-shrink:0;min-width:max-content}
+.steps{counter-reset:s;margin:1rem 0}
+.stp{position:relative;padding:.7rem 0;padding-right:3rem;border-bottom:1px solid var(--line)}
+.stp:last-child{border:none}
+.stp::before{counter-increment:s;content:counter(s);position:absolute;right:0;top:.75rem;width:30px;height:30px;border-radius:9px;background:rgba(224,181,106,.1);border:1px solid var(--gold-dim);color:var(--gold2);font-family:'IBM Plex Mono';font-weight:700;font-size:.82rem;display:flex;align-items:center;justify-content:center}
+.stp b{color:var(--gold2)}
+.tip{background:rgba(130,180,214,.07);border:1px solid rgba(130,180,214,.2);border-radius:13px;padding:.9rem 1.1rem;margin:1rem 0}.tip b{color:var(--blue)}
+.warn{background:rgba(220,140,140,.07);border:1px solid rgba(220,140,140,.2);border-radius:13px;padding:.9rem 1.1rem;margin:1rem 0}.warn b{color:var(--red)}
+.good{background:rgba(131,211,170,.07);border:1px solid rgba(131,211,170,.2);border-radius:13px;padding:.9rem 1.1rem;margin:1rem 0}.good b{color:var(--green)}
+/* relation short-text */
+.rel{font-family:'IBM Plex Mono';direction:ltr;background:var(--ink);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:9px;padding:.55rem .85rem;margin:.45rem 0;font-size:.84rem;color:var(--text);overflow-x:auto;white-space:nowrap}
+.rel .rn{color:var(--gold2);font-weight:700}
+.rel u{color:var(--gold2);text-decoration-thickness:1.5px;text-underline-offset:2px}
+.rel i{color:var(--blue)}
+.rel .note{color:var(--faint);font-style:normal;font-size:.76rem}
+.fd{font-family:'IBM Plex Mono';direction:ltr;font-size:.85rem;color:var(--text);padding:.18rem 0;display:flex;gap:.35rem;align-items:center;flex-wrap:wrap}
+.fd .det{color:var(--gold2);font-weight:600}
+.fd .arr{color:var(--purp);font-weight:700}
+.fdbox{background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:.7rem .9rem;margin:.5rem 0}
+.nf{display:inline-block;font-family:'IBM Plex Mono';font-size:.72rem;font-weight:700;padding:.12rem .5rem;border-radius:6px;border:1px solid;margin:0 .2rem}
+.nf1{color:var(--red);border-color:rgba(220,140,140,.4);background:rgba(220,140,140,.08)}
+.nf2{color:var(--gold);border-color:rgba(224,181,106,.4);background:rgba(224,181,106,.08)}
+.nf3{color:var(--green);border-color:rgba(131,211,170,.4);background:rgba(131,211,170,.08)}
+/* data table */
+.dtbl{overflow-x:auto;margin:.7rem 0}
+.dtbl table{border-collapse:collapse;font-family:'IBM Plex Mono';font-size:.78rem;direction:ltr;min-width:480px;width:100%}
+.dtbl th{background:rgba(224,181,106,.1);color:var(--gold2);padding:.45rem .7rem;text-align:left;border:1px solid var(--line);font-weight:700}
+.dtbl td{padding:.4rem .7rem;border:1px solid var(--line);color:var(--dim)}
+/* flow */
+.nflow{display:flex;align-items:stretch;gap:.5rem;flex-wrap:wrap;justify-content:center;margin:1rem 0}
+.nstep{flex:1;min-width:130px;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:.9rem;text-align:center}
+.nstep .t{font-family:'IBM Plex Mono';font-weight:700;color:var(--gold2);font-size:.9rem;margin-bottom:.3rem}
+.nstep .d{color:var(--dim);font-size:.8rem}
+.narrow{display:flex;align-items:center;color:var(--purp);font-weight:700;font-size:1.2rem}
+@media(max-width:680px){.narrow{transform:rotate(90deg)}}
+/* code block */
+.code{font-family:'IBM Plex Mono';direction:ltr;text-align:left;background:var(--ink);border:1px solid var(--line);border-left:3px solid var(--green);border-radius:10px;padding:.8rem 1rem;margin:.6rem 0;font-size:.82rem;color:var(--text);overflow-x:auto;white-space:pre;line-height:1.7}
+.code .kw{color:var(--purp);font-weight:600}
+.code .fn{color:var(--gold2)}
+.code .cm{color:var(--faint);font-style:italic}
+/* problems */
+.prob{background:linear-gradient(165deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;margin-bottom:1rem;overflow:hidden;box-shadow:var(--sh)}
+.prob summary{list-style:none;cursor:pointer;padding:1.1rem 1.3rem;display:flex;align-items:center;gap:.85rem;font-weight:700;color:var(--text);font-size:1.02rem;transition:.18s}
+.prob summary::-webkit-details-marker{display:none}
+.prob summary:hover{background:rgba(224,181,106,.04)}
+.prob summary .qn{font-family:'IBM Plex Mono';direction:ltr;background:linear-gradient(140deg,var(--gold2),var(--gold-dim));color:var(--ink);min-width:48px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;flex-shrink:0}
+.prob summary .ar{margin-right:auto;color:var(--gold);transition:.3s;font-size:1.1rem}
+.prob[open] summary .ar{transform:rotate(90deg)}
+.prob .body{padding:.4rem 1.3rem 1.3rem;border-top:1px solid var(--line)}
+.qtext{color:var(--dim);font-style:italic;margin:.9rem 0;padding-left:.8rem;border-left:2px solid var(--gold-dim);direction:ltr;text-align:left;font-family:'IBM Plex Mono';font-size:.8rem;line-height:1.6}
+.subh{color:var(--gold2);font-family:'IBM Plex Mono';font-size:.86rem;font-weight:700;margin:.9rem 0 .3rem;direction:ltr}
+footer{text-align:center;padding:3rem 1.5rem;color:var(--dim);border-top:1px solid var(--line);margin-top:2rem}
+footer .h{color:var(--gold)}
+.reveal{opacity:0;transform:translateY(22px);transition:.6s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ===== CUSTOM AUDIO PLAYER ===== */
+.audio-cta-btn{display:inline-flex;align-items:center;gap:.6rem;background:rgba(224,181,106,.08);border:1px solid rgba(224,181,106,.3);color:var(--gold2);padding:.7rem 1.4rem;border-radius:50px;font-weight:700;font-size:.95rem;cursor:pointer;transition:all .25s ease;margin:0;font-family:'Tajawal',sans-serif}
+.audio-cta-btn:hover{background:rgba(224,181,106,.18);transform:translateY(-2px);box-shadow:0 5px 15px rgba(224,181,106,.15)}
+.player-panel{position:fixed;bottom:24px;left:50%;transform:translate(-50%,40px);width:calc(100% - 32px);max-width:680px;background:rgba(16,16,22,.85);backdrop-filter:blur(20px) saturate(1.2);-webkit-backdrop-filter:blur(20px) saturate(1.2);border:1px solid var(--line);border-radius:20px;padding:1rem 1.25rem;z-index:1000;box-shadow:0 20px 50px -10px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.05);display:flex;flex-direction:column;gap:.75rem;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s cubic-bezier(.34,1.56,.64,1);direction:ltr}
+.player-panel.active{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+.player-scrubber-wrapper{display:flex;align-items:center;gap:.75rem;width:100%}
+.player-time{font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--dim);min-width:42px;text-align:center;user-select:none}
+.player-progress-container{flex-grow:1;height:6px;background:rgba(255,255,255,.08);border-radius:3px;position:relative;cursor:pointer;transition:height .15s ease}
+.player-progress-container:hover{height:8px}
+.player-progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--gold-dim),var(--gold2));border-radius:3px;position:absolute;top:0;left:0}
+.player-progress-thumb{width:12px;height:12px;background:var(--gold2);border-radius:50%;position:absolute;top:50%;transform:translate(-50%,-50%) scale(0);transition:transform .15s ease;box-shadow:0 0 8px var(--gold)}
+.player-progress-container:hover .player-progress-thumb{transform:translate(-50%,-50%) scale(1)}
+.player-controls{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.player-info-meta{display:flex;align-items:center;gap:.5rem;color:var(--gold2);font-size:.85rem;font-weight:700;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:rtl}
+.player-info-meta span{font-family:'Tajawal',sans-serif}
+.player-buttons{display:flex;align-items:center;gap:.75rem}
+.player-btn{background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--dim);transition:all .2s ease;width:34px;height:34px;border-radius:50%}
+.player-btn:hover{color:var(--gold2);background:rgba(224,181,106,.08)}
+.player-btn.play-pause{background:linear-gradient(140deg,var(--gold2),var(--gold-dim));color:var(--ink);width:42px;height:42px;box-shadow:0 4px 12px rgba(224,181,106,.3)}
+.player-btn.play-pause:hover{transform:scale(1.05);box-shadow:0 4px 18px rgba(224,181,106,.5);background:linear-gradient(140deg,#fff,var(--gold));color:var(--ink)}
+.player-btn svg{width:18px;height:18px;fill:currentColor}
+.player-btn.play-pause svg{width:20px;height:20px}
+.player-speed-badge{font-family:'IBM Plex Mono',monospace;font-size:.78rem;font-weight:700;border:1px solid var(--line);padding:.25rem .5rem;border-radius:6px;cursor:pointer;user-select:none;transition:all .2s ease;color:var(--dim)}
+.player-speed-badge:hover{border-color:var(--gold2);color:var(--gold2);background:rgba(224,181,106,.05)}
+.player-bubble{position:fixed;bottom:24px;left:24px;width:56px;height:56px;background:linear-gradient(140deg,var(--gold2),var(--gold-dim));border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:999;cursor:pointer;box-shadow:0 8px 30px rgba(224,181,106,.4),0 0 0 1px rgba(255,255,255,.1);opacity:0;pointer-events:none;transform:scale(.8);transition:all .3s cubic-bezier(.34,1.56,.64,1)}
+.player-bubble.active{opacity:1;pointer-events:auto;transform:scale(1)}
+.player-bubble:hover{transform:scale(1.08);box-shadow:0 8px 35px rgba(224,181,106,.6)}
+.player-bubble .audio-waves{display:flex;align-items:flex-end;gap:3px;height:18px}
+.player-bubble .audio-waves span{width:3px;height:3px;background:var(--ink);border-radius:1.5px;transition:height .1s ease}
+.player-bubble.playing .audio-waves span{animation:dance 1.2s infinite ease-in-out alternate}
+.player-bubble.playing .audio-waves span:nth-child(1){animation-delay:.1s}
+.player-bubble.playing .audio-waves span:nth-child(2){animation-delay:.4s}
+.player-bubble.playing .audio-waves span:nth-child(3){animation-delay:.2s}
+.player-bubble.playing .audio-waves span:nth-child(4){animation-delay:.5s}
+@keyframes dance{0%{height:4px}100%{height:18px}}
+@media(max-width:500px){.player-panel{bottom:16px;padding:.8rem 1rem;gap:.5rem}.player-info-meta{max-width:110px;font-size:.8rem}.player-btn{width:30px;height:30px}.player-btn.play-pause{width:36px;height:36px}.player-speed-badge{padding:.15rem .35rem;font-size:.72rem}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-in">
+  <div class="brand"><span class="mk">5</span> Physical Design</div>
+  <button class="menu-btn" onclick="document.getElementById('nav').classList.toggle('open')">☰</button>
+  <nav class="navlinks" id="nav">
+    <a href="index.html" style="color:var(--gold2);font-weight:700">← Back</a>
+    <a href="#process">العملية</a>
+    <a href="#fields">Fields</a>
+    <a href="#missing">Missing Data</a>
+    <a href="#denorm">Denormalization</a>
+    <a href="#files">Files</a>
+    <a href="#fileorg">File Org</a>
+    <a href="#index">Indexes</a>
+    <a href="#query">Query Opt</a>
+    <a href="#problems">المسائل</a>
+    <a href="#defs">التعريفات</a>
+  </nav>
+</div></div>
+
+<header class="hero">
+  <div class="kicker">CSE 301 · DATABASE SYSTEMS · CHAPTER 5</div>
+  <h1>الـ Physical Database<br>Design & Performance</h1>
+  <p>بعد ما عملنا الـ logical design (جداول منظّمة)، الشابتر ده بيحوّلها لـ <b>تصميم فيزيائي</b> فعليّ على الديسك: data types، file organizations، indexes، و denormalization — كل ده عشان الأداء (performance) يبقى أسرع. وكل مسائل شيت 5 محلولة طبق الأصل زي حل الدكتور.</p>
+  <div style="margin-top:1.2rem;display:flex;justify-content:center;gap:.8rem;flex-wrap:wrap;align-items:center;">
+    <span class="pill" style="margin:0;">يلا نقفّل الشابتر الخامس 👇</span>
+    <button class="audio-cta-btn" id="hero-audio-btn">
+      <span>🎙️ استمع للشرح الصوتي لشابتر ٥</span>
+    </button>
+  </div>
+  <div class="hdiv"></div>
+</header>
+
+<!-- ===== PROCESS ===== -->
+<section id="process">
+  <div class="sec-head"><span class="num">01</span><h2>عملية التصميم الفيزيائي</h2></div>
+  <p class="lead">الـ <span class="en">Physical Database Design</span> = نحوّل الوصف المنطقي (relations) لـ <b>مواصفات تقنية</b> لتخزين واسترجاع الداتا، بحيث الأداء يبقى كويس مع الحفاظ على الـ integrity والأمان والاسترجاع.</p>
+  <div class="card reveal">
+    <h3>الغرض والهدف <span class="badge">Purpose &amp; Goal</span></h3>
+    <p><b>Purpose:</b> تترجم الوصف المنطقي للداتا لمواصفات تقنية للتخزين والاسترجاع.</p>
+    <p><b>Goal:</b> تصميم لتخزين الداتا يدّي <b>أداء كافٍ (performance)</b> ويضمن الـ <b>integrity والأمان (security) والاسترجاع (recoverability)</b>.</p>
+  </div>
+  <div class="card reveal">
+    <h3>المدخلات الأساسية — سؤال 3 <span class="badge">Inputs</span></h3>
+    <p>أهم 3 مدخلات للتصميم الفيزيائي (احفظهم كده):</p>
+    <ul class="qlist">
+      <li><span class="k">1</span> الـ <b>logical database structures</b> اللي اتعملت في الـ logical design (الـ normalized relations).</li>
+      <li><span class="k">2</span> متطلبات معالجة المستخدم <b>(user processing requirements)</b> اللي اتحددت في الـ requirements definition.</li>
+      <li><span class="k">3</span> خصائص الـ <b>DBMS</b> ومكونات بيئة التكنولوجيا المستخدمة.</li>
+    </ul>
+    <div class="tip">💡 <b>تفصيل أكتر من السلايد:</b> الـ inputs بتشمل كمان: تقديرات الحجم (volume estimates)، تعريفات الصفات، توقعات وقت الاستجابة، احتياجات الأمان والـ backup/recovery، وتوقعات الـ integrity.</div>
+  </div>
+  <div class="card reveal">
+    <h3>القرارات الأساسية — سؤال 4 <span class="badge">Key Decisions</span></h3>
+    <p>القرارات اللي بتاخدها في التصميم الفيزيائي:</p>
+    <ul class="qlist">
+      <li><span class="k">a</span> اختيار صيغة التخزين (<b>data type</b>) لكل صفة — عشان <b>تقلل المساحة</b> و<b>تعظّم الـ integrity</b>.</li>
+      <li><span class="k">b</span> تجميع الصفات في <b>physical records</b> — مش دايماً نفس أعمدة الجدول المنطقي بتبقى أفضل تجميع.</li>
+      <li><span class="k">c</span> ترتيب الـ records في الـ secondary memory (<b>file organizations</b>) عشان التخزين/الاسترجاع/التحديث يبقى سريع + حماية واسترجاع الداتا.</li>
+      <li><span class="k">d</span> اختيار هياكل لربط الملفات (<b>indexes &amp; database architectures</b>) عشان استرجاع الداتا المرتبطة يبقى أكفأ.</li>
+      <li><span class="k">e</span> تجهيز استراتيجيات للـ <b>query optimization</b> تستغل الـ file organizations والـ indexes.</li>
+    </ul>
+  </div>
+  <div class="nflow reveal">
+    <div class="nstep"><div class="t">Inputs</div><div class="d">Normalized relations · volume · response time · security</div></div>
+    <div class="narrow">←</div>
+    <div class="nstep"><div class="t">Decisions</div><div class="d">Data types · physical records · file org · indexes · query opt</div></div>
+  </div>
+</section>
+
+<!-- ===== FIELDS ===== -->
+<section id="fields">
+  <div class="sec-head"><span class="num">02</span><h2>تصميم الحقول — Designing Fields</h2></div>
+  <p class="lead">الـ <span class="en">Field</span> هو أصغر وحدة من داتا التطبيق بيتعرّف عليها الـ system software. تصميم الحقل = اختيار data type + الترميز/الضغط/التشفير + التحكم في الـ integrity.</p>
+  <div class="card reveal">
+    <h3>اختيار الـ Data Type — سؤال 5 <span class="badge">Objectives</span></h3>
+    <p>الـ data type هو صيغة التخزين المعرّفة بالـ DBMS لكل صفة. أهداف اختياره (أهميتها بتختلف حسب التطبيق):</p>
+    <ul class="qlist">
+      <li><span class="k">1</span> تحسين الـ <b>data integrity</b> (تكامل الداتا).</li>
+      <li><span class="k">2</span> تمثيل <b>كل القيم الممكنة</b> (represent all possible values).</li>
+      <li><span class="k">3</span> دعم <b>كل عمليات معالجة الداتا</b> (support all data manipulations).</li>
+      <li><span class="k">4</span> <b>تقليل مساحة التخزين</b> (minimize storage space).</li>
+    </ul>
+  </div>
+  <div class="card reveal">
+    <h3>ليه بنرمّز القيم؟ Coding — سؤال 6 <span class="badge">Coding</span></h3>
+    <p>لما الصفة يكون ليها مجموعة قيم <b>متفرّقة (sparse)</b> أو حجمها كبير جداً وهتاكل مساحة، بنفكّر في <b>الترميز (coding)</b> أو <b>الضغط (compression)</b>.</p>
+    <div class="ex">📌 الحقول الكبيرة معناها إن الداتا متباعدة أكتر → معالجة <b>أبطأ</b>. لو مجموعة القيم الصحيحة صغيرة، نترجمها لكود ياخد مساحة أقل. وتقنيات الضغط كمان بتستخدم الترميز لتقليل المساحة للأنماط المتكررة.</div>
+    <div class="tip">💡 <b>من السلايد (Pine Valley):</b> الكود بيوفّر مساحة، بس بيكلّف <b>lookup إضافي</b> في جدول الأكواد عشان تجيب القيمة الفعلية.</div>
+  </div>
+  <div class="card reveal">
+    <h3>التحكم في تكامل الحقل <span class="badge">Field Data Integrity</span></h3>
+    <ul class="qlist">
+      <li><span class="k">Default value</span> القيمة المفترضة لو مفيش قيمة صريحة اتدخلت.</li>
+      <li><span class="k">Range control</span> حدود القيم المسموحة (constraints / validation rules).</li>
+      <li><span class="k">Null value control</span> السماح أو منع الحقول الفاضية.</li>
+      <li><span class="k">Referential integrity</span> الـ range control (والـ null) عشان الـ FK يطابق PK موجود.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== MISSING DATA ===== -->
+<section id="missing">
+  <div class="sec-head"><span class="num">03</span><h2>التعامل مع الداتا الناقصة</h2></div>
+  <p class="lead">الـ <span class="en">Missing Data</span> مشكلة شائعة. فيه 3 طرق للتعامل معها — سؤال 7 (مهم جداً).</p>
+  <div class="card reveal">
+    <h3>الطرق الثلاثة — سؤال 7 <span class="badge">Handling Missing Values</span></h3>
+    <ul class="qlist">
+      <li><span class="k">1 Substitute</span> حُط <b>تقدير</b> للقيمة الناقصة (مثلاً بمعادلة على متوسط القيم الموجودة). لازم القيم دي تتعلّم عشان المستخدم يعرف إنها مش حقيقية.</li>
+      <li><span class="k">2 Track / Report</span> تتبّع الداتا الناقصة وتعمل <b>تقرير</b> بيها عشان الناس تحلّها بسرعة. الـ <b>trigger</b> بيقدر يعمل كده: trigger يسجّل القيمة الناقصة في ملف، وtrigger تاني يشتغل دورياً ويطلع تقرير.</li>
+      <li><span class="k">3 Sensitivity testing</span> تتجاهل الداتا الناقصة <b>إلا لو</b> معرفة القيمة ممكن تغيّر النتيجة بشكل كبير. دي أعقد طريقة وبتتعمل غالباً في كود التطبيق.</li>
+    </ul>
+    <div class="good">✅ <b>ربط مهم:</b> الـ <b>Triggers</b> (روتين بيشتغل أوتوماتيك لما حدث يقع أو وقت يعدّي) بتُستخدم لتنفيذ طرق التعامل دي.</div>
+  </div>
+</section>
+
+<!-- ===== DENORMALIZATION ===== -->
+<section id="denorm">
+  <div class="sec-head"><span class="num">04</span><h2>الـ Denormalization</h2></div>
+  <p class="lead">عكس الـ Normalization: بناخد relations صغيرة ونـ<b>دمجها</b> في relations أكبر عشان الـ queries والتقارير تتعالج بـ overhead أقل (أسرع).</p>
+  <div class="card reveal">
+    <h3>التعريف والفايدة <span class="badge">Definition</span></h3>
+    <p>الـ <b>Denormalization</b>: تحويل الـ normalized relations لمواصفات physical records <b>غير منظّمة</b> عشان الأداء.</p>
+    <div class="vs">
+      <div class="side g"><h4>الفايدة (Benefit)</h4><p>بتحسّن الأداء (السرعة) عن طريق تقليل عدد الـ table lookups — يعني تقليل عدد الـ <b>join queries</b> اللازمة.</p></div>
+      <div class="mid">VS</div>
+      <div class="side r"><h4>التكلفة (Cost)</h4><p>بسبب <b>تكرار الداتا</b>: إهدار مساحة تخزين + تهديد للـ integrity/consistency.</p></div>
+    </div>
+  </div>
+  <div class="card reveal">
+    <h3>فرص الـ Denormalization الشائعة <span class="badge">Opportunities</span></h3>
+    <ul class="qlist">
+      <li><span class="k">1:1</span> علاقة one-to-one بين كيانين → ندمجهم في جدول واحد (Fig 5-2).</li>
+      <li><span class="k">M:N + attrs</span> علاقة many-to-many فيها <b>non-key attributes</b> (associative entity) → ندمج صفات أحد الكيانات في جدول العلاقة عشان نتجنّب join متكرر (Fig 5-3).</li>
+      <li><span class="k">Reference data</span> علاقة 1:N والطرف الـ "one" عنده داتا مش مستخدمة في أي علاقة تانية (Fig 5-4).</li>
+    </ul>
+  </div>
+  <div class="warn reveal">⚠️ <b>Denormalize with caution:</b> الـ denormalization ممكن (1) يزوّد فرص الأخطاء والتضارب، (2) يرجّع الـ anomalies تاني، (3) يجبرك على إعادة برمجة لما الـ business rules تتغير. وأحياناً فيه طرق أحسن لتحسين أداء الـ joins زي: تنظيم الجداول في الداتابيز (file organization &amp; clustering)، وتصميم وتحسين الـ query صح.</div>
+</section>
+
+<!-- ===== FILES ===== -->
+<section id="files">
+  <div class="sec-head"><span class="num">05</span><h2>ملفات الداتابيز الفيزيائية</h2></div>
+  <p class="lead">إزاي الداتا بتتخزّن فعلياً على الـ secondary memory: physical files و tablespaces.</p>
+  <div class="card reveal">
+    <h3>Physical File و Tablespace <span class="badge">Storage</span></h3>
+    <p><b>Physical File:</b> جزء مسمّى من الـ secondary memory متخصّص لتخزين الـ physical records.</p>
+    <p><b>Tablespace:</b> وحدة تخزين منطقية مسمّاة تقدر تخزّن فيها داتا من <b>أكتر من جدول/view/object</b>.</p>
+    <div class="tip">💡 <b>مكونات الـ Tablespace (Oracle):</b> <b>Segment</b> (جدول أو index أو partition) · <b>Extent</b> (قطعة متصلة من مساحة الديسك) · <b>Data block</b> (أصغر وحدة تخزين).</div>
+  </div>
+</section>
+
+<!-- ===== FILE ORGANIZATIONS ===== -->
+<section id="fileorg">
+  <div class="sec-head"><span class="num">06</span><h2>تنظيم الملفات — File Organizations</h2></div>
+  <p class="lead">الـ <span class="en">File Organization</span> = تقنية الترتيب الفيزيائي لـ records الملف على الـ secondary storage. 3 أنواع: Sequential · Indexed · Hashed.</p>
+  <div class="card reveal">
+    <h3>عوامل اختيار الـ File Organization <span class="badge">Factors</span></h3>
+    <ul class="qlist">
+      <li><span class="k">1</span> استرجاع داتا سريع (fast retrieval &amp; throughput).</li>
+      <li><span class="k">2</span> استغلال كفؤ لمساحة التخزين.</li>
+      <li><span class="k">3</span> الحماية من الأعطال وفقدان الداتا.</li>
+      <li><span class="k">4</span> تقليل الحاجة لإعادة التنظيم (reorganization).</li>
+      <li><span class="k">5</span> استيعاب النمو (growth).</li>
+      <li><span class="k">6</span> الأمان من الاستخدام غير المصرّح.</li>
+    </ul>
+  </div>
+  <div class="nflow reveal">
+    <div class="nstep"><div class="t">Sequential</div><div class="d">records متخزّنة بالترتيب حسب الـ primary key</div></div>
+    <div class="nstep"><div class="t">Indexed</div><div class="d">sequential أو لأ + index يحدد مكان الـ record</div></div>
+    <div class="nstep"><div class="t">Hashed</div><div class="d">العنوان بيتحدد بـ hashing algorithm</div></div>
+  </div>
+  <div class="grid2">
+    <div class="card reveal">
+      <h3>Sequential <span class="badge">Sequential</span></h3>
+      <p>الـ records متخزّنة <b>بالتسلسل</b> حسب قيم الـ primary key.</p>
+      <div class="ex">📌 لو الملف <b>مرتّب</b>: كل insert/delete بيتطلب إعادة ترتيب (re-sort).<br>📌 لو <b>مش مرتّب</b>: متوسط زمن إيجاد الـ record = <b>n/2</b>.</div>
+    </div>
+    <div class="card reveal">
+      <h3>Indexed <span class="badge">Indexed</span></h3>
+      <p>الـ records متخزّنة بالتسلسل أو من غير، مع <b>index</b> (جدول/هيكل بيانات) بيحدد مكان الـ records اللي بتحقق شرط معيّن.</p>
+      <div class="ex">📌 الـ primary keys بتتعمل لها index أوتوماتيك.<br>📌 حقول تانية أو combinations ممكن تتعمل لها index → اسمها <b>secondary keys</b> (nonunique keys).<br>📌 بيستخدم <b>tree search</b>، ومتوسط الزمن = عمق الشجرة (depth).</div>
+    </div>
+  </div>
+  <div class="card reveal">
+    <h3>Hashed <span class="badge">Hashed</span></h3>
+    <p>عنوان كل record بيتحدد باستخدام <b>hashing algorithm</b>.</p>
+    <div class="ex">📌 عادةً بيستخدم <b>division-remainder</b> (باقي القسمة) لتحديد موضع الـ record. الـ records اللي ليها نفس الموضع بتتجمّع في lists.</div>
+  </div>
+</section>
+
+<!-- ===== INDEXES ===== -->
+<section id="index">
+  <div class="sec-head"><span class="num">07</span><h2>الـ Indexes والمفاتيح</h2></div>
+  <p class="lead">الـ <span class="en">Index</span> هو جدول/هيكل بيانات بيحدد مكان الـ records اللي بتحقق شرط في الملف. ده اللي بيخلّي الاسترجاع سريع.</p>
+  <div class="card reveal">
+    <h3>استخدام واختيار المفاتيح <span class="badge">Using Keys</span></h3>
+    <div class="vs">
+      <div class="side b"><h4>Unique key index</h4><p>على مفتاح فريد — بيفرض الـ uniqueness. مثال: <span class="en">CustomerID</span> (PK) لـ Customer، أو composite PK لـ OrderLine.</p></div>
+      <div class="mid">+</div>
+      <div class="side g"><h4>Secondary key index</h4><p>على حقل ممكن يتكرّر (مش فريد). مثال: حقل <span class="en">Description</span> لـ Product.</p></div>
+    </div>
+  </div>
+  <div class="card reveal">
+    <h3>الـ Join Index <span class="badge">Join Index</span></h3>
+    <p>index على أعمدة من <b>جدولين أو أكتر</b> جايين من نفس domain القيم → بيسرّع عمليات الـ <b>join</b>.</p>
+    <div class="ex">📌 نوعين: (أ) join index لأعمدة non-key مشتركة، (ب) join index لمطابقة foreign key (FK) مع primary key (PK).</div>
+  </div>
+  <div class="card reveal">
+    <h3>قواعد استخدام الـ Indexes — سؤال مهم جداً <span class="badge">Rules</span></h3>
+    <ul class="qlist">
+      <li><span class="k">1</span> استخدمها على الجداول <b>الكبيرة</b>.</li>
+      <li><span class="k">2</span> اعمل index للـ <b>primary key</b> بتاع كل جدول.</li>
+      <li><span class="k">3</span> اعمل index لحقول البحث (اللي بتيجي كتير في <b>WHERE</b>).</li>
+      <li><span class="k">4</span> الحقول في <b>ORDER BY</b> و <b>GROUP BY</b>.</li>
+      <li><span class="k">5</span> لما يكون فيه <b>أكتر من 100 قيمة</b> مختلفة، ومش لما يكون أقل من 30.</li>
+      <li><span class="k">6</span> تجنّب الـ index للحقول ذات القيم الطويلة (يفضّل تضغطها الأول).</li>
+      <li><span class="k">7</span> لو المفتاح بيحدد مكان الـ record، استخدم <b>surrogate</b> (زي رقم تسلسلي) عشان التوزيع يبقى متساوي في مساحة التخزين.</li>
+      <li><span class="k">8</span> الـ DBMS ممكن يكون عنده حد لعدد الـ indexes لكل جدول وعدد البايتات للحقل المفهرس.</li>
+      <li><span class="k">9</span> خلّي بالك من فهرسة الحقول ذات الـ null — كتير من الـ DBMSs مش بتعترف بالـ null في بحث الـ index.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== QUERY OPTIMIZATION ===== -->
+<section id="query">
+  <div class="sec-head"><span class="num">08</span><h2>تحسين الاستعلامات — Query Optimization</h2></div>
+  <p class="lead">آخر قرار في التصميم الفيزيائي: نضمن إن الـ queries بتستغل الـ file organizations والـ indexes بكفاءة.</p>
+  <div class="card reveal">
+    <h3>طرق التحسين <span class="badge">Query Optimization</span></h3>
+    <ul class="qlist">
+      <li><span class="k">Parallel processing</span> معالجة الاستعلام بالتوازي — ممكنة في أنظمة الـ <b>multiprocessor</b>.</li>
+      <li><span class="k">Override auto</span> تجاوز الـ optimization الأوتوماتيكي — بيسمح لكاتب الـ query إنه يتحكّم بدل الأتمتة.</li>
+      <li><span class="k">Data warehouses</span> الـ data warehouses أصلاً معدّة (configured) لأداء استعلام محسّن.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== PROBLEMS ===== -->
+<section id="problems">
+  <div class="sec-head"><span class="num">09</span><h2>المسائل المحلولة (طبق الأصل من الشيت)</h2></div>
+  <p class="lead">كل مسألة بنص السؤال زي الشيت، وحلّها بالحرف زي إجابة الدكتور. (الأسئلة 1 و 2 في قسم التعريفات تحت 👇)</p>
+
+  <details class="prob reveal">
+    <summary><span class="qn">3</span> Major inputs into physical database design <span class="ar">›</span></summary>
+    <div class="body">
+      <div class="qtext">What are the major inputs into physical database design?</div>
+      <div class="subh">Three major inputs to physical design:</div>
+      <ul class="qlist">
+        <li><span class="k">a</span> Logical database structures developed during logical design.</li>
+        <li><span class="k">b</span> User processing requirements identified during requirements definition.</li>
+        <li><span class="k">c</span> Characteristics for the DBMS and other components of the computing technology environment.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">4</span> Key decisions in physical database design <span class="ar">›</span></summary>
+    <div class="body">
+      <div class="qtext">What are the key decisions in physical database design?</div>
+      <div class="subh">Key decisions in physical database design:</div>
+      <ul class="qlist">
+        <li><span class="k">a</span> Choosing the storage format (called data type) for each attribute from the logical data model: the format is chosen to minimize storage space and to maximize data integrity.</li>
+        <li><span class="k">b</span> Grouping attributes from the logical data model into physical records: you will discover that although the columns of a relational table are a natural definition for the contents of a physical record, this is not always the most desirable grouping of attributes.</li>
+        <li><span class="k">c</span> Arranging similarly structured records in secondary memory (primarily hard disks) so that individual and groups of records can be stored, retrieved, and updated rapidly (called file organizations): consideration must also be given to protecting data and recovering data after errors are found.</li>
+        <li><span class="k">d</span> Selecting structures for storing and connecting files to make retrieving related data more efficient (called indexes and database architectures).</li>
+        <li><span class="k">e</span> Preparing strategies for handling queries against the database that will optimize performance and take advantage of the file organizations and indexes that you have specified: efficient database structures will be of benefit only if queries and the database management systems that handle those queries are tuned to intelligently use those structures.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">5</span> Objectives of selecting a data type <span class="ar">›</span></summary>
+    <div class="body">
+      <div class="qtext">What are the objectives of selecting a data type for a field?</div>
+      <div class="subh">These four objectives will have varying relative importance for different applications:</div>
+      <ul class="qlist">
+        <li><span class="k">a</span> Improve data integrity</li>
+        <li><span class="k">b</span> Represent all possible values</li>
+        <li><span class="k">c</span> Support all data manipulations</li>
+        <li><span class="k">d</span> Minimize storage space.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">6</span> Why are field values sometimes coded? <span class="ar">›</span></summary>
+    <div class="body">
+      <div class="qtext">Why are field values sometimes coded?</div>
+      <div class="subh">Coding or compressing field values:</div>
+      <p>Where attributes have a sparse set of values or a volume so large that considerable storage space will be consumed, possibilities for coding or compressing field values should be considered. Large data fields mean that data are further apart, which yields slower data processing. Where the set of valid values is small, translation into a code that requires less space is a possibility. Data compression techniques also use coding to reduce the storage space required for commonly recurring patterns of data.</p>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">7</span> Three ways to handle missing field values <span class="ar">›</span></summary>
+    <div class="body">
+      <div class="qtext">Describe three ways to handle missing field values.</div>
+      <div class="subh">Three ways to handle missing field values:</div>
+      <ul class="qlist">
+        <li><span class="k">a</span> Substitute an estimate of the missing value: for example, for a missing sales value when computing monthly product sales, use a formula involving the mean of the existing monthly sales values for that product indexed by total sales for that month across all products. Such estimates must be marked so users know that these are not actual values.</li>
+        <li><span class="k">b</span> Track missing data so that special reports and other system elements cause people to quickly resolve unknown values. Setting up a trigger in the database can accomplish this. A trigger is a routine that will automatically execute when some event occurs or time period passes. One trigger could log the missing entry to a file when a null or other missing value is stored, and another trigger could run periodically to create a report of the contents of this log file.</li>
+        <li><span class="k">c</span> Perform sensitivity testing so that missing data are ignored unless knowing a value might significantly change results. For example, if total monthly sales for a particular salesperson were almost over a threshold that would make a difference in that person's compensation, then attention would be drawn to the missing value. Otherwise, it would be ignored. This is the most complex of the methods mentioned; it requires the most sophisticated processing logic, which is often implemented in application programs.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">8</span> Millennium College — indexes + SQL <span class="ar">›</span></summary>
+    <div class="body">
+      <div class="qtext">Consider the following two relations for Millennium College. Following is a typical query against these relations. a) On what attributes should indexes be defined to speed up this query? Give the reasons for each attribute selected. b) Write SQL commands to create indexes for each attribute you identified in part a.</div>
+      <div class="subh">الجداول والاستعلام النموذجي (من الشيت):</div>
+      <div class="rel"><span class="rn">STUDENT</span> (<u>StudentID</u>, StudentName, GPA)</div>
+      <div class="rel"><span class="rn">REGISTRATION</span> (<u>StudentID</u>, <u>CourseID</u>)</div>
+      <div class="code"><span class="kw">SELECT</span> Student.StudentID, StudentName
+<span class="kw">FROM</span> STUDENT, REGISTRATION
+<span class="kw">WHERE</span> Student.StudentID = Registration.StudentID
+  <span class="kw">AND</span> GPA &gt; 3.0
+<span class="kw">ORDER BY</span> StudentName;</div>
+      <div class="subh">a.</div>
+      <p><b>StudentID</b> in STUDENT because it is a primary key and the index would enforce uniqueness of the key; also, StudentID in STUDENT and in REGISTRATION is used in a WHERE clause for joining the STUDENT and REGISTRATION tables, so it likely makes sense to create an index on StudentID in REGISTRATION as well.</p>
+      <p><b>GPA</b> in STUDENT because it is a nonkey cluster attribute used to qualify record retrieval.</p>
+      <p><b>StudentName</b> in STUDENT because it is a nonkey attribute used to sort records.</p>
+      <p><b>StudentID, CourseID</b> in REGISTRATION because it is a concatenated primary key and the index would enforce uniqueness of the key.</p>
+      <div class="subh">b.</div>
+      <div class="code"><span class="kw">CREATE UNIQUE INDEX</span> STUPKINDX <span class="kw">ON</span> STUDENT (StudentID);
+<span class="kw">CREATE INDEX</span> STUDREGINDX <span class="kw">ON</span> REGISTRATION (StudentID);
+<span class="kw">CREATE INDEX</span> CLUST_INDX
+<span class="kw">ON</span> STUDENT (GPA)
+CLUSTER;
+<span class="kw">CREATE INDEX</span> NAMEINDX <span class="kw">ON</span> STUDENT (StudentName);
+<span class="kw">CREATE UNIQUE INDEX</span> REGSPKINDX
+<span class="kw">ON</span> REGISTRATION (StudentID, CourseID);</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">9</span> Large retail chain — denormalization <span class="ar">›</span></summary>
+    <div class="body">
+      <div class="qtext">Consider the following normalized relations from a database in a large retail chain. What opportunities might exist for denormalizing these relations when defining the physical records for this database? Under what circumstances would you consider creating such denormalized records?</div>
+      <div class="subh">Recommendations for denormalization, large retail chain:</div>
+      <div class="rel"><span class="rn">EMPLOYEE SCHEDULE</span> (DepartmentID, EmployeeID, WhereWork, EmployeeName, EmployeeAddress, Date)</div>
+      <p>A many-to-many relationship (associative entity) with nonkey attributes: Rather than joining three files to extract data from the two basic entities in the relationship, it may be advisable to combine attributes from one of the entities into the record representing the relation in the many-to-many relationship, thus avoiding one join in many data access modules. This approach is advantageous as this joining will occur frequently.</p>
+      <div class="rel"><span class="rn">DEPARTMENT</span> (DepartmentID, ManagerID, SalesGoal, StoreID, Region, ManagerID, SquareFeet)</div>
+      <p>This reference data denormalization option wouldn't be recommended since the table STORE is further related to a table MANAGER, and there are probably more than just a few departments in each STORE.</p>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">10</span> Mobile service provider — indexing <span class="ar">›</span></summary>
+    <div class="body">
+      <div class="qtext">Consider the following set of normalized relations from a database used by a mobile service provider to keep track of its users and advertiser customers. Assume frequent need for: list of users sorted by zip code; access to a specific client with the client's contact person's name, e-mail address, and phone number; list of users sorted by interest area and within each interest area user's estimated intensity of interest; list of users within a specific age range sorted by their category and within the category by zip code; access to a specific user based on their e-mail address. Based on these needs, specify the types of indexes you would recommend for this situation. Justify your decisions.</div>
+      <div class="subh">Indexing for mobile service provider:</div>
+      <ul class="qlist">
+        <li><span class="k">a</span> List of users sorted by zip code → Create an indexed file organization for USER by UserZip.</li>
+        <li><span class="k">b</span> Access to a specific client → Index ADVERTISERCLIENT by ClientContactID; create a hash index including ContactName, ContactEmail, and ContactPhone for CONTACT.</li>
+        <li><span class="k">c</span> List of users sorted by interest area and intensity of interest → Index INTEREST by InterestLabel and USERINTERSTAREA by UserInterestIntensity.</li>
+        <li><span class="k">d</span> List of users within an age range sorted by category and zip code → Index USER by UserYearOfBirth and UserZip and CATEGORY by CategoryName.</li>
+        <li><span class="k">e</span> Access to a specific user based on their e-mail → Create a hash index based on UserEmail for USER.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">11</span> Mobile service provider — denormalization <span class="ar">›</span></summary>
+    <div class="body">
+      <div class="qtext">Consider the relations in Problem 10. Please identify possible opportunities for denormalizing these relations as part of the physical design of the database. Which ones would you be most likely to implement?</div>
+      <div class="subh">Denormalization for mobile service provider — some possibilities for denormalization:</div>
+      <ul class="qlist">
+        <li><span class="k">a</span> Include ContactName, ContactEmail, and ContactPhone in ADVERTISERCLIENT.</li>
+        <li><span class="k">b</span> Include InterestLabel in USERINTERESTAREA.</li>
+        <li><span class="k">c</span> Include InterestLabel, UserLName, UserFName, and UserYearOfBirth in USER.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">12</span> Sports league — denormalization <span class="ar">›</span></summary>
+    <div class="body">
+      <div class="qtext">Consider the following normalized relations for a sports league. What recommendations would you make regarding opportunities for denormalization? What additional information would you need to make fully informed denormalization decisions?</div>
+      <div class="subh">Recommendations for denormalization, sports league:</div>
+      <p>One possibility for denormalization would be the inclusion of SpecialtyDescription attribute in the PLAYER relation. It appears that the PlayerSpecialtyCode refers to the SpecialtyCode in the SPECIALTY relation, using SPECIALTY as reference information for Players. To make the right decision, you would need to know more about Player specialties, in terms of occurrence (can they have more than one, in the future?) and the expected size of the SpecialtyDescription attribute. Denormalizing the relations by adding the SpecialtyDescription data to the PLAYER relation might be adding a lot of redundant information that could take up a great deal of storage.</p>
+      <p>There might be opportunities for further denormalization in these relations, but the following questions need to be asked before proceeding with any further denormalization:</p>
+      <ul class="qlist">
+        <li><span class="k">a</span> What are the meaning and the contents of the TeamLocation attribute in the TEAM relation? Is this a code used to reference the LocationID in the LOCATION relation? Or is this a character field storing different information about the Team's location? Can a TEAM instance have more than one location?</li>
+        <li><span class="k">b</span> What are the meaning and the contents of the ManagerTeam attribute in the MANAGER relation? Does this attribute refer to the TeamID attribute in the TEAM relation? Is a Manager instance also a Player instance?</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">13</span> Sports league (global) — FKs + indexes <span class="ar">›</span></summary>
+    <div class="body">
+      <div class="qtext">Consider the relations specified in Problem 12. Assume the database has been implemented without denormalization, is global in scope (thousands of leagues, tens of thousands of teams, hundreds of thousands of players), and a new relation LEAGUE has been added. TEAM has an additional attribute TeamLeague. Typical operations: adding new players; adding new player contracts; updating player specialty codes; updating city populations; reporting players by team; reporting players by team and specialty; reporting players ordered by salary; reporting teams and their players by city. a) Identify the foreign keys. b) Specify the types of indexes you would recommend, explaining how you used the list of operations.</div>
+      <div class="subh">a. Identify the foreign keys. [Primary Keys, <i>Foreign Keys</i>]</div>
+      <div class="rel"><span class="rn">TEAM</span> (<u>TeamID</u>, TeamName, <i>TeamLocation</i>, <i>TeamLeague</i>)</div>
+      <div class="rel"><span class="rn">PLAYER</span> (<u>PlayerID</u>, PlayerFirstName, PlayerLastName, PlayerDateOfBirth, <i>PlayerSpecialtyCode</i>)</div>
+      <div class="rel"><span class="rn">SPECIALTY</span> (<u>SpecialtyCode</u>, SpecialtyDescription)</div>
+      <div class="rel"><span class="rn">CONTRACT</span> (<u>TeamID</u>, <u>PlayerID</u>, StartTime, EndTime, Salary)</div>
+      <div class="rel"><span class="rn">LOCATION</span> (<u>LocationID</u>, CityName, CityState, CityCountry, CityPopulation)</div>
+      <div class="rel"><span class="rn">MANAGER</span> (<u>ManagerID</u>, ManagerName, <i>ManagerTeam</i>)</div>
+      <div class="rel"><span class="rn">LEAGUE</span> (<u>LeagueID</u>, LeagueName, LeagueLocation)</div>
+      <div class="subh">b. Recommended indices and explanation:</div>
+      <p>I would recommend indexes on all primary keys (TeamID, PlayerID, SpecialtyCode, LocationID, ManagerID, LeagueID), which many DBMSs do automatically. I would also suggest creating a surrogate key of ContractID for the CONTRACT relation, and also creating an index on that primary key. These indexes will assist in quick retrieval of data for the first four database operations on the list.</p>
+      <p>Additionally, I would recommend that indexes are created to assist in the reporting needs, as follows: TeamID + PlayerID, TeamID + PlayerID + SpecialtyCode, Salary + PlayerID, and TeamID + PlayerID + LocationID.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ===== DEFINITIONS ===== -->
+<section id="defs">
+  <div class="sec-head"><span class="num">10</span><h2>التعريفات والمقارنات</h2></div>
+  <p class="lead">أسئلة 1 (التعريفات) و 2 (المقارنات) بنص الشيت بالحرف — دي اللي بتيجي مضمونة.</p>
+
+  <div class="card reveal">
+    <h3>سؤال 1 — Define each of the following terms <span class="badge">Definitions</span></h3>
+    <ul class="qlist">
+      <li><span class="k">a. File organization</span> A technique for physically arranging the records of a file on secondary storage devices.</li>
+      <li><span class="k">b. Sequential file org.</span> Records in the file are stored in sequence according to a primary key value.</li>
+      <li><span class="k">c. Indexed file org.</span> Records are either stored sequentially or non-sequentially, and an index is created that allows software to locate individual records.</li>
+      <li><span class="k">d. Hashed file org.</span> The address for each record is determined using a hashing algorithm.</li>
+      <li><span class="k">e. Composite key</span> A key made up of more than one column.</li>
+      <li><span class="k">f. Secondary key</span> One or a combination of fields for which more than one record may have the same combination of values.</li>
+      <li><span class="k">g. Data type</span> Each unit of a detailed coding scheme recognized by system software, such as a DBMS, for representing organizational data.</li>
+      <li><span class="k">h. Join index</span> An index on columns from two or more tables that come from the same domain of values.</li>
+    </ul>
+  </div>
+
+  <div class="card reveal">
+    <h3>سؤال 2 — Contrast the following terms <span class="badge">Contrast</span></h3>
+    <div class="vs">
+      <div class="side b"><h4>Physical file</h4><p>A physical file is a named portion of secondary memory (magnetic tape, hard disk) allocated for the purpose of storing records.</p></div>
+      <div class="mid">vs</div>
+      <div class="side g"><h4>Tablespace</h4><p>A tablespace is a named set of disk storage elements in which physical files for database tables may be stored.</p></div>
+    </div>
+    <div class="vs">
+      <div class="side g"><h4>Normalization</h4><p>The process of breaking up larger relations with structural problems (i.e., anomalies) into smaller, well-structured relations.</p></div>
+      <div class="mid">vs</div>
+      <div class="side r"><h4>Denormalization</h4><p>The opposite process of normalization: takes smaller relations and combines them into bigger relations to produce relations processed with less management overhead for queries, reporting, and sometimes data maintenance.</p></div>
+    </div>
+    <div class="vs">
+      <div class="side b"><h4>Secondary key</h4><p>One field or a combination of fields for which more than one record may have the same combination of values.</p></div>
+      <div class="mid">vs</div>
+      <div class="side g"><h4>Primary key</h4><p>One or a combination of fields for which every record has a unique value. Hence, the primary key is a unique identifier for a row.</p></div>
+    </div>
+  </div>
+
+  <div class="good reveal" style="margin-top:1.4rem">🔑 <b>خلاصة تقفّل بيها:</b> الـ Physical design = <b>data types</b> (تقلل مساحة + تزوّد integrity) → <b>denormalization</b> (تدمج عشان تقلل joins بس بحذر) → <b>file organizations</b> (sequential / indexed / hashed) → <b>indexes</b> (PK + WHERE + ORDER BY + &gt;100 قيمة) → <b>query optimization</b>. ركّز على قواعد الـ index وأنواع الـ file organization — دول اللي بييجوا أكتر.</div>
+</section>
+
+<footer>
+  <p>بالتوفيق يا أبو عيد 💪 — مفتاح الشابتر ده: <b>الأداء (performance)</b>. الـ index بيسرّع القراءة، والـ denormalization بيقلّل الـ joins — بس الاتنين ليهم ثمن (مساحة + integrity).</p>
+  <p style="margin-top:.5rem;font-size:.85rem">CSE 301 · Chapter 5 · Physical Database Design &amp; Performance · <span class="h">★</span></p>
+</footer>
+
+<!-- HTML5 Audio Element -->
+<audio id="main-audio" src="ch 5 .m4a" preload="metadata"></audio>
+
+<!-- Custom Audio Player Control Bar -->
+<div class="player-panel" id="custom-player">
+  <div class="player-scrubber-wrapper">
+    <span class="player-time" id="time-current">0:00</span>
+    <div class="player-progress-container" id="progress-container">
+      <div class="player-progress-bar" id="progress-bar"></div>
+      <div class="player-progress-thumb" id="progress-thumb"></div>
+    </div>
+    <span class="player-time" id="time-total">0:00</span>
+  </div>
+  <div class="player-controls">
+    <div class="player-info-meta">
+      <span>🎙️ شرح شابتر ٥ (أبو عيد)</span>
+    </div>
+    <div class="player-buttons">
+      <button class="player-btn" id="btn-rewind" title="رجوع 10 ثواني">
+        <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+      </button>
+      <button class="player-btn play-pause" id="btn-play-pause" title="تشغيل / إيقاف">
+        <svg id="svg-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="svg-pause" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+      <button class="player-btn" id="btn-forward" title="تقدم 10 ثواني">
+        <svg viewBox="0 0 24 24"><path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.97 7.22l2.37.78c1.05-3.19 4.06-5.5 7.6-5.5 1.96 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z"/></svg>
+      </button>
+    </div>
+    <div style="display:flex;align-items:center;gap:.5rem;">
+      <div class="player-speed-badge" id="btn-speed" title="سرعة التشغيل">1.0x</div>
+      <button class="player-btn" id="btn-mute" title="كتم الصوت">
+        <svg id="svg-volume" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+        <svg id="svg-mute" viewBox="0 0 24 24" style="display:none;"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.21.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+      </button>
+      <button class="player-btn" id="btn-minimize" title="تصغير">
+        <svg viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Minimized Floating Bubble Widget -->
+<div class="player-bubble" id="minimized-bubble" title="فتح الشرح الصوتي">
+  <div class="audio-waves"><span></span><span></span><span></span><span></span></div>
+</div>
+
+<script>
+// Audio Player Controller Script
+(function() {
+  const audio = document.getElementById('main-audio');
+  const player = document.getElementById('custom-player');
+  const bubble = document.getElementById('minimized-bubble');
+  const heroBtn = document.getElementById('hero-audio-btn');
+  const btnPlayPause = document.getElementById('btn-play-pause');
+  const svgPlay = document.getElementById('svg-play');
+  const svgPause = document.getElementById('svg-pause');
+  const btnRewind = document.getElementById('btn-rewind');
+  const btnForward = document.getElementById('btn-forward');
+  const btnSpeed = document.getElementById('btn-speed');
+  const btnMute = document.getElementById('btn-mute');
+  const svgVolume = document.getElementById('svg-volume');
+  const svgMute = document.getElementById('svg-mute');
+  const btnMinimize = document.getElementById('btn-minimize');
+  const timeCurrent = document.getElementById('time-current');
+  const timeTotal = document.getElementById('time-total');
+  const progressContainer = document.getElementById('progress-container');
+  const progressBar = document.getElementById('progress-bar');
+  const progressThumb = document.getElementById('progress-thumb');
+
+  let isPlaying = false;
+  let isMuted = false;
+  let speedIndex = 0;
+  const speeds = [1.0, 1.25, 1.5, 2.0, 0.75];
+
+  function initAudio() {
+    const savedPos = localStorage.getItem('cse301_ch5_audio_pos');
+    if (savedPos) { audio.currentTime = parseFloat(savedPos); }
+    const savedSpeed = localStorage.getItem('cse301_ch5_audio_speed');
+    if (savedSpeed) {
+      const parsedSpeed = parseFloat(savedSpeed);
+      const index = speeds.indexOf(parsedSpeed);
+      if (index !== -1) { speedIndex = index; audio.playbackRate = parsedSpeed; btnSpeed.textContent = parsedSpeed + 'x'; }
+    }
+    audio.addEventListener('loadedmetadata', () => {
+      timeTotal.textContent = formatTime(audio.duration);
+      timeCurrent.textContent = formatTime(audio.currentTime);
+    });
+    if (audio.readyState >= 1) {
+      timeTotal.textContent = formatTime(audio.duration);
+      timeCurrent.textContent = formatTime(audio.currentTime);
+    } else {
+      audio.addEventListener('durationchange', () => { timeTotal.textContent = formatTime(audio.duration); });
+    }
+  }
+
+  function formatTime(seconds) {
+    if (isNaN(seconds) || seconds === Infinity) return '0:00';
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor(seconds % 60);
+    const paddedS = s < 10 ? '0' + s : s;
+    if (h > 0) { const paddedM = m < 10 ? '0' + m : m; return `${h}:${paddedM}:${paddedS}`; }
+    return `${m}:${paddedS}`;
+  }
+
+  function togglePlay() {
+    if (isPlaying) { audio.pause(); }
+    else { audio.play().catch(err => { console.error("Play blocked or error: ", err); }); }
+  }
+
+  audio.addEventListener('play', () => { isPlaying = true; svgPlay.style.display = 'none'; svgPause.style.display = 'block'; bubble.classList.add('playing'); });
+  audio.addEventListener('pause', () => { isPlaying = false; svgPlay.style.display = 'block'; svgPause.style.display = 'none'; bubble.classList.remove('playing'); saveProgress(); });
+  btnPlayPause.addEventListener('click', togglePlay);
+
+  audio.addEventListener('timeupdate', () => {
+    if (!audio.duration) return;
+    const percent = (audio.currentTime / audio.duration) * 100;
+    progressBar.style.width = percent + '%';
+    progressThumb.style.left = percent + '%';
+    timeCurrent.textContent = formatTime(audio.currentTime);
+    if (Math.floor(audio.currentTime) % 2 === 0) { saveProgress(); }
+  });
+
+  function saveProgress() { localStorage.setItem('cse301_ch5_audio_pos', audio.currentTime); }
+
+  function seek(e) {
+    if (!audio.duration) return;
+    const rect = progressContainer.getBoundingClientRect();
+    const width = rect.width;
+    const clickX = e.clientX - rect.left;
+    const percent = Math.min(Math.max(clickX / width, 0), 1);
+    audio.currentTime = percent * audio.duration;
+    saveProgress();
+  }
+
+  let isDragging = false;
+  progressContainer.addEventListener('mousedown', (e) => { isDragging = true; seek(e); });
+  document.addEventListener('mousemove', (e) => { if (isDragging) seek(e); });
+  document.addEventListener('mouseup', () => { isDragging = false; });
+
+  progressContainer.addEventListener('touchstart', (e) => { isDragging = true; seekTouch(e); });
+  document.addEventListener('touchmove', (e) => { if (isDragging) seekTouch(e); });
+  document.addEventListener('touchend', () => { isDragging = false; });
+
+  function seekTouch(e) {
+    if (e.touches.length === 0 || !audio.duration) return;
+    const rect = progressContainer.getBoundingClientRect();
+    const width = rect.width;
+    const touchX = e.touches[0].clientX - rect.left;
+    const percent = Math.min(Math.max(touchX / width, 0), 1);
+    audio.currentTime = percent * audio.duration;
+    saveProgress();
+  }
+
+  btnRewind.addEventListener('click', () => { audio.currentTime = Math.max(audio.currentTime - 10, 0); saveProgress(); });
+  btnForward.addEventListener('click', () => { audio.currentTime = Math.min(audio.currentTime + 10, audio.duration || 0); saveProgress(); });
+
+  btnSpeed.addEventListener('click', () => {
+    speedIndex = (speedIndex + 1) % speeds.length;
+    const currentSpeed = speeds[speedIndex];
+    audio.playbackRate = currentSpeed;
+    btnSpeed.textContent = currentSpeed + 'x';
+    localStorage.setItem('cse301_ch5_audio_speed', currentSpeed);
+  });
+
+  btnMute.addEventListener('click', () => {
+    isMuted = !isMuted;
+    audio.muted = isMuted;
+    if (isMuted) { svgVolume.style.display = 'none'; svgMute.style.display = 'block'; }
+    else { svgVolume.style.display = 'block'; svgMute.style.display = 'none'; }
+  });
+
+  btnMinimize.addEventListener('click', () => { player.classList.remove('active'); bubble.classList.add('active'); });
+  bubble.addEventListener('click', () => { bubble.classList.remove('active'); player.classList.add('active'); });
+
+  heroBtn.addEventListener('click', () => {
+    player.classList.add('active');
+    bubble.classList.remove('active');
+    if (!isPlaying) { audio.play().catch(err => { console.error("Play blocked, player opened: ", err); }); }
+  });
+
+  initAudio();
+})();
+</script>
+
+<script>
+document.querySelectorAll('.navlinks a').forEach(a=>a.addEventListener('click',()=>document.getElementById('nav').classList.remove('open')));
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
