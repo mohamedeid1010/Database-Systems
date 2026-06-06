@@ -199,18 +199,19 @@
     let totalVisits = null;
     let isCounterVisible = true;
 
-    // Increment and fetch visits using CounterAPI
-    fetch('https://api.counterapi.dev/v1/must_cse301_mohamed/visits/up')
-      .then(res => res.json())
-      .then(data => {
-        totalVisits = data.count;
-        updateUI();
-      })
-      .catch(err => {
-        console.error('Error fetching counter:', err);
-        totalVisits = "Unavailable";
-        updateUI();
-      });
+    // Increment and fetch visits using JSONP (bypasses CORS and tracking blockers)
+    window.handleVisitsCallback = function(response) {
+      totalVisits = response.value;
+      updateUI();
+    };
+
+    const script = document.createElement('script');
+    script.src = 'https://abacus.jasoncameron.dev/hit/must_cse301_mohamed/visits?callback=handleVisitsCallback';
+    script.onerror = function() {
+      totalVisits = "Unavailable";
+      updateUI();
+    };
+    document.body.appendChild(script);
 
     function showCount() {
       isCounterVisible = true;
