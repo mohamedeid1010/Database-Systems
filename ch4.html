@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 4 — Relational Model & Normalization — مذاكرة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Tajawal:wght@400;500;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0b0f;--bg2:#101016;--panel:#15151c;--panel2:#1a1a22;--ink:#0c0c11;--gold:#e0b56a;--gold2:#f3d49a;--gold-dim:#8f7440;--text:#eceae4;--dim:#9b978d;--faint:#6b6860;--line:#26262f;--blue:#82b4d6;--green:#83d3aa;--red:#dc8c8c;--purp:#bd9fd8;--cn:#54545f;--sh:0 24px 70px -20px rgba(0,0,0,.7);--r:18px;}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;line-height:1.85;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(1100px 700px at 88% -8%,rgba(224,181,106,.11),transparent 58%),radial-gradient(800px 600px at -5% 105%,rgba(130,180,214,.05),transparent 55%),var(--bg)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;opacity:.022;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.en{font-family:'IBM Plex Mono',monospace;direction:ltr;unicode-bidi:embed;font-weight:500}
+code.en{background:rgba(224,181,106,.10);color:var(--gold2);padding:.08em .42em;border-radius:5px;font-size:.84em;border:1px solid rgba(224,181,106,.16)}
+.topbar{position:sticky;top:0;z-index:200;background:rgba(11,11,15,.78);backdrop-filter:blur(16px) saturate(1.2);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.4rem;gap:1rem}
+.brand{display:flex;align-items:center;gap:.6rem;font-weight:800;color:var(--gold2);white-space:nowrap}
+.brand .mk{width:26px;height:26px;border-radius:8px;background:linear-gradient(140deg,var(--gold2),var(--gold-dim));display:grid;place-items:center;color:var(--ink);font-family:'IBM Plex Mono';font-weight:700;font-size:.8rem}
+.navlinks{display:flex;gap:.1rem;flex-wrap:wrap}
+.navlinks a{color:var(--dim);text-decoration:none;font-size:.78rem;font-weight:600;padding:.4rem .6rem;border-radius:9px;transition:.18s;white-space:nowrap}
+.navlinks a:hover{color:var(--gold2);background:rgba(224,181,106,.08)}
+.menu-btn{display:none;background:none;border:1px solid var(--line);color:var(--gold);padding:.45rem .7rem;border-radius:9px;font-size:1.05rem;cursor:pointer}
+@media(max-width:1080px){.navlinks{display:none;position:absolute;top:100%;right:0;left:0;flex-direction:column;background:var(--bg2);padding:.5rem;border-bottom:1px solid var(--line);max-height:70vh;overflow:auto}.navlinks.open{display:flex}.menu-btn{display:block}}
+.hero{max-width:1000px;margin:0 auto;padding:5rem 1.5rem 2.5rem;text-align:center}
+.kicker{font-family:'IBM Plex Mono';direction:ltr;color:var(--gold);letter-spacing:.32em;font-size:.74rem;font-weight:600;margin-bottom:1.4rem;opacity:.9}
+.hero h1{font-family:'Aref Ruqaa',serif;font-weight:700;font-size:clamp(2.4rem,6.5vw,4.6rem);line-height:1.25;background:linear-gradient(176deg,#fce8c0,var(--gold) 52%,var(--gold-dim));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:1.2rem;padding-bottom:.18em}
+.hero p{font-size:1.12rem;color:var(--dim);max-width:680px;margin:0 auto 2rem}
+.hero .pill{display:inline-block;background:rgba(224,181,106,.07);border:1px solid rgba(224,181,106,.24);color:var(--gold2);padding:.55rem 1.2rem;border-radius:50px;font-weight:700;font-size:.93rem}
+.hdiv{width:130px;height:1px;margin:2.4rem auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+section{max-width:1000px;margin:0 auto;padding:3rem 1.5rem;scroll-margin-top:74px}
+.sec-head{display:flex;align-items:center;gap:1rem;margin-bottom:1.7rem}
+.sec-head .num{font-family:'IBM Plex Mono';direction:ltr;font-size:.95rem;font-weight:700;color:var(--ink);background:linear-gradient(140deg,var(--gold2),var(--gold-dim));min-width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px -6px rgba(224,181,106,.5)}
+.sec-head h2{font-size:clamp(1.5rem,4vw,2.1rem);font-weight:800;color:var(--gold2)}
+.lead{color:var(--dim);font-size:1.05rem;margin-bottom:1.7rem;border-right:3px solid var(--gold-dim);padding-right:1rem}
+.card{background:linear-gradient(165deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);padding:1.5rem 1.6rem;margin-bottom:1.1rem;box-shadow:var(--sh);position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(180deg,var(--gold),transparent 80%)}
+.card h3{color:var(--gold2);font-size:1.2rem;margin-bottom:.55rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.badge{font-family:'IBM Plex Mono';direction:ltr;font-size:.68rem;background:rgba(130,180,214,.12);color:var(--blue);padding:.2rem .55rem;border-radius:6px;border:1px solid rgba(130,180,214,.24);font-weight:600}
+.card p{color:var(--text);margin-bottom:.6rem}
+.ex{background:var(--ink);border-radius:12px;padding:.8rem 1rem;margin-top:.8rem;border:1px dashed rgba(224,181,106,.2);color:var(--dim);font-size:.93rem}
+.ex b{color:var(--gold)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:stretch;margin:1rem 0}
+@media(max-width:600px){.vs{grid-template-columns:1fr;text-align:center}.vs .mid{padding:.2rem}}
+.vs .side{background:var(--ink);border:1px solid var(--line);border-radius:13px;padding:1rem 1.1rem}
+.vs .side h4{color:var(--gold2);margin-bottom:.35rem;font-size:1rem}
+.vs .side.b h4{color:var(--blue)} .vs .side.g h4{color:var(--green)} .vs .side.r h4{color:var(--red)}
+.vs .side p{font-size:.92rem;margin:0;color:var(--text)}
+.vs .mid{display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono';color:var(--gold);font-weight:700;font-size:1.1rem}
+.qlist{list-style:none}
+.qlist li{padding:.48rem 0;border-bottom:1px dashed var(--line);display:flex;gap:.6rem}
+.qlist li:last-child{border:none}
+.qlist .k{color:var(--gold2);font-weight:700;direction:ltr;font-family:'IBM Plex Mono';font-size:.84rem;flex-shrink:0;min-width:max-content}
+.steps{counter-reset:s;margin:1rem 0}
+.stp{position:relative;padding:.7rem 0;padding-right:3rem;border-bottom:1px solid var(--line)}
+.stp:last-child{border:none}
+.stp::before{counter-increment:s;content:counter(s);position:absolute;right:0;top:.75rem;width:30px;height:30px;border-radius:9px;background:rgba(224,181,106,.1);border:1px solid var(--gold-dim);color:var(--gold2);font-family:'IBM Plex Mono';font-weight:700;font-size:.82rem;display:flex;align-items:center;justify-content:center}
+.stp b{color:var(--gold2)}
+.tip{background:rgba(130,180,214,.07);border:1px solid rgba(130,180,214,.2);border-radius:13px;padding:.9rem 1.1rem;margin:1rem 0}.tip b{color:var(--blue)}
+.warn{background:rgba(220,140,140,.07);border:1px solid rgba(220,140,140,.2);border-radius:13px;padding:.9rem 1.1rem;margin:1rem 0}.warn b{color:var(--red)}
+.good{background:rgba(131,211,170,.07);border:1px solid rgba(131,211,170,.2);border-radius:13px;padding:.9rem 1.1rem;margin:1rem 0}.good b{color:var(--green)}
+/* relation short-text */
+.rel{font-family:'IBM Plex Mono';direction:ltr;background:var(--ink);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:9px;padding:.55rem .85rem;margin:.45rem 0;font-size:.84rem;color:var(--text);overflow-x:auto;white-space:nowrap}
+.rel .rn{color:var(--gold2);font-weight:700}
+.rel u{color:var(--gold2);text-decoration-thickness:1.5px;text-underline-offset:2px}
+.rel i{color:var(--blue)}
+.rel .note{color:var(--faint);font-style:normal;font-size:.76rem}
+.fd{font-family:'IBM Plex Mono';direction:ltr;font-size:.85rem;color:var(--text);padding:.18rem 0;display:flex;gap:.35rem;align-items:center;flex-wrap:wrap}
+.fd .det{color:var(--gold2);font-weight:600}
+.fd .arr{color:var(--purp);font-weight:700}
+.fdbox{background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:.7rem .9rem;margin:.5rem 0}
+.nf{display:inline-block;font-family:'IBM Plex Mono';font-size:.72rem;font-weight:700;padding:.12rem .5rem;border-radius:6px;border:1px solid;margin:0 .2rem}
+.nf1{color:var(--red);border-color:rgba(220,140,140,.4);background:rgba(220,140,140,.08)}
+.nf2{color:var(--gold);border-color:rgba(224,181,106,.4);background:rgba(224,181,106,.08)}
+.nf3{color:var(--green);border-color:rgba(131,211,170,.4);background:rgba(131,211,170,.08)}
+/* data table */
+.dtbl{overflow-x:auto;margin:.7rem 0}
+.dtbl table{border-collapse:collapse;font-family:'IBM Plex Mono';font-size:.78rem;direction:ltr;min-width:480px;width:100%}
+.dtbl th{background:rgba(224,181,106,.1);color:var(--gold2);padding:.45rem .7rem;text-align:left;border:1px solid var(--line);font-weight:700}
+.dtbl td{padding:.4rem .7rem;border:1px solid var(--line);color:var(--dim)}
+/* normalization flow */
+.nflow{display:flex;align-items:stretch;gap:.5rem;flex-wrap:wrap;justify-content:center;margin:1rem 0}
+.nstep{flex:1;min-width:130px;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:.9rem;text-align:center}
+.nstep .t{font-family:'IBM Plex Mono';font-weight:700;color:var(--gold2);font-size:.9rem;margin-bottom:.3rem}
+.nstep .d{color:var(--dim);font-size:.8rem}
+.narrow{display:flex;align-items:center;color:var(--purp);font-weight:700;font-size:1.2rem}
+@media(max-width:680px){.narrow{transform:rotate(90deg)}}
+/* EER/flow diagram (for 4-38) */
+.diagram{background:radial-gradient(120% 120% at 50% 0%,#101017,#0c0c11);border:1px solid var(--line);border-radius:16px;padding:1.6rem 1rem;margin:1rem 0;overflow-x:auto}
+.diagram-inner{min-width:min-content;display:flex;flex-direction:column;align-items:center}
+.dcap{text-align:center;color:var(--dim);font-size:.86rem;margin:.1rem 0 1rem}
+.ent{display:inline-flex;flex-direction:column;direction:ltr;text-align:left;background:linear-gradient(160deg,#1d1a12,#15140f);border:1.6px solid var(--gold);border-radius:11px;min-width:120px;box-shadow:0 10px 24px -14px rgba(0,0,0,.8)}
+.ent .nm{font-family:'IBM Plex Mono';font-weight:700;color:var(--gold2);text-align:center;padding:.42rem .8rem;font-size:.84rem;border-bottom:1px solid rgba(224,181,106,.28)}
+.ent .at{padding:.5rem .8rem;display:flex;flex-direction:column;gap:.16rem}
+.ent .at span{font-family:'IBM Plex Mono';font-size:.74rem;color:var(--dim);white-space:nowrap}
+.ent .at .key{color:var(--gold2);text-decoration:underline;text-underline-offset:2px}
+.flow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.1rem}
+.flow .edge{display:flex;flex-direction:column;align-items:center;min-width:60px}
+.flow .edge .ln{height:2px;width:100%;min-width:48px;background:var(--cn)}
+.flow .edge .cl{font-family:'IBM Plex Mono';font-size:.66rem;color:var(--faint);direction:ltr;white-space:nowrap;margin:.12rem 0}
+.col{display:flex;flex-direction:column;align-items:center}
+.vln{width:2px;height:26px;background:var(--cn)}
+.rel-pill{display:inline-flex;flex-direction:column;align-items:center;direction:ltr;background:#15131a;border:1.6px solid var(--purp);color:var(--purp);font-family:'IBM Plex Mono';font-size:.74rem;font-weight:600;padding:.35rem .8rem;border-radius:999px;white-space:nowrap}
+/* problems */
+.prob{background:linear-gradient(165deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;margin-bottom:1rem;overflow:hidden;box-shadow:var(--sh)}
+.prob summary{list-style:none;cursor:pointer;padding:1.1rem 1.3rem;display:flex;align-items:center;gap:.85rem;font-weight:700;color:var(--text);font-size:1.02rem;transition:.18s}
+.prob summary::-webkit-details-marker{display:none}
+.prob summary:hover{background:rgba(224,181,106,.04)}
+.prob summary .qn{font-family:'IBM Plex Mono';direction:ltr;background:linear-gradient(140deg,var(--gold2),var(--gold-dim));color:var(--ink);min-width:48px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;flex-shrink:0}
+.prob summary .ar{margin-right:auto;color:var(--gold);transition:.3s;font-size:1.1rem}
+.prob[open] summary .ar{transform:rotate(90deg)}
+.prob .body{padding:.4rem 1.3rem 1.3rem;border-top:1px solid var(--line)}
+.qtext{color:var(--dim);font-style:italic;margin:.9rem 0;padding-left:.8rem;border-left:2px solid var(--gold-dim);direction:ltr;text-align:left;font-family:'IBM Plex Mono';font-size:.8rem;line-height:1.6}
+.subh{color:var(--gold2);font-family:'IBM Plex Mono';font-size:.86rem;font-weight:700;margin:.9rem 0 .3rem;direction:ltr}
+footer{text-align:center;padding:3rem 1.5rem;color:var(--dim);border-top:1px solid var(--line);margin-top:2rem}
+footer .h{color:var(--gold)}
+.reveal{opacity:0;transform:translateY(22px);transition:.6s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-in">
+  <div class="brand"><span class="mk">4</span> Relational Model</div>
+  <button class="menu-btn" onclick="document.getElementById('nav').classList.toggle('open')">☰</button>
+  <nav class="navlinks" id="nav">
+    <a href="index.html" style="color:var(--gold2);font-weight:700">← Back</a>
+    <a href="#relation">Relations</a>
+    <a href="#keys">Keys</a>
+    <a href="#fd">FDs</a>
+    <a href="#integrity">Integrity</a>
+    <a href="#anomaly">Anomalies</a>
+    <a href="#norm">Normalization</a>
+    <a href="#mapping">EER→Relations</a>
+    <a href="#merge">Merging</a>
+    <a href="#problems">المسائل</a>
+    <a href="#defs">التعريفات</a>
+  </nav>
+</div></div>
+
+<header class="hero">
+  <div class="kicker">CSE 301 · DATABASE SYSTEMS · CHAPTER 4</div>
+  <h1>الـ Relational Model<br>& Normalization</h1>
+  <p>إزاي نحوّل الـ EER لجداول (relations)، ونتأكد إنها مظبوطة ومفيهاش تكرار أو anomalies عن طريق الـ Normalization (1NF → 2NF → 3NF). وكل مسائل شيت 4 محلولة طبق الأصل زي حل الدكتور.</p>
+  <span class="pill">يلا نكمّل الشابتر الرابع 👇</span>
+  <div class="hdiv"></div>
+</header>
+
+<!-- ===== RELATIONS ===== -->
+<section id="relation">
+  <div class="sec-head"><span class="num">01</span><h2>الـ Relation وخصائصها</h2></div>
+  <p class="lead">الـ <span class="en">Relation</span> هو الاسم الرسمي للجدول. كل قاعدة بيانات علائقية = مجموعة relations.</p>
+  <div class="card reveal">
+    <h3>إيه هو الـ Relation؟ <span class="badge">Relation</span></h3>
+    <p>الـ <span class="en">Relation</span> هو جدول ثنائي الأبعاد ليه اسم: <b>صفوف (rows / tuples)</b> = حالات، و<b>أعمدة (columns / attributes)</b> = صفات.</p>
+    <div class="good">✅ <b>مهم:</b> كلمة <code class="en">relation</code> (الجدول) مش نفس كلمة <code class="en">relationship</code> (العلاقة في الـ ERD). وكمان: <b>كل relation أصلاً في 1NF</b>.</div>
+  </div>
+  <div class="card reveal">
+    <h3>الست خصائص (6 properties) — سؤال 4-5 <span class="badge">Properties</span></h3>
+    <ul class="qlist">
+      <li><span class="k">1</span> كل relation ليه اسم فريد في الداتابيز.</li>
+      <li><span class="k">2</span> القيمة في تقاطع أي صف وعمود <b>atomic</b> (مش مقسّمة، وقيمة واحدة).</li>
+      <li><span class="k">3</span> كل صف فريد (مفيش صفين متطابقين).</li>
+      <li><span class="k">4</span> كل عمود ليه اسم فريد داخل الجدول.</li>
+      <li><span class="k">5</span> ترتيب الأعمدة مالوش أهمية.</li>
+      <li><span class="k">6</span> ترتيب الصفوف مالوش أهمية.</li>
+    </ul>
+  </div>
+  <div class="card reveal">
+    <h3>Well-Structured Relation — سؤال 4-10</h3>
+    <p>relation فيها <b>أقل تكرار ممكن</b>، وبتسمح للـ insert/modify/delete من غير أخطاء أو تضارب. مهمة عشان <b>تكامل الداتا (integrity)</b>. القاعدة الذهبية: <b>الجدول مايخصش أكتر من entity type واحد</b>.</p>
+  </div>
+</section>
+
+<!-- ===== KEYS ===== -->
+<section id="keys">
+  <div class="sec-head"><span class="num">02</span><h2>المفاتيح — Keys</h2></div>
+  <p class="lead">المفاتيح بتميّز الصفوف وبتربط الجداول ببعض.</p>
+  <div class="card reveal">
+    <h3>أنواع المفاتيح <span class="badge">Keys</span></h3>
+    <ul class="qlist">
+      <li><span class="k">Primary key</span> مميّز فريد للصف (كل الصفوف بتبقى unique بسببه).</li>
+      <li><span class="k">Candidate key</span> مرشّح يبقى primary — كل non-key بيعتمد عليه، ومفيش جزء منه زيادة.</li>
+      <li><span class="k">Foreign key</span> عمود في الجدول التابع بيشير لـ primary key في جدول تاني (بيطبّق العلاقات).</li>
+      <li><span class="k">Composite key</span> primary key مكوّن من أكتر من عمود.</li>
+      <li><span class="k">Recursive FK</span> foreign key بيشير لـ primary key بتاع <b>نفس الجدول</b> (بيطبّق unary 1:M).</li>
+      <li><span class="k">Surrogate PK</span> رقم تسلسلي/مولّد من النظام مالوش معنى حقيقي.</li>
+      <li><span class="k">Enterprise key</span> primary key قيمته فريدة <b>عبر كل الجداول</b> في الداتابيز كلها.</li>
+      <li><span class="k">Determinant</span> العمود اللي على شمال السهم في الـ functional dependency.</li>
+    </ul>
+  </div>
+  <div class="card reveal">
+    <h3>شرطين الـ Candidate Key — سؤال 4-6</h3>
+    <ul class="qlist">
+      <li><span class="k">Unique ID</span> قيمته بتميّز الصف بشكل فريد.</li>
+      <li><span class="k">Non-redundancy</span> مينفعش تشيل أي عمود منه من غير ما يفقد خاصية التمييز.</li>
+    </ul>
+    <div class="tip">💡 <b>فايدة الـ Surrogate key (4-27):</b> مالوش معنى حقيقي فمش هيتغير أبداً، وأبسط من المفاتيح الذكية، وتقدر تختار نوعه حسب الأداء.</div>
+  </div>
+</section>
+
+<!-- ===== FD ===== -->
+<section id="fd">
+  <div class="sec-head"><span class="num">03</span><h2>الـ Functional Dependencies</h2></div>
+  <p class="lead">قلب الـ Normalization. الـ <span class="en">FD</span> معناها إن قيمة عمود بتحدد قيمة عمود تاني.</p>
+  <div class="card reveal">
+    <h3>التعريف <span class="badge">FD</span></h3>
+    <p>الـ <span class="en">Functional Dependency</span>: قيمة الـ <b>determinant</b> (الشمال) بتحدد قيمة العمود التاني (اليمين). بنكتبها كده:</p>
+    <div class="fdbox">
+      <div class="fd"><span class="det">SSN</span><span class="arr">→</span> Name, Address, Birthdate</div>
+      <div class="fd"><span class="det">EmpID, CourseTitle</span><span class="arr">→</span> DateCompleted</div>
+      <div class="fd"><span class="det">VIN</span><span class="arr">→</span> Make, Model, Color</div>
+    </div>
+  </div>
+  <div class="vs">
+    <div class="card reveal" style="margin:0"><h3 style="color:var(--blue)">Partial Dependency <span class="badge">2NF</span></h3><p>عمود non-key بيعتمد على <b>جزء</b> من الـ composite key مش كله. (دي اللي بنشيلها في 2NF).</p></div>
+    <div class="card reveal" style="margin:0"><h3 style="color:var(--purp)">Transitive Dependency <span class="badge">3NF</span></h3><p>FD بين عمودين <b>non-key</b> (المفتاح بيحدد A، و A بيحدد B). دي اللي بنشيلها في 3NF.</p></div>
+  </div>
+</section>
+
+<!-- ===== INTEGRITY ===== -->
+<section id="integrity">
+  <div class="sec-head"><span class="num">04</span><h2>قيود التكامل — Integrity Constraints</h2></div>
+  <div class="card reveal">
+    <h3>الأنواع الثلاثة <span class="badge">Integrity</span></h3>
+    <ul class="qlist">
+      <li><span class="k">Domain</span> القيم المسموحة لكل عمود (النوع والمدى).</li>
+      <li><span class="k">Entity integrity</span> الـ primary key <b>مايكونش null</b> أبداً.</li>
+      <li><span class="k">Referential</span> أي foreign key لازم يساوي primary key موجود في الجدول التاني، <b>أو</b> يكون null.</li>
+    </ul>
+  </div>
+  <div class="card reveal">
+    <h3>تطبيقها في SQL — سؤال 4-17 <span class="badge">CREATE TABLE</span></h3>
+    <ul class="qlist">
+      <li><span class="k">Entity integrity</span> عن طريق <code class="en">NOT NULL</code> و <code class="en">PRIMARY KEY</code>.</li>
+      <li><span class="k">Referential</span> عن طريق <code class="en">FOREIGN KEY ... REFERENCES</code>.</li>
+    </ul>
+    <div class="tip">💡 <b>Delete Rules:</b> <code class="en">Restrict</code> (امنع حذف الأب لو ليه أبناء) · <code class="en">Cascade</code> (احذف الأبناء معاه) · <code class="en">Set-to-Null</code> (خلّي الـ FK = null).<br><b>فايدة تطبيقها في التصميم (4-18):</b> بتتطبّق بثبات على كل التطبيقات، بدل ما تكتبها في كود كل تطبيق وتختبرها.</div>
+  </div>
+</section>
+
+<!-- ===== ANOMALIES ===== -->
+<section id="anomaly">
+  <div class="sec-head"><span class="num">05</span><h2>الـ Anomalies — سؤال 4-7 و 4-8</h2></div>
+  <p class="lead">لو الجدول فيه أكتر من entity type، بتظهر 3 مشاكل. دي السبب اللي بنعمل علشانه Normalization.</p>
+  <div class="grid2">
+    <div class="card reveal" style="margin:0"><h3 style="color:var(--red)">Insertion</h3><p>مينفعش تضيف صف من غير ما تملأ كل الـ PK — فتضطر تدخل داتا زيادة مالهاش لزمة.</p><div class="ex">مينفعش تضيف موظف من غير ما تسجّله في كورس.</div></div>
+    <div class="card reveal" style="margin:0"><h3 style="color:var(--red)">Deletion</h3><p>حذف صف بيخلّيك تفقد معلومات مهمة مش متخزّنة في مكان تاني.</p><div class="ex">لو شلت الموظف 140 تفقد معلومة وجود كورس Tax Acc.</div></div>
+    <div class="card reveal" style="margin:0"><h3 style="color:var(--red)">Modification</h3><p>تعديل بسيط لازم يتطبّق على صفوف كتير، فبيزيد احتمال الأخطاء.</p><div class="ex">زيادة مرتب الموظف 100 بتتطلب تعديل عدة صفوف.</div></div>
+  </div>
+  <div class="warn">⚠️ <b>ليه بتحصل؟</b> لأن في أكتر من «theme» (entity type) في relation واحد → تكرار داتا واعتماد غير ضروري بين الكيانات.</div>
+</section>
+
+<!-- ===== NORMALIZATION ===== -->
+<section id="norm">
+  <div class="sec-head"><span class="num">06</span><h2>الـ Normalization</h2></div>
+  <p class="lead">عملية تفكيك الـ relations اللي فيها anomalies لـ relations أصغر well-structured. الهدف (4-13): إزالة الـ insertion/deletion/modification anomalies.</p>
+  <div class="card reveal">
+    <h3>الخطوات <span class="badge">1NF → 2NF → 3NF</span></h3>
+    <div class="nflow">
+      <div class="nstep"><div class="t">Unnormalized</div><div class="d">فيه multivalued attributes</div></div>
+      <div class="narrow">→</div>
+      <div class="nstep"><div class="t">1NF</div><div class="d">شيل الـ multivalued · كل قيمة atomic</div></div>
+      <div class="narrow">→</div>
+      <div class="nstep"><div class="t">2NF</div><div class="d">شيل الـ partial dependencies</div></div>
+      <div class="narrow">→</div>
+      <div class="nstep"><div class="t">3NF</div><div class="d">شيل الـ transitive dependencies</div></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card reveal" style="margin:0"><h3 style="color:var(--red)">1NF</h3><p>مفيش multivalued attributes · كل قيمة atomic. (كل relation أصلاً 1NF).</p></div>
+    <div class="card reveal" style="margin:0"><h3 style="color:var(--gold2)">2NF</h3><p>1NF + كل non-key بيعتمد على <b>كل</b> الـ primary key (مفيش partial dependency).</p></div>
+    <div class="card reveal" style="margin:0"><h3 style="color:var(--green)">3NF</h3><p>2NF + مفيش transitive dependencies (مفيش non-key بيحدد non-key).</p></div>
+  </div>
+  <div class="tip">🔑 <b>شروط الـ 2NF (سؤال 4-16) — أي واحد منهم بيكفي:</b> (أ) الـ PK عمود واحد بسيط · (ب) مفيش non-key attributes · (ج) كل non-key بيعتمد على كل أعمدة الـ PK.</div>
+  <div class="tip">🧩 <b>حل الـ 3NF:</b> الـ non-key determinant اللي عامل transitive يروح جدول جديد، ويبقى هو الـ PK هناك، ويفضل foreign key في الجدول القديم.</div>
+</section>
+
+<!-- ===== MAPPING ===== -->
+<section id="mapping">
+  <div class="sec-head"><span class="num">07</span><h2>تحويل الـ EER لـ Relations</h2></div>
+  <p class="lead">القواعد اللي بتستخدمها في مسائل «Develop a relational schema».</p>
+  <div class="card reveal">
+    <h3>الكيانات والصفات</h3>
+    <ul class="qlist">
+      <li><span class="k">Regular entity</span> جدول، والصفات البسيطة بتتحول مباشرة.</li>
+      <li><span class="k">Composite attr</span> بناخد أجزاءه البسيطة بس (Address → Street, City, State, Zip).</li>
+      <li><span class="k">Multivalued attr</span> جدول جديد + foreign key من الكيان الأصلي.</li>
+      <li><span class="k">Weak entity</span> جدول جديد، الـ PK = partial identifier + PK بتاع الكيان القوي (الـ FK مايكونش null).</li>
+    </ul>
+  </div>
+  <div class="card reveal">
+    <h3>العلاقات (4-19, 4-20, 4-21)</h3>
+    <ul class="qlist">
+      <li><span class="k">1:M</span> الـ PK بتاع جهة الـ «one» يروح foreign key في جهة الـ «many».</li>
+      <li><span class="k">M:N</span> جدول جديد، الـ PK بتاعه = الـ PK بتوع الكيانين.</li>
+      <li><span class="k">1:1</span> الـ PK بتاع الجهة الإجبارية يروح FK في الجهة الاختيارية.</li>
+      <li><span class="k">Unary 1:M</span> <b>recursive foreign key</b> في نفس الجدول.</li>
+      <li><span class="k">Unary M:N</span> جدولين: الكيان + associative الـ PK بتاعه عمودين من PK الكيان.</li>
+      <li><span class="k">Ternary M:N</span> associative relation الـ PK بتاعه = PK الكيانات المشاركة.</li>
+      <li><span class="k">Associative entity</span> جدول جديد، الـ PK الافتراضي = PK الكيانين المرتبطين.</li>
+      <li><span class="k">Supertype/Subtype</span> جدول للـ supertype + جدول لكل subtype، والـ PK بتاع الـ supertype يبقى PK لكل subtype (علاقة 1:1).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== MERGING ===== -->
+<section id="merge">
+  <div class="sec-head"><span class="num">08</span><h2>دمج الـ Relations — سؤال 4-15</h2></div>
+  <div class="card reveal">
+    <h3>4 مشاكل وحلولها <span class="badge">View Integration</span></h3>
+    <ul class="qlist">
+      <li><span class="k">Synonyms</span> أسماء مختلفة بنفس المعنى → وحّد الاسم.</li>
+      <li><span class="k">Homonyms</span> اسم واحد بمعانٍ مختلفة → أنشئ أسماء جديدة لكل معنى.</li>
+      <li><span class="k">Transitive dep.</span> الدمج بيخلق transitive → اعمل 3NF واشيلها.</li>
+      <li><span class="k">Supertype/subtype</span> ممكن تكون مخفية → أنشئ relations تعبّر عنها.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== PROBLEMS ===== -->
+<section id="problems">
+  <div class="sec-head"><span class="num">09</span><h2>المسائل المحلولة (طبق الأصل من الشيت)</h2></div>
+  <p class="lead">كل مسألة محلولة بنفس إجابة الدكتور في الشيت: نفس الـ relations، نفس الـ FDs، نفس الـ normal forms.</p>
+
+  <!-- 4-30 -->
+  <details class="prob reveal" open>
+    <summary><span class="qn">4-30</span> تحديد الـ normal form + التفكيك لـ 3NF <span class="ar">›</span></summary>
+    <div class="body">
+      <p class="qtext">For each CLASS relation, indicate the normal form. If not in 3NF, decompose into 3NF relations.</p>
+      <div class="subh">a) CLASS(<u>CourseNo</u>, <u>SectionNo</u>) → <span class="nf nf3">3NF</span></div>
+      <div class="subh">b) CLASS(<u>CourseNo</u>, <u>SectionNo</u>, Room) → <span class="nf nf3">3NF</span></div>
+      <div class="subh">c) CLASS(...Room, Capacity) [Room→Capacity] → <span class="nf nf2">2NF</span> — فيها transitive، نفككها:</div>
+      <div class="rel"><span class="rn">CLASS</span> (<u>CourseNo</u>, <u>SectionNo</u>, <i>Room</i>)</div>
+      <div class="rel"><span class="rn">ROOM</span> (<u>Room</u>, Capacity)</div>
+      <div class="subh">d) CLASS(...CourseName, Room, Capacity) [CourseNo→CourseName; Room→Capacity] → <span class="nf nf1">1NF</span> — فيها partial، نفككها:</div>
+      <div class="rel"><span class="rn">COURSE</span> (<u>CourseNo</u>, CourseName)</div>
+      <div class="rel"><span class="rn">CLASS</span> (<u>CourseNo</u>, <u>SectionNo</u>, <i>Room</i>)</div>
+      <div class="rel"><span class="rn">ROOM</span> (<u>Room</u>, Capacity)</div>
+    </div>
+  </details>
+
+  <!-- 4-32 -->
+  <details class="prob reveal">
+    <summary><span class="qn">4-32</span> Millennium College — 3NF بـ enterprise key <span class="ar">›</span></summary>
+    <div class="body">
+      <p class="qtext">Convert the class list to 3NF using an enterprise key. (instructor→unique location, student→unique major, course→unique title)</p>
+      <div class="rel"><span class="rn">OBJECT</span> (<u>OID</u>, ObjectType)</div>
+      <div class="rel"><span class="rn">INSTRUCTOR</span> (<u>OID</u>, InstructorName, InstructorLocation)</div>
+      <div class="rel"><span class="rn">COURSE</span> (<u>OID</u>, CourseNo, CourseTitle, <i>InstructorName</i>)</div>
+      <div class="rel"><span class="rn">STUDENT</span> (<u>OID</u>, StudentNo, StudentName, Major)</div>
+      <div class="rel"><span class="rn">OUTCOME</span> (<u>OID</u>, <i>StudentNo</i>, <i>CourseNo</i>, Grade)</div>
+      <div class="tip">💡 الـ <code class="en">OID</code> هو الـ enterprise key — فريد عبر كل الجداول.</div>
+    </div>
+  </details>
+
+  <!-- 4-33 -->
+  <details class="prob reveal">
+    <summary><span class="qn">4-33</span> Credit Card — schema + FDs + 3NF بـ enterprise key <span class="ar">›</span></summary>
+    <div class="body">
+      <p class="qtext">EER for a credit card environment (debit/credit card subtypes). a) relational schema, b) FDs, c) 3NF with enterprise key.</p>
+      <div class="subh">a, b) Relational schema (الأسهم = foreign keys):</div>
+      <div class="rel"><span class="rn">CUSTOMER</span> (<u>CustomerID</u>, CustName, CustAddress)</div>
+      <div class="rel"><span class="rn">CARD ACCOUNT</span> (<u>AccountID</u>, ExpDate, CardType, <i>CustomerID</i>)</div>
+      <div class="rel"><span class="rn">DEBIT CARD</span> (<u><i>DAccountID</i></u>, BankNo)</div>
+      <div class="rel"><span class="rn">CREDIT CARD</span> (<u><i>CAccountID</i></u>, CurrBal)</div>
+      <div class="rel"><span class="rn">CHARGES</span> (<u><i>MerchID</i></u>, <u><i>CAccountID</i></u>, <u>ChargeDate</u>, <u>ChargeTime</u>, Amount)</div>
+      <div class="rel"><span class="rn">MERCHANT</span> (<u>MerchID</u>, MerchAddr)</div>
+      <div class="subh">c) باستخدام enterprise key (OID):</div>
+      <div class="rel"><span class="rn">OBJECT</span> (<u>OID</u>, ObjectType)</div>
+      <div class="rel"><span class="rn">CUSTOMER</span> (<u>OID</u>, CustomerID, CustName, CustAddress)</div>
+      <div class="rel"><span class="rn">CARD ACCOUNT</span> (<u>OID</u>, AccountID, ExpDate, CardType, <i>CustomerID</i>)</div>
+      <div class="rel"><span class="rn">DEBIT CARD</span> (<u>OID</u>, DAccountID, BankNo)</div>
+      <div class="rel"><span class="rn">CREDIT CARD</span> (<u>OID</u>, CAccountID, CurrBal)</div>
+      <div class="rel"><span class="rn">CHARGES</span> (<u>OID</u>, <i>MerchID</i>, <i>CAccountID</i>, ChargeDate, ChargeTime, Amount)</div>
+      <div class="rel"><span class="rn">MERCHANT</span> (<u>OID</u>, MerchID, MerchAddr)</div>
+    </div>
+  </details>
+
+  <!-- 4-34 -->
+  <details class="prob reveal">
+    <summary><span class="qn">4-34</span> PART SUPPLIER — 1NF, FDs, anomalies, 3NF <span class="ar">›</span></summary>
+    <div class="body">
+      <p class="qtext">Parts & vendors data. PartNo (not Description) uniquely identifies parts; VendorName uniquely identifies vendors.</p>
+      <div class="subh">a) العلاقة في 1NF بالبيانات:</div>
+      <div class="rel"><span class="rn">PART SUPPLIER</span> (<u>PartNo</u>, Description, <u>VendorName</u>, Address, UnitCost)</div>
+      <div class="dtbl"><table>
+        <tr><th>PartNo</th><th>Description</th><th>VendorName</th><th>Address</th><th>UnitCost</th></tr>
+        <tr><td>1234</td><td>Logic Chip</td><td>Fast Chips</td><td>Cupertino</td><td>10.00</td></tr>
+        <tr><td>1234</td><td>Logic Chip</td><td>Smart Chips</td><td>Phoenix</td><td>8.00</td></tr>
+        <tr><td>5678</td><td>Memory Chip</td><td>Fast Chips</td><td>Cupertino</td><td>3.00</td></tr>
+        <tr><td>5678</td><td>Memory Chip</td><td>Quality Chips</td><td>Austin</td><td>2.00</td></tr>
+        <tr><td>5678</td><td>Memory Chip</td><td>Smart Chips</td><td>Phoenix</td><td>5.00</td></tr>
+      </table></div>
+      <div class="subh">b) Functional dependencies + candidate key:</div>
+      <div class="fdbox">
+        <div class="fd"><span class="det">PartNo</span><span class="arr">→</span> Description</div>
+        <div class="fd"><span class="det">VendorName</span><span class="arr">→</span> Address</div>
+        <div class="fd"><span class="det">PartNo, VendorName</span><span class="arr">→</span> UnitCost</div>
+      </div>
+      <p>Composite candidate key: <code class="en">PartNo + VendorName</code></p>
+      <div class="subh">c) Anomalies:</div>
+      <ul class="qlist">
+        <li><span class="k">Insert</span> مينفعش تضيف vendor جديد من غير part رقمه (والعكس).</li>
+        <li><span class="k">Delete</span> لو حذفت آخر part لـ vendor، تفقد معلومات الـ vendor (مثلاً Part 5678 من Quality Chips).</li>
+        <li><span class="k">Modify</span> لو عنوان vendor اتغيّر، لازم تعدّل كل صفوفه.</li>
+      </ul>
+      <div class="subh">e) Normal form: <span class="nf nf1">1NF</span></div>
+      <div class="subh">f) Relations في 3NF:</div>
+      <div class="rel"><span class="rn">PART</span> (<u>PartNo</u>, Description)</div>
+      <div class="rel"><span class="rn">PART SUPPLIER</span> (<u><i>PartNo</i></u>, <u><i>VendorName</i></u>, UnitCost)</div>
+      <div class="rel"><span class="rn">VENDOR</span> (<u>VendorName</u>, Address)</div>
+    </div>
+  </details>
+
+  <!-- 4-35 -->
+  <details class="prob reveal">
+    <summary><span class="qn">4-35</span> Restaurant — relational schema <span class="ar">›</span></summary>
+    <div class="body">
+      <p class="qtext">EER for a restaurant (seatings, tables, waiters, managers). Develop a relational schema + FDs + 3NF with enterprise key.</p>
+      <div class="rel"><span class="rn">RTABLE</span> (<u>RTableNbr</u>, RTableNbrOfSeats, RTableRating)</div>
+      <div class="rel"><span class="rn">SEATING</span> (<u>SeatingID</u>, NbrOfGuests, StartTimeDate, EndTimeDate, <i>ManagerID</i>)</div>
+      <div class="rel"><span class="rn">SEATINGTABLES</span> (<u><i>RTableNbr</i></u>, <u><i>SeatingID</i></u>)</div>
+      <div class="rel"><span class="rn">EMPLOYEE</span> (<u>EmployeeID</u>, EmpLName, EmpFName, EmpType)</div>
+      <div class="rel"><span class="rn">MANAGER</span> (<u><i>EmployeeID</i></u>, MonthlySalary)</div>
+      <div class="rel"><span class="rn">WAITER</span> (<u><i>EmployeeID</i></u>, HourlyWage, <i>ManagerID</i>)</div>
+      <div class="rel"><span class="rn">SPECIALTY</span> (<u>SpecialtyID</u>, SpecialtyDesc)</div>
+      <div class="rel"><span class="rn">WAITERSPECIALTY</span> (<u><i>EmployeeID</i></u>, <u><i>SpecialtyID</i></u>)</div>
+      <div class="rel"><span class="rn">ASSIGNMENT</span> (<u><i>SeatingID</i></u>, <u><i>EmployeeID</i></u>, StartTimeDate, EndTimeDate, TipsEarned)</div>
+      <div class="tip">💡 EMPLOYEE هو supertype و MANAGER / WAITER هم subtypes (الـ PK بتاعهم = EmployeeID). و SEATINGTABLES و WAITERSPECIALTY و ASSIGNMENT جداول للعلاقات M:N.</div>
+    </div>
+  </details>
+
+  <!-- 4-36 -->
+  <details class="prob reveal">
+    <summary><span class="qn">4-36</span> GRADE REPORT — FDs, normal form, 3NF <span class="ar">›</span></summary>
+    <div class="body">
+      <p class="qtext">GRADE REPORT relation for a university. a) schema + FDs, b) normal form, c) 3NF, d) referential integrity.</p>
+      <div class="subh">a) Functional dependencies:</div>
+      <div class="fdbox">
+        <div class="fd"><span class="det">StudentID</span><span class="arr">→</span> StudentName, CampusAddress, Major</div>
+        <div class="fd"><span class="det">CourseID</span><span class="arr">→</span> CourseTitle, InstructorName</div>
+        <div class="fd"><span class="det">InstructorName</span><span class="arr">→</span> InstructorLocation</div>
+        <div class="fd"><span class="det">StudentID, CourseID</span><span class="arr">→</span> Grade</div>
+      </div>
+      <div class="subh">b) Normal form: <span class="nf nf1">1NF</span></div>
+      <p>سبب: فيها partial dependency (StudentName بيعتمد على StudentID لوحده، مش كل الـ PK)، فمش 2NF.</p>
+      <div class="subh">c) Relations في 3NF:</div>
+      <div class="rel"><span class="rn">STUDENT</span> (<u>StudentID</u>, StudentName, CampusAddress, Major)</div>
+      <div class="rel"><span class="rn">REGISTRATION</span> (<u><i>StudentID</i></u>, <u><i>CourseID</i></u>, Grade)</div>
+      <div class="rel"><span class="rn">COURSE</span> (<u>CourseID</u>, CourseTitle, <i>InstructorName</i>)</div>
+      <div class="rel"><span class="rn">INSTRUCTOR</span> (<u>InstructorName</u>, InstructorLocation)</div>
+    </div>
+  </details>
+
+  <!-- 4-37 -->
+  <details class="prob reveal">
+    <summary><span class="qn">4-37</span> Shipping MANIFEST — FDs, normal form, 3NF <span class="ar">›</span></summary>
+    <div class="body">
+      <p class="qtext">Shipping manifest relation. a) schema + FDs, b) normal form, c) 3NF, d) referential integrity.</p>
+      <div class="subh">a) ملحوظة: TotalWeight صفة derived (تتحسب من Weight × Quantity) فمش بتتخزن. FDs:</div>
+      <div class="fdbox">
+        <div class="fd"><span class="det">ShipmentID</span><span class="arr">→</span> ShipmentDate, ExpectedArrivalDate, Origin, Destination, ShipNumber, CaptainID</div>
+        <div class="fd"><span class="det">CaptainID</span><span class="arr">→</span> CaptainName</div>
+        <div class="fd"><span class="det">ItemNumber</span><span class="arr">→</span> Type, Description, Weight</div>
+        <div class="fd"><span class="det">ShipmentID, ItemNumber</span><span class="arr">→</span> Quantity</div>
+      </div>
+      <div class="subh">b) Normal form: <span class="nf nf1">1NF</span></div>
+      <p>سبب: ShipmentDate بيعتمد على ShipmentID لوحده (partial dependency).</p>
+      <div class="subh">c) Relations في 3NF:</div>
+      <div class="rel"><span class="rn">SHIPMENT</span> (<u>ShipmentID</u>, ShipmentDate, ExpectedArrivalDate, Origin, Destination, ShipNumber, <i>CaptainID</i>)</div>
+      <div class="rel"><span class="rn">SHIPMENT LINE</span> (<u><i>ShipmentID</i></u>, <u><i>ItemNumber</i></u>, Quantity)</div>
+      <div class="rel"><span class="rn">ITEM</span> (<u>ItemNumber</u>, Type, Description, Weight)</div>
+      <div class="rel"><span class="rn">CAPTAIN</span> (<u>CaptainID</u>, CaptainName)</div>
+    </div>
+  </details>
+
+  <!-- 4-38 -->
+  <details class="prob reveal">
+    <summary><span class="qn">4-38</span> تحويل relations 4-37 لـ EER diagram <span class="ar">›</span></summary>
+    <div class="body">
+      <p class="qtext">Transform the relational schema from 4-37 into an EER diagram. State assumptions.</p>
+      <div class="diagram">
+        <p class="dcap">CAPTAIN — SHIPMENT — SHIPMENT LINE — ITEM</p>
+        <div class="diagram-inner">
+          <div class="flow">
+            <div class="ent"><div class="nm">CAPTAIN</div><div class="at"><span class="key">CaptID</span><span>CaptainName</span></div></div>
+            <div class="edge"><span class="cl">Operated By</span><span class="ln"></span><span class="cl">(1 : M)</span></div>
+            <div class="col">
+              <div class="ent"><div class="nm">SHIPMENT</div><div class="at"><span class="key">ShipmentID</span><span>ShipmentDate</span><span>Origin, Destination</span><span>ShipNo</span></div></div>
+              <span class="vln"></span>
+              <div class="rel-pill">Composes (1 : M)</div>
+              <span class="vln"></span>
+              <div class="ent"><div class="nm">SHIPMENT LINE</div><div class="at"><span>Quantity</span></div></div>
+              <span class="vln"></span>
+              <div class="rel-pill">IsPartOf (M : 1)</div>
+              <span class="vln"></span>
+              <div class="ent"><div class="nm">ITEM</div><div class="at"><span class="key">ItemNumber</span><span>Type, Description</span><span>Weight</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tip">📝 <b>Assumptions:</b> الـ SHIPMENT LINE كيان ترابطي (associative) بين SHIPMENT و ITEM. كل shipment ليه captain واحد (Operated By). TotalWeight مش متخزّن (derived).</div>
+    </div>
+  </details>
+
+  <!-- 4-44 -->
+  <details class="prob reveal">
+    <summary><span class="qn">4-44</span> Vacation Property Rentals — relations + 3NF + constraint <span class="ar">›</span></summary>
+    <div class="body">
+      <p class="qtext">EER for vacation rentals (beach/mountain property subtypes). a) relations, b) FDs/normal form, c) 3NF, d) integrity constraint.</p>
+      <div class="subh">a, c) Relations في 3NF:</div>
+      <div class="rel"><span class="rn">RENTER</span> (<u>RenterID</u>, LastName, FirstName, MiddleInitial, Address, Phone#, Email)</div>
+      <div class="rel"><span class="rn">RENTAL AGREEMENT</span> (<u>AgreementID</u>, <i>RenterID</i>, <i>PropertyID</i>, BeginDate, EndDate, RentalAmount)</div>
+      <div class="rel"><span class="rn">PROPERTY</span> (<u>PropertyID</u>, StreetAddress, CityState, Zip, NbrRooms, BaseRate, <i>MainProperty</i>, PropertyType)</div>
+      <div class="rel"><span class="rn">BEACH PROPERTY</span> (<u><i>BPropertyID</i></u>, BlocksToBeach)</div>
+      <div class="rel"><span class="rn">MOUNTAIN PROPERTY</span> (<u><i>MPropertyID</i></u>)</div>
+      <div class="rel"><span class="rn">PROPERTY ACTIVITY</span> (<u><i>MPropertyID</i></u>, <u><i>ActivityID</i></u>)</div>
+      <div class="rel"><span class="rn">ACTIVITY</span> (<u>ActivityID</u>, ActivityDesc)</div>
+      <div class="subh">b) كل الـ relations في <span class="nf nf3">3NF</span>.</div>
+      <div class="subh">d) Integrity constraint (action assertion):</div>
+      <div class="good">العقار يكون ليه <b>اتفاقية إيجار واحدة بس سارية في نفس الوقت</b> — يعني أي تاريخ بيقع بين BeginDate و EndDate لاتفاقية واحدة فقط.</div>
+    </div>
+  </details>
+</section>
+
+<!-- ===== DEFINITIONS ===== -->
+<section id="defs">
+  <div class="sec-head"><span class="num">10</span><h2>التعريفات والأسئلة النظرية</h2></div>
+  <p class="lead">إجابات أسئلة 1 و 2 والأسئلة النظرية جاهزة للحفظ.</p>
+  <div class="card reveal">
+    <h3>سؤال 1 — عرّف المصطلحات</h3>
+    <ul class="qlist">
+      <li><span class="k">Determinant</span> العمود على شمال السهم في الـ FD.</li>
+      <li><span class="k">Functional dependency</span> قيد بين عمودين قيمة أحدهما بتحدد الآخر.</li>
+      <li><span class="k">Transitive dependency</span> FD بين عمودين non-key.</li>
+      <li><span class="k">Recursive FK</span> foreign key بيشير لـ PK بتاع نفس الجدول.</li>
+      <li><span class="k">Normalization</span> تفكيك الـ relations اللي فيها anomalies لـ relations أصغر well-structured.</li>
+      <li><span class="k">Composite key</span> primary key من أكتر من عمود.</li>
+      <li><span class="k">Relation</span> جدول ثنائي الأبعاد ليه اسم.</li>
+      <li><span class="k">Normal form</span> حالة للـ relation ناتجة من تطبيق قواعد الـ FDs.</li>
+      <li><span class="k">Partial FD</span> non-key بيعتمد على جزء من الـ PK مش كله.</li>
+      <li><span class="k">Enterprise key</span> PK قيمته فريدة عبر كل الجداول.</li>
+      <li><span class="k">Surrogate PK</span> رقم تسلسلي/مولّد مالوش معنى حقيقي.</li>
+    </ul>
+  </div>
+  <div class="card reveal">
+    <h3>سؤال 2 — قارن</h3>
+    <ul class="qlist">
+      <li><span class="k">Normal form vs Normalization</span> الأولى حالة الـ relation، التانية عملية التفكيك.</li>
+      <li><span class="k">Candidate vs Primary</span> كل candidate ممكن يميّز، الـ primary هو المختار منهم.</li>
+      <li><span class="k">Partial vs Transitive</span> الأولى اعتماد على جزء من الـ PK، التانية بين non-keys.</li>
+      <li><span class="k">Composite vs Recursive FK</span> PK من عدة أعمدة · FK لنفس الجدول.</li>
+      <li><span class="k">Determinant vs Candidate key</span> شمال السهم في FD · يميّز الصف.</li>
+      <li><span class="k">Foreign vs Primary</span> FK بيشير لـ PK في جدول تاني.</li>
+      <li><span class="k">Natural vs Surrogate PK</span> له معنى حقيقي · رقم مولّد بلا معنى.</li>
+      <li><span class="k">Enterprise vs Surrogate</span> فريد عبر الداتابيز كلها · فريد داخل الجدول.</li>
+    </ul>
+  </div>
+  <div class="card reveal">
+    <h3>أسئلة نظرية مهمة</h3>
+    <p><b>4-4) Conceptual vs Logical:</b> الـ Conceptual بيفهم المؤسسة والمتطلبات الصح. الـ Logical بيحوّلها لهيكل تقني مستقر يشتغل على نوع داتابيز معيّن.</p>
+    <p><b>4-11) العلاقات في الـ relational model:</b> بتتمثّل بالـ <b>foreign keys</b> (مثلاً CustomerID كـ FK في جدول ORDER).</p>
+    <p><b>4-13) غرض الـ Normalization:</b> تجميع الصفات في relations بشكل بيشيل الـ insertion/deletion/modification anomalies.</p>
+    <p><b>4-14) ليه مفيد رغم إن EER بيدّي relations منظّمة؟</b> لأنه عملية منهجية، ومفيدة لما الهيكل مبيتبنيش من conceptual model جاهز بل من data items موجودة.</p>
+    <p><b>4-19) Unary 1:M:</b> recursive foreign key في نفس الجدول.</p>
+    <p><b>4-20) Ternary M:N:</b> associative relation الـ PK بتاعه = PK الكيانات المشاركة.</p>
+    <p><b>4-21) Associative entity:</b> relation جديد الـ PK الافتراضي = PK الكيانات المرتبطة.</p>
+  </div>
+</section>
+
+<footer>
+  <p>بالتوفيق يا أبو عيد 💪 — مفتاح الشابتر ده: <b>اعرف الـ FDs</b>، وبعدها الـ normal form بيبان لوحده (partial = 1NF، transitive = 2NF، نضيف = 3NF).</p>
+  <p style="margin-top:.5rem;font-size:.85rem">CSE 301 · Chapter 4 · Logical Database Design · <span class="h">★</span></p>
+</footer>
+
+<script>
+document.querySelectorAll('.navlinks a').forEach(a=>a.addEventListener('click',()=>document.getElementById('nav').classList.remove('open')));
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

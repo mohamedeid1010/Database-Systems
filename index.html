@@ -17,6 +17,7 @@
       --text-dim: #888890;
       --accent-ch2: #e0b56a;
       --accent-ch3: #82b4d6;
+      --accent-ch4: #bd9fd8;
     }
 
     .abu-eid {
@@ -109,6 +110,11 @@
       box-shadow: 0 0 15px rgba(130, 180, 214, 0.15);
     }
 
+    .btn.ch4:hover {
+      border-color: var(--accent-ch4);
+      box-shadow: 0 0 15px rgba(189, 159, 216, 0.15);
+    }
+
     .ch-label {
       font-size: 0.85rem;
       font-weight: 600;
@@ -120,6 +126,7 @@
 
     .ch2 .ch-label { color: var(--accent-ch2); }
     .ch3 .ch-label { color: var(--accent-ch3); }
+    .ch4 .ch-label { color: var(--accent-ch4); }
 
     .ch-title {
       font-size: 1.15rem;
@@ -166,6 +173,14 @@
         <div>
           <div class="ch-label">Chapter 03</div>
           <div class="ch-title">EER Model Study Guide</div>
+        </div>
+        <span class="arrow">→</span>
+      </a>
+
+      <a href="ch4.html" class="btn ch4">
+        <div>
+          <div class="ch-label">Chapter 04</div>
+          <div class="ch-title">Relational Model & Normalization Study Guide</div>
         </div>
         <span class="arrow">→</span>
       </a>
