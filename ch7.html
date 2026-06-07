@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 7 — Advanced SQL — مذاكرة ممتعة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Tajawal:wght@400;500;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a12;--bg2:#0f0f1a;--panel:#16161f;--panel2:#1b1b27;--ink:#0b0b12;--gold:#e6b95f;--gold2:#ffd98a;--gold-dim:#8f7440;--text:#f0eee8;--dim:#a39e92;--faint:#6b6860;--line:#272730;--blue:#7fb6e6;--green:#7fe0a8;--red:#ff8d8d;--purp:#c79ff0;--pink:#ff9ecb;--cyan:#7fe8e0;--sh:0 24px 70px -20px rgba(0,0,0,.7);--r:20px;}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;line-height:1.85;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(1100px 700px at 88% -8%,rgba(199,159,240,.12),transparent 58%),radial-gradient(900px 700px at -8% 30%,rgba(127,224,168,.07),transparent 55%),radial-gradient(800px 600px at 50% 110%,rgba(127,182,230,.07),transparent 55%),var(--bg)}
+.en{font-family:'IBM Plex Mono',monospace;direction:ltr;unicode-bidi:embed;font-weight:500}
+code.en{background:rgba(230,185,95,.12);color:var(--gold2);padding:.08em .42em;border-radius:5px;font-size:.84em;border:1px solid rgba(230,185,95,.18)}
+
+.scrollbar{position:fixed;top:0;left:0;height:4px;width:0%;z-index:300;background:linear-gradient(90deg,var(--purp),var(--pink),var(--gold));box-shadow:0 0 12px rgba(199,159,240,.6);transition:width .1s linear}
+
+.topbar{position:sticky;top:0;z-index:200;background:rgba(10,10,18,.82);backdrop-filter:blur(16px) saturate(1.3);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:.7rem 1.2rem;gap:1rem}
+.brand{display:flex;align-items:center;gap:.6rem;font-weight:800;color:var(--gold2);white-space:nowrap}
+.brand .mk{width:30px;height:30px;border-radius:9px;background:linear-gradient(140deg,var(--gold2),var(--gold-dim));display:grid;place-items:center;color:var(--ink);font-family:'IBM Plex Mono';font-weight:700;font-size:.85rem;box-shadow:0 4px 14px -2px rgba(230,185,95,.5)}
+.navlinks{display:flex;gap:.1rem;flex-wrap:wrap}
+.navlinks a{color:var(--dim);text-decoration:none;font-size:.78rem;font-weight:600;padding:.4rem .55rem;border-radius:9px;transition:.18s;white-space:nowrap}
+.navlinks a:hover{color:var(--gold2);background:rgba(230,185,95,.08)}
+.menu-btn{display:none;background:none;border:1px solid var(--line);color:var(--gold);padding:.45rem .7rem;border-radius:9px;font-size:1.05rem;cursor:pointer}
+@media(max-width:1080px){.navlinks{display:none;position:absolute;top:100%;right:0;left:0;flex-direction:column;background:var(--bg2);padding:.5rem;border-bottom:1px solid var(--line);max-height:70vh;overflow:auto}.navlinks.open{display:flex}.menu-btn{display:block}}
+
+.xpwrap{position:fixed;bottom:20px;right:20px;z-index:250;display:flex;align-items:center;gap:.55rem;background:rgba(16,16,26,.9);backdrop-filter:blur(14px);border:1px solid rgba(230,185,95,.3);border-radius:50px;padding:.5rem .9rem;box-shadow:0 10px 30px -8px rgba(0,0,0,.7);font-weight:800;transition:transform .18s}
+.xpwrap .star{font-size:1.1rem;filter:drop-shadow(0 0 6px rgba(230,185,95,.6))}
+.xpwrap .xpnum{font-family:'IBM Plex Mono';color:var(--gold2);direction:ltr;font-size:.92rem}
+.xpwrap .lvl{font-size:.7rem;color:var(--dim);font-weight:700}
+.xp-pop{position:fixed;z-index:400;font-family:'IBM Plex Mono';font-weight:800;color:var(--gold2);pointer-events:none;font-size:1.1rem;text-shadow:0 2px 8px rgba(0,0,0,.6);animation:xpfly 1s ease-out forwards}
+@keyframes xpfly{0%{opacity:0;transform:translateY(0) scale(.7)}20%{opacity:1;transform:translateY(-10px) scale(1.1)}100%{opacity:0;transform:translateY(-50px) scale(1)}}
+
+.hero{max-width:920px;margin:0 auto;padding:4rem 1.4rem 2rem;text-align:center}
+.kicker{font-family:'IBM Plex Mono';direction:ltr;color:var(--gold);letter-spacing:.3em;font-size:.72rem;font-weight:600;margin-bottom:1.2rem;opacity:.9}
+.hero h1{font-family:'Aref Ruqaa',serif;font-weight:700;font-size:clamp(2.3rem,6.5vw,4.4rem);line-height:1.25;background:linear-gradient(176deg,#fff0d0,var(--gold) 50%,var(--purp));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:1.1rem;padding-bottom:.18em}
+.hero .sub{font-size:1.1rem;color:var(--dim);max-width:640px;margin:0 auto 1.6rem}
+.startbtn{display:inline-flex;align-items:center;gap:.6rem;background:linear-gradient(135deg,var(--gold2),var(--gold-dim));color:var(--ink);border:none;padding:.95rem 2rem;border-radius:50px;font-weight:800;font-size:1.05rem;font-family:'Tajawal';cursor:pointer;box-shadow:0 12px 30px -8px rgba(230,185,95,.55);transition:.2s}
+.startbtn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 16px 40px -8px rgba(230,185,95,.7)}
+.herostats{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin-top:1.6rem}
+.hstat{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:14px;padding:.6rem 1rem;min-width:90px}
+.hstat .n{font-family:'IBM Plex Mono';font-weight:800;color:var(--gold2);font-size:1.2rem}
+.hstat .l{font-size:.72rem;color:var(--dim)}
+.hdiv{width:120px;height:1px;margin:2.2rem auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+
+.examnote{max-width:680px;margin:1.4rem auto 0;background:linear-gradient(120deg,rgba(199,159,240,.08),rgba(127,182,230,.06));border:1px solid rgba(199,159,240,.25);border-radius:16px;padding:.9rem 1.1rem;font-size:.95rem;color:var(--text)}
+.examnote b{color:var(--purp)}
+
+section{max-width:880px;margin:0 auto;padding:2.6rem 1.4rem;scroll-margin-top:70px}
+.sec-head{display:flex;align-items:center;gap:.9rem;margin-bottom:1.4rem}
+.sec-head .num{font-family:'IBM Plex Mono';direction:ltr;font-size:1.3rem;min-width:50px;height:50px;border-radius:15px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px -6px rgba(0,0,0,.5)}
+.sec-head h2{font-size:clamp(1.4rem,4vw,2rem);font-weight:800;color:var(--gold2)}
+.sec-head .sm{font-size:.8rem;color:var(--faint);font-weight:600}
+
+.card{background:linear-gradient(165deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);padding:1.4rem 1.5rem;margin-bottom:1rem;box-shadow:var(--sh);position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:linear-gradient(180deg,var(--gold),var(--purp) 90%)}
+.card h3{color:var(--gold2);font-size:1.18rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.emoji{font-size:1.3rem}
+.simple{font-size:1.05rem;color:var(--text);margin-bottom:.6rem}
+.simple b{color:var(--gold2)}
+.tagq{font-family:'IBM Plex Mono';direction:ltr;font-size:.64rem;background:rgba(199,159,240,.14);color:var(--purp);padding:.18rem .5rem;border-radius:6px;border:1px solid rgba(199,159,240,.3);font-weight:700}
+
+.ana{background:linear-gradient(120deg,rgba(255,158,203,.08),rgba(199,159,240,.06));border:1px solid rgba(255,158,203,.22);border-radius:14px;padding:.8rem 1rem;margin:.7rem 0;font-size:.95rem;color:var(--text)}
+.ana .lbl{display:inline-flex;align-items:center;gap:.3rem;font-weight:800;color:var(--pink);font-size:.82rem;margin-bottom:.15rem}
+.ana b{color:var(--pink)}
+
+.more{margin-top:.6rem}
+.more summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:.4rem;color:var(--blue);font-weight:700;font-size:.85rem;background:rgba(127,182,230,.08);border:1px solid rgba(127,182,230,.22);padding:.35rem .8rem;border-radius:50px;transition:.18s}
+.more summary::-webkit-details-marker{display:none}
+.more summary:hover{background:rgba(127,182,230,.16)}
+.more[open] summary{margin-bottom:.6rem}
+.more .deep{background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:.8rem 1rem;font-size:.92rem;color:var(--dim)}
+.more .deep b{color:var(--gold2)}
+
+.qlist{list-style:none;margin:.3rem 0}
+.qlist li{padding:.45rem 0;border-bottom:1px dashed var(--line);display:flex;gap:.6rem;align-items:flex-start}
+.qlist li:last-child{border:none}
+.qlist .k{color:var(--gold2);font-weight:700;direction:ltr;font-family:'IBM Plex Mono';font-size:.8rem;flex-shrink:0;min-width:max-content;background:rgba(230,185,95,.1);padding:.05rem .45rem;border-radius:6px}
+.tip{background:rgba(127,182,230,.07);border:1px solid rgba(127,182,230,.2);border-radius:13px;padding:.8rem 1rem;margin:.8rem 0;font-size:.93rem}.tip b{color:var(--blue)}
+.warn{background:rgba(255,141,141,.07);border:1px solid rgba(255,141,141,.2);border-radius:13px;padding:.8rem 1rem;margin:.8rem 0;font-size:.93rem}.warn b{color:var(--red)}
+.good{background:rgba(127,224,168,.07);border:1px solid rgba(127,224,168,.2);border-radius:13px;padding:.8rem 1rem;margin:.8rem 0;font-size:.93rem}.good b{color:var(--green)}
+
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:.8rem;align-items:stretch;margin:.8rem 0}
+@media(max-width:600px){.vs{grid-template-columns:1fr;text-align:center}}
+.vs .side{background:var(--ink);border:1px solid var(--line);border-radius:14px;padding:.9rem 1rem}
+.vs .side h4{color:var(--gold2);margin-bottom:.3rem;font-size:.98rem}
+.vs .side.b h4{color:var(--blue)} .vs .side.g h4{color:var(--green)} .vs .side.r h4{color:var(--red)}
+.vs .side p{font-size:.88rem;margin:0;color:var(--text)}
+.vs .mid{display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono';color:var(--gold);font-weight:700;font-size:1rem}
+
+.code{font-family:'IBM Plex Mono';direction:ltr;text-align:left;background:var(--ink);border:1px solid var(--line);border-left:3px solid var(--green);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0;font-size:.82rem;color:var(--text);overflow-x:auto;white-space:pre;line-height:1.7}
+.code .kw{color:var(--purp);font-weight:600}
+.code .st{color:var(--green)}
+.code .cm{color:var(--faint);font-style:italic}
+.code .fn{color:var(--cyan)}
+
+.schema{background:linear-gradient(160deg,#13161c,#101319);border:1px dashed rgba(127,182,230,.3);border-radius:14px;padding:.9rem 1.1rem;margin:.6rem 0;direction:ltr;text-align:left}
+.schema .st{font-family:'IBM Plex Mono';font-size:.78rem;color:var(--text);padding:.18rem 0}
+.schema .rn{color:var(--gold2);font-weight:700}
+.schema u{color:var(--gold2);text-underline-offset:2px}
+.schema i{color:var(--blue);font-style:italic}
+
+.exq{background:linear-gradient(160deg,#171520,#101417);border:1px solid rgba(199,159,240,.3);border-radius:18px;padding:1.2rem 1.3rem;margin:1.2rem 0;box-shadow:var(--sh)}
+.exq .eh{display:flex;align-items:center;gap:.5rem;color:var(--purp);font-weight:800;font-size:.76rem;font-family:'IBM Plex Mono';direction:ltr;margin-bottom:.5rem}
+.exq .task{font-size:1.02rem;font-weight:700;color:var(--text);margin-bottom:.7rem}
+.exq .task .en{color:var(--gold2)}
+.exq textarea{width:100%;min-height:90px;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:.7rem .9rem;color:var(--text);font-family:'IBM Plex Mono';font-size:.85rem;direction:ltr;text-align:left;resize:vertical;line-height:1.6}
+.exq textarea:focus{outline:none;border-color:var(--purp);box-shadow:0 0 0 3px rgba(199,159,240,.12)}
+.exq .revealbtn{margin-top:.6rem;background:linear-gradient(135deg,var(--purp),#6a4a94);color:#fff;border:none;padding:.55rem 1.2rem;border-radius:50px;font-weight:800;font-family:'Tajawal';font-size:.92rem;cursor:pointer;transition:.18s}
+.exq .revealbtn:hover{transform:translateY(-2px);box-shadow:0 8px 20px -6px rgba(199,159,240,.5)}
+.exq .ans{display:none;margin-top:.7rem;animation:fadein .35s ease}
+.exq .ans.show{display:block}
+.exq .ans .lbl{color:var(--green);font-weight:800;font-size:.82rem;margin-bottom:.2rem;font-family:'IBM Plex Mono';direction:ltr}
+.exq .ans .note{color:var(--dim);font-size:.85rem;margin-top:.3rem}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.fcgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem;margin:.6rem 0}
+@media(max-width:600px){.fcgrid{grid-template-columns:1fr}}
+.fc{background:transparent;perspective:1000px;height:165px;cursor:pointer}
+.fc-in{position:relative;width:100%;height:100%;transition:transform .6s cubic-bezier(.4,.2,.2,1);transform-style:preserve-3d}
+.fc.flip .fc-in{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;padding:1rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1px solid var(--line)}
+.fc-front{background:linear-gradient(160deg,var(--panel),var(--panel2));box-shadow:var(--sh)}
+.fc-front .term{font-weight:800;color:var(--gold2);font-size:1.02rem}
+.fc-front .hint{font-size:.72rem;color:var(--faint);margin-top:.5rem}
+.fc-back{background:linear-gradient(160deg,#15161f,#101620);transform:rotateY(180deg);border-color:rgba(127,224,168,.25)}
+.fc-back .ans{font-size:.76rem;color:var(--text);direction:ltr;line-height:1.45}
+
+.prob{background:linear-gradient(165deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;margin-bottom:.8rem;overflow:hidden;box-shadow:var(--sh)}
+.prob summary{list-style:none;cursor:pointer;padding:1rem 1.2rem;display:flex;align-items:center;gap:.8rem;font-weight:700;color:var(--text);font-size:1rem;transition:.18s}
+.prob summary::-webkit-details-marker{display:none}
+.prob summary:hover{background:rgba(230,185,95,.04)}
+.prob summary .qn{font-family:'IBM Plex Mono';direction:ltr;background:linear-gradient(140deg,var(--gold2),var(--gold-dim));color:var(--ink);min-width:52px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.72rem;flex-shrink:0}
+.prob summary .ar{margin-right:auto;color:var(--gold);transition:.3s;font-size:1.1rem}
+.prob[open] summary .ar{transform:rotate(90deg)}
+.prob .pbody{padding:.3rem 1.2rem 1.2rem;border-top:1px solid var(--line)}
+.qtext{color:var(--dim);font-style:italic;margin:.8rem 0;padding-left:.7rem;border-left:2px solid var(--gold-dim);direction:ltr;text-align:left;font-family:'IBM Plex Mono';font-size:.78rem;line-height:1.6}
+.subh{color:var(--gold2);font-family:'IBM Plex Mono';font-size:.84rem;font-weight:700;margin:.8rem 0 .3rem;direction:ltr}
+
+.finish{max-width:880px;margin:0 auto;padding:3rem 1.4rem}
+.finishcard{background:linear-gradient(160deg,#1a1726,#13131d);border:1px solid rgba(199,159,240,.3);border-radius:24px;padding:2.2rem 1.6rem;text-align:center;box-shadow:var(--sh)}
+.finishcard h2{font-family:'Aref Ruqaa',serif;color:var(--gold2);font-size:2rem;margin-bottom:.6rem}
+.finishcard p{color:var(--dim);margin-bottom:1.2rem}
+.scorebox{display:inline-flex;flex-direction:column;align-items:center;background:rgba(199,159,240,.08);border:1px solid rgba(199,159,240,.3);border-radius:18px;padding:1rem 1.6rem;margin-bottom:1rem}
+.scorebox .big{font-family:'IBM Plex Mono';font-size:2.4rem;font-weight:800;color:var(--purp)}
+.scorebox .lbl{font-size:.8rem;color:var(--dim)}
+.againbtn{background:none;border:1px solid var(--gold-dim);color:var(--gold2);padding:.6rem 1.4rem;border-radius:50px;font-weight:700;cursor:pointer;font-family:'Tajawal'}
+
+footer{text-align:center;padding:2.5rem 1.4rem;color:var(--dim);border-top:1px solid var(--line);margin-top:1rem}
+footer .h{color:var(--gold)}
+.reveal{opacity:0;transform:translateY(24px);transition:.6s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+.conf{position:fixed;width:10px;height:14px;z-index:500;top:-20px;pointer-events:none;border-radius:2px;opacity:.95}
+</style>
+</head>
+<body>
+<div class="scrollbar" id="scrollbar"></div>
+
+<div class="topbar"><div class="topbar-in">
+  <div class="brand"><span class="mk">7</span> Advanced SQL</div>
+  <button class="menu-btn" onclick="document.getElementById('nav').classList.toggle('open')">☰</button>
+  <nav class="navlinks" id="nav">
+    <a href="index.html" style="color:var(--gold2);font-weight:700">← Back</a>
+    <a href="#s1">Joins؟</a>
+    <a href="#s2">Equi/Natural</a>
+    <a href="#s3">Outer</a>
+    <a href="#s4">Multi/Self</a>
+    <a href="#s5">Subqueries</a>
+    <a href="#s6">UNION</a>
+    <a href="#s7">Transactions</a>
+    <a href="#s8">Triggers</a>
+    <a href="#cards">كاردز</a>
+    <a href="#problems">الشيت</a>
+  </nav>
+</div></div>
+
+<div class="xpwrap" id="xpwrap" title="نقاطك"><span class="star">⭐</span><span><span class="xpnum" id="xpnum">0</span> XP</span><span class="lvl" id="lvl">· مبتدئ</span></div>
+
+<header class="hero">
+  <div class="kicker">CSE 301 · DATABASE SYSTEMS · CHAPTER 7</div>
+  <h1>Advanced SQL</h1>
+  <p class="sub">دلوقتي بنشتغل على <b style="color:var(--gold2)">أكتر من جدول</b> مع بعض: joins بأنواعها، subqueries، UNION، transactions و triggers. الامتحان كله <b style="color:var(--gold2)">كود</b> — فكل جزئية ليها تمرين تكتبه بإيدك والإجابة مخفية تظهرها بعد ما تحاول. وكل مسائل الشيت بحل الدكتور بالحرف.</p>
+  <a href="#s1"><button class="startbtn">🔗 يلا نجمّع الجداول</button></a>
+  <div class="examnote">📌 <b>قاعدة الجوين الذهبية:</b> كل جدولين بتجمعهم محتاجين <b>شرط مساواة</b> في الـ WHERE (الـ PK في جدول = الـ FK في التاني). لو عندك n جداول → محتاج (n-1) شرط ربط على الأقل.</div>
+  <div class="herostats">
+    <div class="hstat"><div class="n">8</div><div class="l">مواضيع</div></div>
+    <div class="hstat"><div class="n">7</div><div class="l">تمرين كود</div></div>
+    <div class="hstat"><div class="n">10</div><div class="l">مسائل كود</div></div>
+    <div class="hstat"><div class="n">~30</div><div class="l">دقيقة</div></div>
+  </div>
+  <div class="hdiv"></div>
+</header>
+
+<section style="padding-top:0">
+  <div class="card reveal" style="border-color:rgba(127,182,230,.3)">
+    <h3><span class="emoji">🗂️</span> جداول تمارين الشرح (Pine Valley)</h3>
+    <p class="simple" style="font-size:.95rem">خليها قدامك وانت بتحل تمارين الشرح:</p>
+    <div class="schema">
+      <div class="st"><span class="rn">CUSTOMER_T</span> (<u>CustomerID</u>, CustomerName, CustomerCity, CustomerState)</div>
+      <div class="st"><span class="rn">ORDER_T</span> (<u>OrderID</u>, OrderDate, <i>CustomerID</i>)</div>
+      <div class="st"><span class="rn">ORDERLINE_T</span> (<u>OrderID</u>, <u>ProductID</u>, OrderedQuantity)</div>
+      <div class="st"><span class="rn">PRODUCT_T</span> (<u>ProductID</u>, ProductDescription, ProductFinish, ProductStandardPrice)</div>
+      <div class="st"><span class="rn">EMPLOYEE_T</span> (<u>EmployeeID</u>, EmployeeName, <i>SupervisorID</i>) <span style="color:var(--faint)">— للـ self-join</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S1: JOINS OVERVIEW ===== -->
+<section id="s1">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#ffd98a,#8f7440);color:#0b0b12">01</span><div><h2>يعني إيه Join؟</h2><div class="sm">Join types · سؤال 1</div></div></div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">🔗</span> الفكرة في سطر</h3>
+    <p class="simple">الـ <b>Join</b> = عملية بتجمّع جدولين (أو أكتر) ليهم عمود مشترك في جدول واحد. أكتر عملية بتُستخدم في SQL.</p>
+    <div class="ana"><span class="lbl">💡 تشبيه</span> عندك كشف بأسماء العملاء، وكشف تاني بالأوردرات (فيه رقم العميل بس). الـ join بيلزّق الكشفين على بعض عن طريق <b>رقم العميل المشترك</b> فتطلع كشف فيه اسم العميل + أوردره.</div>
+  </div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">🧩</span> أنواع الـ Joins <span class="tagq">سؤال 1</span></h3>
+    <ul class="qlist">
+      <li><span class="k">Equi-join</span> الربط على <b>مساواة</b> القيم في الأعمدة المشتركة، والعمود المشترك بيظهر <b>مرتين</b> (مكرر) في النتيجة.</li>
+      <li><span class="k">Natural join</span> equi-join بس بنشيل العمود المكرر (يظهر مرة واحدة).</li>
+      <li><span class="k">Outer join</span> بيرجّع كمان الصفوف اللي <b>ملهاش match</b> (بـ null) — عكس الـ inner.</li>
+      <li><span class="k">Union join</span> بيجمع كل أعمدة كل جدول + صف لكل صف في كل جدول.</li>
+      <li><span class="k">Self join</span> ربط الجدول <b>بنفسه</b> (للعلاقات الـ unary).</li>
+    </ul>
+    <div class="tip">💡 الأعمدة المشتركة بتكون عادةً <b>PK للجدول المهيمن</b> و <b>FK للجدول التابع</b> في علاقة 1:M.</div>
+  </div>
+</section>
+
+<!-- ===== S2: EQUI / NATURAL ===== -->
+<section id="s2">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#7fb6e6,#2c5a7a);color:#0b0b12">02</span><div><h2>Equi-Join &amp; Natural Join</h2><div class="sm">WHERE vs INNER JOIN ... ON</div></div></div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">🟰</span> طريقتين لنفس النتيجة</h3>
+    <p class="simple">عايز اسم العميل ورقم الأوردر لكل عميل عمل أوردر — فيه طريقتين:</p>
+    <div class="code"><span class="cm">-- 1) Equi-join بالـ WHERE (العمود المشترك بيظهر مرتين)</span>
+<span class="kw">SELECT</span> Customer_T.CustomerName, Order_T.OrderID
+<span class="kw">FROM</span> Customer_T, Order_T
+<span class="kw">WHERE</span> Customer_T.CustomerID = Order_T.CustomerID;
+
+<span class="cm">-- 2) نفس النتيجة بالـ INNER JOIN ... ON</span>
+<span class="kw">SELECT</span> CustomerName, OrderID
+<span class="kw">FROM</span> Customer_T <span class="kw">INNER JOIN</span> Order_T
+       <span class="kw">ON</span> Customer_T.CustomerID = Order_T.CustomerID;</div>
+    <div class="ana"><span class="lbl">💡 افتكر</span> الـ <b>INNER JOIN</b> بيرجّع بس الصفوف اللي ليها match في الجدولين. والـ <b>ON</b> بيعمل شرط المساواة على العمود المشترك.</div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">هات <span class="en">ProductDescription</span> و <span class="en">OrderedQuantity</span> بربط <span class="en">PRODUCT_T</span> مع <span class="en">ORDERLINE_T</span> (equi-join بالـ WHERE).</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">SELECT</span> Product_T.ProductDescription, OrderLine_T.OrderedQuantity
+<span class="kw">FROM</span> Product_T, OrderLine_T
+<span class="kw">WHERE</span> Product_T.ProductID = OrderLine_T.ProductID;</div></div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">اكتب نفس الفكرة بس بصيغة <span class="en">INNER JOIN ... ON</span>: اسم العميل ورقم الأوردر.</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">SELECT</span> CustomerName, OrderID
+<span class="kw">FROM</span> Customer_T <span class="kw">INNER JOIN</span> Order_T
+       <span class="kw">ON</span> Customer_T.CustomerID = Order_T.CustomerID;</div></div>
+  </div>
+</section>
+
+<!-- ===== S3: OUTER JOIN ===== -->
+<section id="s3">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#7fe0a8,#2c6a45);color:#0b0b12">03</span><div><h2>Outer Join</h2><div class="sm">LEFT / RIGHT OUTER JOIN · سؤال 2</div></div></div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">🌗</span> الفكرة في سطر</h3>
+    <p class="simple">الـ <b>Outer Join</b> بيرجّع <b>كل</b> صفوف جدول حتى لو ملهاش match في التاني — والخانات الفاضية بتترجع <b>null</b>.</p>
+    <div class="ana"><span class="lbl">💡 تشبيه</span> عايز كشف <b>بكل</b> العملاء — اللي عملوا أوردر واللي معملوش. اللي معملوش أوردر هيظهر اسمه ورقم الأوردر بتاعه = <b>null</b>. الـ inner join كان هيشيلهم خالص.</div>
+    <div class="code"><span class="kw">SELECT</span> CustomerName, Customer_T.CustomerID, OrderID
+<span class="kw">FROM</span> Customer_T <span class="kw">LEFT OUTER JOIN</span> Order_T
+       <span class="kw">ON</span> Customer_T.CustomerID = Order_T.CustomerID;</div>
+    <div class="tip">💡 <b>سؤال 2 — إمتى outer بدل natural؟</b> بنستخدمه في صيانة الداتابيز عشان نلاقي الصفوف اللي <b>ملهاش match</b> (بتظهر null). مثلاً: كل العملاء سواء عملوا أوردر في آخر 4 شهور أو لأ، مع تاريخ آخر أوردر — اللي معملوش يطلع بـ null.</div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">هات <span class="en">CustomerName</span> و <span class="en">OrderID</span> لكل العملاء <b>بما فيهم</b> اللي معملوش أوردر (استخدم LEFT OUTER JOIN).</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">SELECT</span> CustomerName, OrderID
+<span class="kw">FROM</span> Customer_T <span class="kw">LEFT OUTER JOIN</span> Order_T
+       <span class="kw">ON</span> Customer_T.CustomerID = Order_T.CustomerID;</div></div>
+  </div>
+</section>
+
+<!-- ===== S4: MULTI / SELF ===== -->
+<section id="s4">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#7fe8e0,#2c6a64);color:#0b0b12">04</span><div><h2>Multiple-Table Join &amp; Self Join</h2><div class="sm">أكتر من جدولين · ربط الجدول بنفسه</div></div></div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">🧱</span> Multiple-table join</h3>
+    <p class="simple">لتجميع معلومات من كذا جدول (زي عمل invoice)، <b>كل زوج جداول</b> محتاج شرط مساواة في الـ WHERE (PK = FK).</p>
+    <div class="code"><span class="cm">-- invoice لأوردر 1006 من 4 جداول</span>
+<span class="kw">SELECT</span> Customer_T.CustomerName, Order_T.OrderID,
+       Product_T.ProductDescription, OrderLine_T.OrderedQuantity
+<span class="kw">FROM</span> Customer_T, Order_T, OrderLine_T, Product_T
+<span class="kw">WHERE</span> Customer_T.CustomerID = Order_T.CustomerID
+  <span class="kw">AND</span> Order_T.OrderID = OrderLine_T.OrderID
+  <span class="kw">AND</span> Product_T.ProductID = OrderLine_T.ProductID
+  <span class="kw">AND</span> Order_T.OrderID = 1006;</div>
+  </div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">🪞</span> Self Join</h3>
+    <p class="simple">ربط الجدول <b>بنفسه</b> — بنستخدم <b>aliases</b> نفرّق بيهم بين النسختين. بييجي مع العلاقات الـ unary (موظف ومديره).</p>
+    <div class="code"><span class="kw">SELECT</span> E.EmployeeName <span class="kw">AS</span> Employee, M.EmployeeName <span class="kw">AS</span> Manager
+<span class="kw">FROM</span> Employee_T E, Employee_T M
+<span class="kw">WHERE</span> E.SupervisorID = M.EmployeeID;</div>
+    <div class="ana"><span class="lbl">💡 تشبيه</span> نفس الجدول بتفتح منه نسختين: نسخة "الموظف" ونسخة "المدير"، وتربط الـ SupervisorID بتاع النسخة الأولى بالـ EmployeeID بتاع التانية.</div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">باستخدام <b>self join</b> على <span class="en">EMPLOYEE_T</span>، هات اسم كل موظف واسم مديره.</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">SELECT</span> E.EmployeeName <span class="kw">AS</span> Employee, M.EmployeeName <span class="kw">AS</span> Manager
+<span class="kw">FROM</span> Employee_T E, Employee_T M
+<span class="kw">WHERE</span> E.SupervisorID = M.EmployeeID;</div></div>
+  </div>
+</section>
+<!-- ===== S5: SUBQUERIES ===== -->
+<section id="s5">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#c79ff0,#4a2c6e);color:#0b0b12">05</span><div><h2>الـ Subqueries</h2><div class="sm">Noncorrelated · Correlated · EXISTS · سؤال 3-5</div></div></div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">📦</span> الفكرة في سطر</h3>
+    <p class="simple">الـ <b>Subquery</b> = query جوّه query تاني. ممكن تيجي في الـ <b>WHERE</b>، أو كـ "جدول" في الـ <b>FROM</b>، أو في الـ <b>HAVING</b>.</p>
+    <div class="code"><span class="cm">-- كل العملاء اللي عملوا أوردر (subquery في WHERE)</span>
+<span class="kw">SELECT</span> CustomerName
+<span class="kw">FROM</span> Customer_T
+<span class="kw">WHERE</span> CustomerID <span class="kw">IN</span>
+   (<span class="kw">SELECT</span> CustomerID <span class="kw">FROM</span> Order_T);</div>
+  </div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">⚖️</span> Noncorrelated vs Correlated <span class="tagq">سؤال 3</span></h3>
+    <div class="vs">
+      <div class="side g"><h4>Noncorrelated</h4><p>مش بتعتمد على الـ outer query، وبتتنفّذ <b>مرة واحدة</b> للـ query كله (inside-out).</p></div>
+      <div class="mid">VS</div>
+      <div class="side b"><h4>Correlated</h4><p>بتستخدم بيانات من الـ outer query، وبتتنفّذ <b>لكل صف</b> في الـ outer (outside-in). بتستخدم <b>EXISTS</b>.</p></div>
+    </div>
+    <div class="tip">💡 <b>EXISTS (سؤال 5):</b> بيرجّع TRUE لو الـ subquery طلّع نتيجة مش فاضية. أي subquery مكتوبة بـ EXISTS هي عملياً <b>correlated</b> (بتشاور للـ outer query). <b>(سؤال 4)</b> استخدامها الشائع: مقارنة قيمة صف بقيمة مرجعية خاصة بمجموعته (مثلاً عمر اللاعب مقارنة بمتوسط عمر فريقه).</div>
+    <div class="code"><span class="cm">-- Correlated: كل الأوردرات اللي فيها منتج Natural Ash</span>
+<span class="kw">SELECT</span> OrderID <span class="kw">FROM</span> Order_T O
+<span class="kw">WHERE EXISTS</span>
+  (<span class="kw">SELECT</span> * <span class="kw">FROM</span> OrderLine_T OL, Product_T P
+   <span class="kw">WHERE</span> OL.ProductID = P.ProductID
+     <span class="kw">AND</span> P.ProductFinish = <span class="st">'Natural Ash'</span>
+     <span class="kw">AND</span> OL.OrderID = O.OrderID);</div>
+  </div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">📊</span> Subquery كـ derived table (في FROM)</h3>
+    <p class="simple">الـ WHERE عادةً مايقدرش يستخدم aggregate function — بس لو حطيناها في subquery نقدر نستخدم نتيجتها.</p>
+    <div class="code"><span class="cm">-- المنتجات اللي سعرها أعلى من المتوسط</span>
+<span class="kw">SELECT</span> ProductDescription, ProductStandardPrice
+<span class="kw">FROM</span> Product_T
+<span class="kw">WHERE</span> ProductStandardPrice &gt;
+   (<span class="kw">SELECT</span> <span class="fn">AVG</span>(ProductStandardPrice) <span class="kw">FROM</span> Product_T);</div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">باستخدام <b>subquery</b> في الـ WHERE، هات أسماء العملاء اللي عملوا أوردر (موجودين في <span class="en">ORDER_T</span>).</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">SELECT</span> CustomerName
+<span class="kw">FROM</span> Customer_T
+<span class="kw">WHERE</span> CustomerID <span class="kw">IN</span>
+   (<span class="kw">SELECT</span> CustomerID <span class="kw">FROM</span> Order_T);</div></div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">هات المنتجات اللي سعرها <b>أعلى من متوسط</b> أسعار كل المنتجات (subquery بـ AVG).</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">SELECT</span> ProductDescription, ProductStandardPrice
+<span class="kw">FROM</span> Product_T
+<span class="kw">WHERE</span> ProductStandardPrice &gt;
+   (<span class="kw">SELECT</span> <span class="fn">AVG</span>(ProductStandardPrice) <span class="kw">FROM</span> Product_T);</div></div>
+  </div>
+
+  <details class="more reveal"><summary>🔎 اعرف أكتر — Join ولا Subquery؟</summary>
+    <div class="deep">بعض الـ queries ممكن تتحل بالاتنين. الفرق: الـ <b>join</b> بيقدر يرجّع أعمدة من الجدولين، أما الـ <b>subquery</b> بترجّع أعمدة من الـ outer query بس. الـ subquery أوضح لما عايز تتأكد من وجود/عدم وجود قيمة.</div>
+  </details>
+</section>
+
+<!-- ===== S6: UNION ===== -->
+<section id="s6">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#ff9ecb,#7a3a5a);color:#0b0b12">06</span><div><h2>UNION Queries</h2><div class="sm">دمج نتائج · سؤال 6</div></div></div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">➕</span> الفكرة في سطر</h3>
+    <p class="simple">الـ <b>UNION</b> بيدمج ناتج أكتر من query في جدول نتيجة واحد.</p>
+    <div class="warn">⚠️ <b>الشرط (سؤال 6):</b> كل الـ queries لازم ترجّع <b>نفس عدد الأعمدة</b> و<b>نفس أنواع البيانات</b> (UNION-compatible).</div>
+    <div class="code"><span class="kw">SELECT</span> CustomerCity, CustomerState <span class="kw">FROM</span> Customer_T
+<span class="kw">UNION</span>
+<span class="kw">SELECT</span> CustomerCity, CustomerState <span class="kw">FROM</span> Customer_T;</div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">اعمل <b>UNION</b> يدمج <span class="en">CustomerName</span> من <span class="en">CUSTOMER_T</span> مع <span class="en">EmployeeName</span> من <span class="en">EMPLOYEE_T</span> في قايمة أسماء واحدة.</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">SELECT</span> CustomerName <span class="kw">FROM</span> Customer_T
+<span class="kw">UNION</span>
+<span class="kw">SELECT</span> EmployeeName <span class="kw">FROM</span> Employee_T;</div><div class="note">لازم نفس عدد الأعمدة (عمود واحد هنا) ونفس النوع (نص).</div></div>
+  </div>
+</section>
+
+<!-- ===== S7: TRANSACTIONS ===== -->
+<section id="s7">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#7fb6e6,#2c5a7a);color:#0b0b12">07</span><div><h2>تكامل المعاملات — Transactions</h2><div class="sm">COMMIT · ROLLBACK</div></div></div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">🔒</span> الفكرة في سطر</h3>
+    <p class="simple"><b>Transaction</b> = وحدة شغل لازم تتنفّذ <b>كاملة أو متتنفّذش خالص</b>. لو أي تحديث فشل، كل التحديثات تتلغي.</p>
+    <div class="ana"><span class="lbl">💡 تشبيه</span> تحويل فلوس: تخصم من حساب وتضيف لحساب تاني. لو الخصم نجح والإضافة فشلت = كارثة! فإما <b>الاتنين</b> يحصلوا أو <b>ولا واحد</b>.</div>
+    <ul class="qlist">
+      <li><span class="k">BEGIN / END TRANSACTION</span> بيحدد بداية ونهاية المعاملة.</li>
+      <li><span class="k">COMMIT</span> بيخلّي كل التحديثات <b>دائمة</b>.</li>
+      <li><span class="k">ROLLBACK</span> بيلغي التحديثات من آخر COMMIT.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== S8: TRIGGERS / EMBEDDED ===== -->
+<section id="s8">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#7fe0a8,#2c6a45);color:#0b0b12">08</span><div><h2>Triggers · Routines · Embedded SQL</h2><div class="sm">سؤال 7 و 8</div></div></div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">⚡</span> Triggers vs Procedures vs Functions</h3>
+    <ul class="qlist">
+      <li><span class="k">Trigger</span> روتين بيشتغل <b>تلقائياً</b> ردّاً على حدث (INSERT/UPDATE/DELETE) — event-driven.</li>
+      <li><span class="k">Procedure</span> module بيتنادى عليه <b>صراحةً</b>، ممكن ياخد input/output، ومش بيرجّع قيمة.</li>
+      <li><span class="k">Function</span> روتين <b>بيرجّع قيمة واحدة</b> وبياخد input parameters بس.</li>
+    </ul>
+  </div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">💉</span> Embedded vs Dynamic SQL <span class="tagq">سؤال 7</span></h3>
+    <div class="vs">
+      <div class="side b"><h4>Embedded SQL</h4><p>كود SQL <b>ثابت (hard-coded)</b> جوّه برنامج بلغة تانية (C/Java). تستخدمه لما تعرف الـ SQL المطلوب بالظبط.</p></div>
+      <div class="mid">VS</div>
+      <div class="side g"><h4>Dynamic SQL</h4><p>البرنامج بيولّد كود SQL <b>وهو شغّال (on the fly)</b>. تستخدمه لما تحتاج تحدد الـ parameters/الجداول وقت التشغيل.</p></div>
+    </div>
+    <details class="more"><summary>🔎 اعرف أكتر — ليه نـ embed SQL + متى CASE</summary>
+      <div class="deep"><b>أسباب الـ embedding:</b> واجهة أمرن للمستخدم · تحسين أداء محتمل · أمان أحسن (تدّي صلاحية للتطبيق مش لليوزر).<br><br><b>CASE (سؤال 8):</b> مفيد لما عايز تسنّد فئات — مثلاً مستوى خصم حسب المبيعات (level 1 لو sales أقل من 1000، level 2 لو ≥1000 وأقل من 5000... إلخ).</div>
+    </details>
+  </div>
+
+  <div class="good reveal">🔑 <b>نصايح كتابة query شاطر:</b> اعرف الـ data model، حدّد الأعمدة المطلوبة بالظبط بدل <span class="en">SELECT *</span>، اعمل شرط مساواة لكل ربط، قلّل الـ subqueries، وخزّن الـ query كـ view لو هتستخدمها كتير.</div>
+</section>
+
+<!-- ===== FLASHCARDS ===== -->
+<section id="cards">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#ff9ecb,#7a3a5a);color:#0b0b12">🃏</span><div><h2>فلاش كاردز — التعريفات</h2><div class="sm">دوس الكارت يتقلب · سؤال 1</div></div></div>
+  <p class="simple reveal" style="color:var(--dim);margin-bottom:1rem">التعريفات بنص الشيت بالحرف 👇</p>
+  <div class="fcgrid">
+    <div class="fc reveal"><div class="fc-in"><div class="fc-face fc-front"><div class="term">Dynamic SQL</div><div class="hint">دوس ↻</div></div><div class="fc-face fc-back"><div class="ans">The process of making an application capable of generating specific SQL code on the fly, as the application is processed.</div></div></div></div>
+    <div class="fc reveal"><div class="fc-in"><div class="fc-face fc-front"><div class="term">Correlated subquery</div><div class="hint">دوس ↻</div></div><div class="fc-face fc-back"><div class="ans">A subquery processed outside-in: the inner query executes for each row in the outer query and depends on values from the current outer row.</div></div></div></div>
+    <div class="fc reveal"><div class="fc-in"><div class="fc-face fc-front"><div class="term">Embedded SQL</div><div class="hint">دوس ↻</div></div><div class="fc-face fc-back"><div class="ans">The process of including hard-coded SQL statements in a program written in another language such as C or Java.</div></div></div></div>
+    <div class="fc reveal"><div class="fc-in"><div class="fc-face fc-front"><div class="term">Procedure</div><div class="hint">دوس ↻</div></div><div class="fc-face fc-back"><div class="ans">A collection of procedural and SQL statements assigned a unique name within the schema and stored in the database.</div></div></div></div>
+    <div class="fc reveal"><div class="fc-in"><div class="fc-face fc-front"><div class="term">Join</div><div class="hint">دوس ↻</div></div><div class="fc-face fc-back"><div class="ans">The most frequently used relational operation, which brings together data from two or more related tables into one result table.</div></div></div></div>
+    <div class="fc reveal"><div class="fc-in"><div class="fc-face fc-front"><div class="term">Equi-join</div><div class="hint">دوس ↻</div></div><div class="fc-face fc-back"><div class="ans">A join whose condition is based on equality between values in the common columns; common columns appear (redundantly) in the result table.</div></div></div></div>
+    <div class="fc reveal"><div class="fc-in"><div class="fc-face fc-front"><div class="term">Self-join</div><div class="hint">دوس ↻</div></div><div class="fc-face fc-back"><div class="ans">A join that matches rows in a table with other rows in the same table; often occurs with a unary relationship (e.g., a Supervisor/Manager of Employees).</div></div></div></div>
+    <div class="fc reveal"><div class="fc-in"><div class="fc-face fc-front"><div class="term">Outer join</div><div class="hint">دوس ↻</div></div><div class="fc-face fc-back"><div class="ans">A join in which rows without matching values in common columns are nevertheless included; returns all values in one table regardless of a match.</div></div></div></div>
+    <div class="fc reveal"><div class="fc-in"><div class="fc-face fc-front"><div class="term">Function</div><div class="hint">دوس ↻</div></div><div class="fc-face fc-back"><div class="ans">A stored subroutine that returns one value and has only input parameters.</div></div></div></div>
+  </div>
+</section>
+
+<!-- ===== PROBLEMS ===== -->
+<section id="problems">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#ffd98a,#8f7440);color:#0b0b12">📝</span><div><h2>مسائل الشيت — بحل الدكتور بالحرف</h2><div class="sm">مسائل الكود 7-25 → 7-34</div></div></div>
+
+  <div class="good reveal">✅ <b>مهم:</b> دي مسائل الكود بس (الامتحان كود). الأسئلة المقالية 2→8 اتدمجت جوّه الشرح فوق. كل الأكواد تحت <b>حل الدكتور بالحرف</b> من الشيت (Problems &amp; Exercises 7-25 → 7-34، صفحة 331–332).</div>
+
+  <div class="card reveal" style="border-color:rgba(127,224,168,.35)">
+    <h3><span class="emoji">🗂️</span> الجداول اللي مسائل الكود بتشتغل عليها</h3>
+    <p class="simple" style="font-size:.92rem"><b>مسائل 7-25 → 7-30</b> على داتابيز الجامعة:</p>
+    <div class="schema">
+      <div class="st"><span class="rn">STUDENT</span> (<u>StudentID</u>, StudentName)</div>
+      <div class="st"><span class="rn">FACULTY</span> (<u>FacultyID</u>, FacultyName)</div>
+      <div class="st"><span class="rn">COURSE</span> (<u>CourseID</u>, CourseName)</div>
+      <div class="st"><span class="rn">SECTION</span> (<u>SectionNo</u>, Semester, <i>CourseID</i>)</div>
+      <div class="st"><span class="rn">QUALIFIED</span> (<u>FacultyID</u>, <u>CourseID</u>, DateQualified)</div>
+      <div class="st"><span class="rn">REGISTRATION</span> (<u>StudentID</u>, <u>SectionNo</u>)</div>
+      <div class="st"><span class="rn">ASSIGNMENT</span> (<i>FacultyID</i>, <i>SectionNo</i>, Semester)</div>
+    </div>
+    <p class="simple" style="font-size:.92rem;margin-top:.7rem"><b>مسائل 7-31 → 7-34</b> على داتابيز الدروس (Figure 7-17):</p>
+    <div class="schema">
+      <div class="st"><span class="rn">TUTOR</span> (<u>TutorID</u>, CertDate, Status)</div>
+      <div class="st"><span class="rn">STUDENT</span> (<u>StudentID</u>, Read, MathScore)</div>
+      <div class="st"><span class="rn">MATCH HISTORY</span> (<u>MatchID</u>, StartDate, EndDate, <i>TutorID</i>, <i>SubjectID</i>, <i>StudentID</i>)</div>
+      <div class="st"><span class="rn">TUTOR REPORT</span> (<u>MatchID</u>, <u>Month</u>, Hours, Lessons)</div>
+      <div class="st"><span class="rn">SUBJECT</span> (<u>SubjectID</u>, SubjectName)</div>
+    </div>
+  </div>
+
+  <details class="prob reveal">
+    <summary><span class="qn">7-25</span> Joins (LIKE / 3-table / roster) <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">a) Display the course ID and course name for all courses with an ISM prefix. b) Display all courses for which Professor Berndt has been qualified. c) Display the class roster, including student name, for all students enrolled in section 2714 of ISM 4212.</div>
+      <div class="subh">a.</div>
+      <div class="code"><span class="kw">SELECT</span> CourseID, CourseName
+<span class="kw">FROM</span> Course
+<span class="kw">WHERE</span> CourseID <span class="kw">LIKE</span> <span class="st">'ISM%'</span>;</div>
+      <div class="subh">b.</div>
+      <div class="code"><span class="kw">SELECT</span> Course.CourseID, Course.CourseName
+<span class="kw">FROM</span> Faculty, Course, Qualified
+<span class="kw">WHERE</span> Faculty.FacultyName = <span class="st">'Berndt'</span> <span class="kw">AND</span>
+      Faculty.FacultyID = Qualified.FacultyID <span class="kw">AND</span>
+      Course.CourseID = Qualified.CourseID;</div>
+      <div class="subh">c.</div>
+      <div class="code"><span class="kw">SELECT</span> Student.StudentID,
+       Student.StudentName,
+       Section.CourseID,
+       Registration.SectionNo
+<span class="kw">FROM</span> Student,
+     Registration,
+     Section
+<span class="kw">WHERE</span> Section.SectionNo = Registration.SectionNo <span class="kw">AND</span>
+      Student.StudentID = Registration.StudentID <span class="kw">AND</span>
+      Registration.SectionNo = 2714
+<span class="kw">ORDER BY</span> StudentName;</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">7-26</span> Instructors qualified to teach ISM 3113 <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">Which instructors are qualified to teach ISM 3113?</div>
+      <div class="code"><span class="kw">SELECT</span> Faculty.FacultyName
+<span class="kw">FROM</span> Faculty, Qualified
+<span class="kw">WHERE</span> Qualified.FacultyID = Faculty.FacultyID
+<span class="kw">AND</span> Qualified.CourseID = <span class="st">'ISM 3113'</span>;</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">7-27</span> Qualified for ISM 3113 but NOT ISM 4930 (MINUS) <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">Is any instructor qualified to teach ISM 3113 and not qualified to teach ISM 4930?</div>
+      <div class="code"><span class="kw">SELECT</span> Faculty.FacultyID,
+       Faculty.FacultyName
+<span class="kw">FROM</span> Faculty,
+     Qualified
+<span class="kw">WHERE</span> Qualified.FacultyID = Faculty.FacultyID <span class="kw">AND</span>
+      Qualified.CourseID = <span class="st">'ISM 3113'</span>
+<span class="kw">MINUS</span>
+<span class="kw">SELECT</span> Faculty.FacultyID, Faculty.FacultyName
+<span class="kw">FROM</span> Faculty, Qualified
+<span class="kw">WHERE</span> Qualified.FacultyID = Faculty.FacultyID
+<span class="kw">AND</span> Qualified.CourseID = <span class="st">'ISM 4930'</span>;</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">7-28</span> Multi-table joins (Altvater / Collins) <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">a) What are the names of the course(s) that student Altvater took during the semester I-2015? b) List names of the students who have taken at least one course that Professor Collins is qualified to teach. c) How many students did Professor Collins teach during the semester I-2015?</div>
+      <div class="subh">a.</div>
+      <div class="code"><span class="kw">SELECT</span> Course.CourseName
+<span class="kw">FROM</span> Course, Section, Registration, Student
+<span class="kw">WHERE</span> Course.CourseID = Section.CourseID <span class="kw">AND</span>
+      Section.SectionNo = Registration.SectionNo <span class="kw">AND</span>
+      Registration.StudentID = Student.StudentID <span class="kw">AND</span>
+      StudentName = <span class="st">'Altvater'</span> <span class="kw">AND</span>
+      Section.Semester = <span class="st">'I-2015'</span>;</div>
+      <div class="note" style="color:var(--dim);font-size:.85rem">ملاحظة الدكتور: مفيش كورسات بتحقق الشرط ده؛ باستخدام Semester = 'II-2015' هيطلع نتايج.</div>
+      <div class="subh">b.</div>
+      <div class="code"><span class="kw">SELECT</span> Student.StudentID, Student.StudentName
+<span class="kw">FROM</span> Registration, Section, Qualified, Faculty, Student
+<span class="kw">WHERE</span> Student.StudentID = Registration.StudentID <span class="kw">AND</span>
+      Registration.SectionNo = Section.SectionNo <span class="kw">AND</span>
+      Section.CourseID = Qualified.CourseID <span class="kw">AND</span>
+      Qualified.FacultyID = Faculty.FacultyID <span class="kw">AND</span>
+      Faculty.FacultyName = <span class="st">'Collins'</span>;</div>
+      <div class="subh">c. (بيستخدم جدول ASSIGNMENT)</div>
+      <div class="code"><span class="kw">SELECT</span> <span class="fn">COUNT</span>(Registration.StudentID)
+<span class="kw">FROM</span> Student, Registration, Section, Assignment, Faculty
+<span class="kw">WHERE</span> Student.StudentID = Registration.StudentID <span class="kw">AND</span>
+      Registration.SectionNo = Section.SectionNo <span class="kw">AND</span>
+      Section.SectionNo = Assignment.SectionNo <span class="kw">AND</span>
+      Assignment.FacultyID = Faculty.FacultyID <span class="kw">AND</span>
+      Faculty.FacultyName = <span class="st">'Collins'</span> <span class="kw">AND</span>
+      Section.Semester = <span class="st">'I-2015'</span>;</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">7-29</span> COUNT DISTINCT (enrollment) <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">a) How many students were enrolled in section 2714 during semester I-2015? b) How many students were enrolled in ISM 3113 during semester I-2015?</div>
+      <div class="subh">a.</div>
+      <div class="code"><span class="kw">SELECT</span> <span class="fn">COUNT</span> (<span class="kw">DISTINCT</span> (Registration.StudentID))
+<span class="kw">FROM</span> Registration, Section
+<span class="kw">WHERE</span> Registration.SectionNo = Section.SectionNo <span class="kw">AND</span>
+      Registration.SectionNo = 2714 <span class="kw">AND</span>
+      Semester = <span class="st">'I-2015'</span>;</div>
+      <div class="subh">b.</div>
+      <div class="code"><span class="kw">SELECT</span> <span class="fn">COUNT</span> (<span class="kw">DISTINCT</span> (StudentID))
+<span class="kw">FROM</span> Section, Registration
+<span class="kw">WHERE</span> Section.SectionNo = Registration.SectionNo
+<span class="kw">AND</span> CourseID = <span class="st">'ISM 3113'</span>
+<span class="kw">AND</span> Semester = <span class="st">'I-2015'</span>;</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">7-30</span> NOT EXISTS (correlated subquery) <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">Which students were not enrolled in any courses during semester I-2015?</div>
+      <div class="code"><span class="kw">SELECT</span> <span class="kw">DISTINCT</span> StudentID, StudentNAME
+<span class="kw">FROM</span> Student
+<span class="kw">WHERE</span> <span class="kw">NOT EXISTS</span>
+   (<span class="kw">SELECT</span> *
+    <span class="kw">FROM</span> Registration, Section
+    <span class="kw">WHERE</span> Student.StudentID = Registration.StudentID <span class="kw">AND</span>
+          Registration.SectionNo = Section.SectionNo <span class="kw">AND</span>
+          Semester = <span class="st">'I-2015'</span>);</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">7-31</span> List PKs &amp; FKs (Figure 7-17) <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">List primary and foreign keys for all entities in Figure 7-17.</div>
+      <ul class="qlist">
+        <li><span class="k">Tutor</span> Primary key: TutorID · Foreign key: none</li>
+        <li><span class="k">Student</span> Primary key: StudentID · Foreign key: none</li>
+        <li><span class="k">MatchHistory</span> Primary key: MatchID · Foreign keys: TutorID references Tutor(TutorID), StudentID references Student(StudentID)</li>
+        <li><span class="k">TutorReport</span> Primary key: MatchID + Month (composite PK) · Foreign key: MatchID references MatchHistory(MatchID)</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">7-32</span> ALTER TABLE — add MathScore <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">Write SQL to add MathScore to the Student table.</div>
+      <div class="code"><span class="kw">ALTER TABLE</span> Student
+<span class="kw">ADD COLUMN</span> MathScore <span class="kw">NUMBER</span>(2,1);</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">7-33</span> ALTER TABLE + CHECK — add Subject <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">Write SQL to add Subject to the Tutor table.</div>
+      <div class="code"><span class="kw">ALTER TABLE</span> Tutor
+<span class="kw">ADD COLUMN</span> Subject <span class="kw">VARCHAR</span>(7)
+       <span class="kw">CHECK</span> (Subject <span class="kw">IN</span> (<span class="st">'Reading'</span>, <span class="st">'Math'</span>, <span class="st">'ESL'</span>));</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">7-34</span> Tutors in more than one subject (design) <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">Suggested solution for tutors who tutor in more than one subject area.</div>
+      <p>One approach is to adjust the database design to allow tutors the ability to declare more than one subject preference for tutoring. Based on the prior specifications (including Problem and Exercise 8), the business role appeared to be that tutors only tutored in one subject, thus the subject could be stored with tutor information. Under this new requirement, the database needs the ability to track more than one subject per tutor. This can be accomplished by adding two tables to the current design (TutorSubject, Subject) and by altering the structure of the MatchHistory table to track the Subject involved in each match of Tutor and Student, as noted in the revised ERD.</p>
+      <p>It is also possible to assume that (1) each tutor is certified only once or (2) that a tutor must be certified in each of the subjects. Assumption 2 would require that CertDate be moved to the TutorSubject relation. This is a good opportunity to show how making an assumption without interviewing the database user may result in an incorrect data model because the correct business role has not been uncovered.</p>
+      <div class="subh">الـ ERD المعدّل (Figure 7-17):</div>
+      <p style="color:var(--dim);font-size:.9rem">Tutor (TutorID, CertDate, Status) — Tutor Subject (associative) — Subject (SubjectID, SubjectName) · Student (StudentID, Read, MathScore) — Match History (MatchID, StartDate, EndDate, TutorID, SubjectID, StudentID) — Tutor Report (MatchID, Month, Hours, Lessons).</p>
+    </div>
+  </details>
+</section>
+
+<!-- ===== FINISH ===== -->
+<div class="finish">
+  <div class="finishcard reveal">
+    <h2>🎓 خلّصت Advanced SQL!</h2>
+    <p>بقيت بتجمّع جداول وتكتب subqueries بإيدك — ده اللي الامتحان عايزه. شوف كام تمرين خلّصت:</p>
+    <div class="scorebox"><span class="big" id="finalscore">0 / 7</span><span class="lbl">تمارين كود حليتها</span></div>
+    <div style="margin:.6rem 0;color:var(--gold2);font-weight:700" id="finalmsg"></div>
+    <br>
+    <button class="againbtn" onclick="location.reload()">🔁 ابدأ من الأول</button>
+  </div>
+</div>
+
+<footer>
+  <p>بالتوفيق يا أبو 💪 — مفتاح الشابتر ده: <b>الـ joins</b> (شرط مساواة لكل ربط) و<b>الـ subqueries</b> (correlated بتتنفّذ لكل صف + EXISTS). اكتب بإيدك وانت هتقفّلها.</p>
+  <p style="margin-top:.5rem;font-size:.85rem">CSE 301 · Chapter 7 · Advanced SQL · <span class="h">★</span></p>
+</footer>
+
+<script>
+const sb=document.getElementById('scrollbar');
+window.addEventListener('scroll',()=>{const h=document.documentElement;const p=h.scrollTop/(h.scrollHeight-h.clientHeight)*100;sb.style.width=p+'%';});
+
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.05});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+document.querySelectorAll('.navlinks a').forEach(a=>a.addEventListener('click',()=>document.getElementById('nav').classList.remove('open')));
+
+let xp=0, done=0;
+const totalEx=document.querySelectorAll('.exq').length;
+const xpnum=document.getElementById('xpnum'), lvlEl=document.getElementById('lvl');
+function levelName(x){if(x>=120)return '· أسطورة 🏆';if(x>=80)return '· محترف 🔥';if(x>=50)return '· متقدّم 💪';if(x>=20)return '· صاعد ✨';return '· مبتدئ';}
+function addXP(n,x,y){
+  xp+=n; xpnum.textContent=xp; lvlEl.textContent=levelName(xp);
+  const pop=document.createElement('div');pop.className='xp-pop';pop.textContent='+'+n+' XP';
+  pop.style.left=(x-10)+'px';pop.style.top=(y-20)+'px';document.body.appendChild(pop);
+  setTimeout(()=>pop.remove(),1000);
+  const w=document.getElementById('xpwrap');w.style.transform='scale(1.12)';setTimeout(()=>w.style.transform='scale(1)',180);
+}
+function updateFinal(){
+  document.getElementById('finalscore').textContent=done+' / '+totalEx;
+  const msg=document.getElementById('finalmsg'),pct=done/totalEx;
+  if(pct>=1)msg.textContent='كمّلت كل التمارين! جاهز للامتحان 🏆';
+  else if(pct>=0.6)msg.textContent='شغل جامد! كمّل الباقي 💪';
+  else if(done>0)msg.textContent='ماشي، كمّل وانت بتتحسّن ✨';
+}
+
+document.querySelectorAll('.exq').forEach(ex=>{
+  const btn=ex.querySelector('.revealbtn'), ans=ex.querySelector('.ans');
+  let revealed=false;
+  btn.addEventListener('click',(e)=>{
+    ans.classList.toggle('show');
+    if(ans.classList.contains('show')){btn.textContent='🙈 اخفي الإجابة';if(!revealed){revealed=true;done++;addXP(10,e.clientX,e.clientY);confetti();updateFinal();}}
+    else{btn.textContent='👀 اظهر الإجابة';}
+  });
+});
+
+let flippedSet=new Set();
+document.querySelectorAll('.fc').forEach((c,i)=>{
+  c.addEventListener('click',(e)=>{c.classList.toggle('flip');if(!flippedSet.has(i)){flippedSet.add(i);addXP(2,e.clientX,e.clientY);}});
+});
+
+function confetti(){
+  const colors=['#e6b95f','#7fe0a8','#7fb6e6','#c79ff0','#ff9ecb','#ffd98a'];
+  for(let i=0;i<26;i++){
+    const c=document.createElement('div');c.className='conf';
+    c.style.left=Math.random()*100+'vw';
+    c.style.background=colors[Math.floor(Math.random()*colors.length)];
+    const dur=1.6+Math.random()*1.2;
+    c.animate([{transform:'translateY(0) rotate(0)',opacity:1},{transform:'translateY('+(window.innerHeight+40)+'px) rotate('+(360+Math.random()*360)+'deg)',opacity:.9}],{duration:dur*1000,easing:'cubic-bezier(.3,.6,.4,1)'});
+    document.body.appendChild(c);setTimeout(()=>c.remove(),dur*1000);
+  }
+}
+</script>
+</body>
+</html>

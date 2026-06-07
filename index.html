@@ -20,6 +20,7 @@
       --accent-ch4: #bd9fd8;
       --accent-ch5: #e0b56a;
       --accent-ch6: #7fe0a8;
+      --accent-ch7: #c79ff0;
 
       /* Celebration Button variables */
       --gold: #e8b85a;
@@ -134,6 +135,11 @@
       box-shadow: 0 0 15px rgba(127, 224, 168, 0.15);
     }
 
+    .btn.ch7:hover {
+      border-color: var(--accent-ch7);
+      box-shadow: 0 0 15px rgba(199, 159, 240, 0.15);
+    }
+
     .ch-label {
       font-size: 0.85rem;
       font-weight: 600;
@@ -148,6 +154,7 @@
     .ch4 .ch-label { color: var(--accent-ch4); }
     .ch5 .ch-label { color: var(--accent-ch5); }
     .ch6 .ch-label { color: var(--accent-ch6); }
+    .ch7 .ch-label { color: var(--accent-ch7); }
 
     .menu-row {
       display: grid;
@@ -669,6 +676,14 @@
         <div>
           <div class="ch-label">Chapter 06</div>
           <div class="ch-title">Introduction to SQL Study Guide</div>
+        </div>
+        <span class="arrow">→</span>
+      </a>
+
+      <a href="ch7.html" class="btn ch7">
+        <div>
+          <div class="ch-label">Chapter 07</div>
+          <div class="ch-title">Advanced SQL Study Guide</div>
         </div>
         <span class="arrow">→</span>
       </a>
