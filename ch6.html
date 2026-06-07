@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 6 — Introduction to SQL — مذاكرة ممتعة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Tajawal:wght@400;500;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a12;--bg2:#0f0f1a;--panel:#16161f;--panel2:#1b1b27;--ink:#0b0b12;--gold:#e6b95f;--gold2:#ffd98a;--gold-dim:#8f7440;--text:#f0eee8;--dim:#a39e92;--faint:#6b6860;--line:#272730;--blue:#7fb6e6;--green:#7fe0a8;--red:#ff8d8d;--purp:#c79ff0;--pink:#ff9ecb;--cyan:#7fe8e0;--sh:0 24px 70px -20px rgba(0,0,0,.7);--r:20px;}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;line-height:1.85;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(1100px 700px at 88% -8%,rgba(230,185,95,.13),transparent 58%),radial-gradient(900px 700px at -8% 30%,rgba(127,224,168,.07),transparent 55%),radial-gradient(800px 600px at 50% 110%,rgba(127,182,230,.07),transparent 55%),var(--bg)}
+.en{font-family:'IBM Plex Mono',monospace;direction:ltr;unicode-bidi:embed;font-weight:500}
+code.en{background:rgba(230,185,95,.12);color:var(--gold2);padding:.08em .42em;border-radius:5px;font-size:.84em;border:1px solid rgba(230,185,95,.18)}
+
+.scrollbar{position:fixed;top:0;left:0;height:4px;width:0%;z-index:300;background:linear-gradient(90deg,var(--green),var(--cyan),var(--blue));box-shadow:0 0 12px rgba(127,224,168,.6);transition:width .1s linear}
+
+.topbar{position:sticky;top:0;z-index:200;background:rgba(10,10,18,.82);backdrop-filter:blur(16px) saturate(1.3);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:.7rem 1.2rem;gap:1rem}
+.brand{display:flex;align-items:center;gap:.6rem;font-weight:800;color:var(--gold2);white-space:nowrap}
+.brand .mk{width:30px;height:30px;border-radius:9px;background:linear-gradient(140deg,var(--gold2),var(--gold-dim));display:grid;place-items:center;color:var(--ink);font-family:'IBM Plex Mono';font-weight:700;font-size:.85rem;box-shadow:0 4px 14px -2px rgba(230,185,95,.5)}
+.navlinks{display:flex;gap:.1rem;flex-wrap:wrap}
+.navlinks a{color:var(--dim);text-decoration:none;font-size:.78rem;font-weight:600;padding:.4rem .55rem;border-radius:9px;transition:.18s;white-space:nowrap}
+.navlinks a:hover{color:var(--gold2);background:rgba(230,185,95,.08)}
+.menu-btn{display:none;background:none;border:1px solid var(--line);color:var(--gold);padding:.45rem .7rem;border-radius:9px;font-size:1.05rem;cursor:pointer}
+@media(max-width:1080px){.navlinks{display:none;position:absolute;top:100%;right:0;left:0;flex-direction:column;background:var(--bg2);padding:.5rem;border-bottom:1px solid var(--line);max-height:70vh;overflow:auto}.navlinks.open{display:flex}.menu-btn{display:block}}
+
+.xpwrap{position:fixed;bottom:20px;right:20px;z-index:250;display:flex;align-items:center;gap:.55rem;background:rgba(16,16,26,.9);backdrop-filter:blur(14px);border:1px solid rgba(230,185,95,.3);border-radius:50px;padding:.5rem .9rem;box-shadow:0 10px 30px -8px rgba(0,0,0,.7);font-weight:800;transition:transform .18s}
+.xpwrap .star{font-size:1.1rem;filter:drop-shadow(0 0 6px rgba(230,185,95,.6))}
+.xpwrap .xpnum{font-family:'IBM Plex Mono';color:var(--gold2);direction:ltr;font-size:.92rem}
+.xpwrap .lvl{font-size:.7rem;color:var(--dim);font-weight:700}
+.xp-pop{position:fixed;z-index:400;font-family:'IBM Plex Mono';font-weight:800;color:var(--gold2);pointer-events:none;font-size:1.1rem;text-shadow:0 2px 8px rgba(0,0,0,.6);animation:xpfly 1s ease-out forwards}
+@keyframes xpfly{0%{opacity:0;transform:translateY(0) scale(.7)}20%{opacity:1;transform:translateY(-10px) scale(1.1)}100%{opacity:0;transform:translateY(-50px) scale(1)}}
+
+.hero{max-width:920px;margin:0 auto;padding:4rem 1.4rem 2rem;text-align:center}
+.kicker{font-family:'IBM Plex Mono';direction:ltr;color:var(--gold);letter-spacing:.3em;font-size:.72rem;font-weight:600;margin-bottom:1.2rem;opacity:.9}
+.hero h1{font-family:'Aref Ruqaa',serif;font-weight:700;font-size:clamp(2.3rem,6.5vw,4.4rem);line-height:1.25;background:linear-gradient(176deg,#fff0d0,var(--gold) 50%,var(--green));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:1.1rem;padding-bottom:.18em}
+.hero .sub{font-size:1.1rem;color:var(--dim);max-width:640px;margin:0 auto 1.6rem}
+.startbtn{display:inline-flex;align-items:center;gap:.6rem;background:linear-gradient(135deg,var(--gold2),var(--gold-dim));color:var(--ink);border:none;padding:.95rem 2rem;border-radius:50px;font-weight:800;font-size:1.05rem;font-family:'Tajawal';cursor:pointer;box-shadow:0 12px 30px -8px rgba(230,185,95,.55);transition:.2s}
+.startbtn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 16px 40px -8px rgba(230,185,95,.7)}
+.herostats{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin-top:1.6rem}
+.hstat{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:14px;padding:.6rem 1rem;min-width:90px}
+.hstat .n{font-family:'IBM Plex Mono';font-weight:800;color:var(--gold2);font-size:1.2rem}
+.hstat .l{font-size:.72rem;color:var(--dim)}
+.hdiv{width:120px;height:1px;margin:2.2rem auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+
+.examnote{max-width:680px;margin:1.4rem auto 0;background:linear-gradient(120deg,rgba(127,224,168,.08),rgba(127,182,230,.06));border:1px solid rgba(127,224,168,.25);border-radius:16px;padding:.9rem 1.1rem;font-size:.95rem;color:var(--text)}
+.examnote b{color:var(--green)}
+
+section{max-width:880px;margin:0 auto;padding:2.6rem 1.4rem;scroll-margin-top:70px}
+.sec-head{display:flex;align-items:center;gap:.9rem;margin-bottom:1.4rem}
+.sec-head .num{font-family:'IBM Plex Mono';direction:ltr;font-size:1.3rem;min-width:50px;height:50px;border-radius:15px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px -6px rgba(0,0,0,.5)}
+.sec-head h2{font-size:clamp(1.4rem,4vw,2rem);font-weight:800;color:var(--gold2)}
+.sec-head .sm{font-size:.8rem;color:var(--faint);font-weight:600}
+
+.card{background:linear-gradient(165deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);padding:1.4rem 1.5rem;margin-bottom:1rem;box-shadow:var(--sh);position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:linear-gradient(180deg,var(--gold),var(--green) 90%)}
+.card h3{color:var(--gold2);font-size:1.18rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.emoji{font-size:1.3rem}
+.simple{font-size:1.05rem;color:var(--text);margin-bottom:.6rem}
+.simple b{color:var(--gold2)}
+.tagq{font-family:'IBM Plex Mono';direction:ltr;font-size:.64rem;background:rgba(199,159,240,.14);color:var(--purp);padding:.18rem .5rem;border-radius:6px;border:1px solid rgba(199,159,240,.3);font-weight:700}
+
+.ana{background:linear-gradient(120deg,rgba(255,158,203,.08),rgba(199,159,240,.06));border:1px solid rgba(255,158,203,.22);border-radius:14px;padding:.8rem 1rem;margin:.7rem 0;font-size:.95rem;color:var(--text)}
+.ana .lbl{display:inline-flex;align-items:center;gap:.3rem;font-weight:800;color:var(--pink);font-size:.82rem;margin-bottom:.15rem}
+.ana b{color:var(--pink)}
+
+.more{margin-top:.6rem}
+.more summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:.4rem;color:var(--blue);font-weight:700;font-size:.85rem;background:rgba(127,182,230,.08);border:1px solid rgba(127,182,230,.22);padding:.35rem .8rem;border-radius:50px;transition:.18s}
+.more summary::-webkit-details-marker{display:none}
+.more summary:hover{background:rgba(127,182,230,.16)}
+.more[open] summary{margin-bottom:.6rem}
+.more .deep{background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:.8rem 1rem;font-size:.92rem;color:var(--dim)}
+.more .deep b{color:var(--gold2)}
+
+.qlist{list-style:none;margin:.3rem 0}
+.qlist li{padding:.45rem 0;border-bottom:1px dashed var(--line);display:flex;gap:.6rem;align-items:flex-start}
+.qlist li:last-child{border:none}
+.qlist .k{color:var(--gold2);font-weight:700;direction:ltr;font-family:'IBM Plex Mono';font-size:.8rem;flex-shrink:0;min-width:max-content;background:rgba(230,185,95,.1);padding:.05rem .45rem;border-radius:6px}
+.tip{background:rgba(127,182,230,.07);border:1px solid rgba(127,182,230,.2);border-radius:13px;padding:.8rem 1rem;margin:.8rem 0;font-size:.93rem}.tip b{color:var(--blue)}
+.warn{background:rgba(255,141,141,.07);border:1px solid rgba(255,141,141,.2);border-radius:13px;padding:.8rem 1rem;margin:.8rem 0;font-size:.93rem}.warn b{color:var(--red)}
+.good{background:rgba(127,224,168,.07);border:1px solid rgba(127,224,168,.2);border-radius:13px;padding:.8rem 1rem;margin:.8rem 0;font-size:.93rem}.good b{color:var(--green)}
+
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:.8rem;align-items:stretch;margin:.8rem 0}
+@media(max-width:600px){.vs{grid-template-columns:1fr;text-align:center}}
+.vs .side{background:var(--ink);border:1px solid var(--line);border-radius:14px;padding:.9rem 1rem}
+.vs .side h4{color:var(--gold2);margin-bottom:.3rem;font-size:.98rem}
+.vs .side.b h4{color:var(--blue)} .vs .side.g h4{color:var(--green)} .vs .side.r h4{color:var(--red)}
+.vs .side p{font-size:.88rem;margin:0;color:var(--text)}
+.vs .mid{display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono';color:var(--gold);font-weight:700;font-size:1rem}
+
+.code{font-family:'IBM Plex Mono';direction:ltr;text-align:left;background:var(--ink);border:1px solid var(--line);border-left:3px solid var(--green);border-radius:12px;padding:.8rem 1rem;margin:.6rem 0;font-size:.82rem;color:var(--text);overflow-x:auto;white-space:pre;line-height:1.7}
+.code .kw{color:var(--purp);font-weight:600}
+.code .st{color:var(--green)}
+.code .cm{color:var(--faint);font-style:italic}
+.code .fn{color:var(--cyan)}
+
+/* schema reference */
+.schema{background:linear-gradient(160deg,#13161c,#101319);border:1px dashed rgba(127,182,230,.3);border-radius:14px;padding:.9rem 1.1rem;margin:.6rem 0;direction:ltr;text-align:left}
+.schema .st{font-family:'IBM Plex Mono';font-size:.78rem;color:var(--text);padding:.18rem 0}
+.schema .rn{color:var(--gold2);font-weight:700}
+.schema u{color:var(--gold2);text-underline-offset:2px}
+.schema i{color:var(--blue);font-style:italic}
+
+/* ===== CODE EXERCISE ===== */
+.exq{background:linear-gradient(160deg,#13191a,#101417);border:1px solid rgba(127,224,168,.3);border-radius:18px;padding:1.2rem 1.3rem;margin:1.2rem 0;box-shadow:var(--sh)}
+.exq .eh{display:flex;align-items:center;gap:.5rem;color:var(--green);font-weight:800;font-size:.76rem;font-family:'IBM Plex Mono';direction:ltr;margin-bottom:.5rem}
+.exq .task{font-size:1.02rem;font-weight:700;color:var(--text);margin-bottom:.7rem}
+.exq .task .en{color:var(--gold2)}
+.exq textarea{width:100%;min-height:90px;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:.7rem .9rem;color:var(--text);font-family:'IBM Plex Mono';font-size:.85rem;direction:ltr;text-align:left;resize:vertical;line-height:1.6}
+.exq textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(127,224,168,.12)}
+.exq .revealbtn{margin-top:.6rem;background:linear-gradient(135deg,var(--green),#3f9469);color:var(--ink);border:none;padding:.55rem 1.2rem;border-radius:50px;font-weight:800;font-family:'Tajawal';font-size:.92rem;cursor:pointer;transition:.18s}
+.exq .revealbtn:hover{transform:translateY(-2px);box-shadow:0 8px 20px -6px rgba(127,224,168,.5)}
+.exq .ans{display:none;margin-top:.7rem;animation:fadein .35s ease}
+.exq .ans.show{display:block}
+.exq .ans .lbl{color:var(--green);font-weight:800;font-size:.82rem;margin-bottom:.2rem;font-family:'IBM Plex Mono';direction:ltr}
+.exq .ans .note{color:var(--dim);font-size:.85rem;margin-top:.3rem}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* flashcards */
+.fcgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem;margin:.6rem 0}
+@media(max-width:600px){.fcgrid{grid-template-columns:1fr}}
+.fc{background:transparent;perspective:1000px;height:160px;cursor:pointer}
+.fc-in{position:relative;width:100%;height:100%;transition:transform .6s cubic-bezier(.4,.2,.2,1);transform-style:preserve-3d}
+.fc.flip .fc-in{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;padding:1rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1px solid var(--line)}
+.fc-front{background:linear-gradient(160deg,var(--panel),var(--panel2));box-shadow:var(--sh)}
+.fc-front .term{font-weight:800;color:var(--gold2);font-size:1.02rem}
+.fc-front .hint{font-size:.72rem;color:var(--faint);margin-top:.5rem}
+.fc-back{background:linear-gradient(160deg,#15161f,#101620);transform:rotateY(180deg);border-color:rgba(127,224,168,.25)}
+.fc-back .ans{font-size:.78rem;color:var(--text);direction:ltr;line-height:1.5}
+
+/* problems */
+.prob{background:linear-gradient(165deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;margin-bottom:.8rem;overflow:hidden;box-shadow:var(--sh)}
+.prob summary{list-style:none;cursor:pointer;padding:1rem 1.2rem;display:flex;align-items:center;gap:.8rem;font-weight:700;color:var(--text);font-size:1rem;transition:.18s}
+.prob summary::-webkit-details-marker{display:none}
+.prob summary:hover{background:rgba(230,185,95,.04)}
+.prob summary .qn{font-family:'IBM Plex Mono';direction:ltr;background:linear-gradient(140deg,var(--gold2),var(--gold-dim));color:var(--ink);min-width:46px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;flex-shrink:0}
+.prob summary .ar{margin-right:auto;color:var(--gold);transition:.3s;font-size:1.1rem}
+.prob[open] summary .ar{transform:rotate(90deg)}
+.prob .pbody{padding:.3rem 1.2rem 1.2rem;border-top:1px solid var(--line)}
+.qtext{color:var(--dim);font-style:italic;margin:.8rem 0;padding-left:.7rem;border-left:2px solid var(--gold-dim);direction:ltr;text-align:left;font-family:'IBM Plex Mono';font-size:.78rem;line-height:1.6}
+.subh{color:var(--gold2);font-family:'IBM Plex Mono';font-size:.84rem;font-weight:700;margin:.8rem 0 .3rem;direction:ltr}
+
+.finish{max-width:880px;margin:0 auto;padding:3rem 1.4rem}
+.finishcard{background:linear-gradient(160deg,#16201b,#13131d);border:1px solid rgba(127,224,168,.3);border-radius:24px;padding:2.2rem 1.6rem;text-align:center;box-shadow:var(--sh)}
+.finishcard h2{font-family:'Aref Ruqaa',serif;color:var(--gold2);font-size:2rem;margin-bottom:.6rem}
+.finishcard p{color:var(--dim);margin-bottom:1.2rem}
+.scorebox{display:inline-flex;flex-direction:column;align-items:center;background:rgba(127,224,168,.08);border:1px solid rgba(127,224,168,.3);border-radius:18px;padding:1rem 1.6rem;margin-bottom:1rem}
+.scorebox .big{font-family:'IBM Plex Mono';font-size:2.4rem;font-weight:800;color:var(--green)}
+.scorebox .lbl{font-size:.8rem;color:var(--dim)}
+.againbtn{background:none;border:1px solid var(--gold-dim);color:var(--gold2);padding:.6rem 1.4rem;border-radius:50px;font-weight:700;cursor:pointer;font-family:'Tajawal'}
+
+footer{text-align:center;padding:2.5rem 1.4rem;color:var(--dim);border-top:1px solid var(--line);margin-top:1rem}
+footer .h{color:var(--gold)}
+.reveal{opacity:0;transform:translateY(24px);transition:.6s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+.conf{position:fixed;width:10px;height:14px;z-index:500;top:-20px;pointer-events:none;border-radius:2px;opacity:.95}
+</style>
+</head>
+<body>
+<div class="scrollbar" id="scrollbar"></div>
+
+<div class="topbar"><div class="topbar-in">
+  <div class="brand"><span class="mk">6</span> Intro to SQL</div>
+  <button class="menu-btn" onclick="document.getElementById('nav').classList.toggle('open')">☰</button>
+  <nav class="navlinks" id="nav">
+    <a href="index.html" style="color:var(--gold2);font-weight:700">← Back</a>
+    <a href="#s1">SQL؟</a>
+    <a href="#s2">Environment</a>
+    <a href="#s3">CREATE TABLE</a>
+    <a href="#s4">ALTER/DROP</a>
+    <a href="#s5">INSERT/UPDATE</a>
+    <a href="#s6">SELECT</a>
+    <a href="#s7">Boolean/LIKE</a>
+    <a href="#s8">GROUP/HAVING</a>
+    <a href="#s9">Views</a>
+    <a href="#cards">كاردز</a>
+    <a href="#problems">الشيت</a>
+  </nav>
+</div></div>
+
+<div class="xpwrap" id="xpwrap" title="نقاطك"><span class="star">⭐</span><span><span class="xpnum" id="xpnum">0</span> XP</span><span class="lvl" id="lvl">· مبتدئ</span></div>
+
+<header class="hero">
+  <div class="kicker">CSE 301 · DATABASE SYSTEMS · CHAPTER 6</div>
+  <h1>Introduction to SQL</h1>
+  <p class="sub">الامتحان كله <b style="color:var(--gold2)">كود</b> — فإحنا هنا مش بس هنفهم، هنكتب queries بإيدينا 💻 كل جزئية ليها تمرين تكتب فيه الكود بنفسك، والإجابة مخفية تظهرها بعد ما تحاول. وكل أسئلة الشيت بحل الدكتور بالحرف.</p>
+  <a href="#s1"><button class="startbtn">💻 يلا نكتب SQL</button></a>
+  <div class="examnote">📌 <b>طريقة المذاكرة الصح هنا:</b> اقرا الجزئية ← اكتب الكود في المربع بإيدك ← بعدين دوس "اظهر الإجابة" وقارن. متغشّش نفسك 😄 الكتابة بإيدك هي اللي هتنجّحك.</div>
+  <div class="herostats">
+    <div class="hstat"><div class="n">9</div><div class="l">مواضيع</div></div>
+    <div class="hstat"><div class="n">14</div><div class="l">تمرين كود</div></div>
+    <div class="hstat"><div class="n">10</div><div class="l">مسائل كود</div></div>
+    <div class="hstat"><div class="n">~30</div><div class="l">دقيقة</div></div>
+  </div>
+  <div class="hdiv"></div>
+</header>
+
+<!-- schema reference floating note -->
+<section style="padding-top:0">
+  <div class="card reveal" style="border-color:rgba(127,182,230,.3)">
+    <h3><span class="emoji">🗂️</span> الجداول اللي هنشتغل عليها (Pine Valley)</h3>
+    <p class="simple" style="font-size:.95rem">خليها قدامك وانت بتحل التمارين — نفس جداول الكتاب:</p>
+    <div class="schema">
+      <div class="st"><span class="rn">CUSTOMER_T</span> (<u>CustomerID</u>, CustomerName, CustomerAddress, CustomerCity, CustomerState, CustomerPostalCode)</div>
+      <div class="st"><span class="rn">PRODUCT_T</span> (<u>ProductID</u>, ProductDescription, ProductFinish, ProductStandardPrice, <i>ProductLineID</i>)</div>
+      <div class="st"><span class="rn">ORDER_T</span> (<u>OrderID</u>, OrderDate, <i>CustomerID</i>)</div>
+      <div class="st"><span class="rn">ORDERLINE_T</span> (<u>OrderID</u>, <u>ProductID</u>, OrderedQuantity)</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== S1: WHAT IS SQL ===== -->
+<section id="s1">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#ffd98a,#8f7440);color:#0b0b12">01</span><div><h2>يعني إيه SQL أصلاً؟</h2><div class="sm">Overview · History · RDBMS</div></div></div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">💬</span> الفكرة في سطر</h3>
+    <p class="simple"><b>SQL</b> = Structured Query Language — اللغة المعيارية (the standard) للتعامل مع قواعد البيانات العلائقية (<b>RDBMS</b>).</p>
+    <div class="ana"><span class="lbl">💡 تشبيه</span> الـ SQL زي ما تطلب من جرسون: "هاتلي كل العملاء اللي في القاهرة مرتبين بالاسم". انت بتقول <b>عايز إيه</b> مش <b>إزاي</b> تجيبه — والـ DBMS هو اللي بيجيبه.</div>
+    <details class="more"><summary>🔎 اعرف أكتر — RDBMS و تاريخ SQL</summary>
+      <div class="deep"><b>RDBMS:</b> نظام بيدير الداتا كمجموعة <b>جداول</b>، والعلاقات بينها بتتمثّل بـ <b>قيم مشتركة</b> (مش links).<br><br><b>تاريخ سريع:</b> 1970 Codd اخترع الفكرة · 1974-79 IBM عملت System R + Sequel · 1979 Oracle أول DB تجاري بـ SQL · 1986 معيار ANSI · تحديثات 1989/1992/1999/2003/2006/2008.</div>
+    </details>
+  </div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">🎁</span> فوايد لغة معيارية موحّدة <span class="tagq">Benefits</span></h3>
+    <ul class="qlist">
+      <li><span class="k">1</span> تقليل تكاليف التدريب · <span class="k">2</span> إنتاجية أعلى · <span class="k">3</span> portability للتطبيقات.</li>
+      <li><span class="k">4</span> عمر أطول للتطبيق · <span class="k">5</span> تقليل الاعتماد على vendor واحد · <span class="k">6</span> تواصل بين الأنظمة.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== S2: ENVIRONMENT ===== -->
+<section id="s2">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#7fb6e6,#2c5a7a);color:#0b0b12">02</span><div><h2>بيئة الـ SQL والأوامر</h2><div class="sm">Catalog · Schema · DDL/DML/DCL · سؤال 3</div></div></div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">🏛️</span> Catalog و Schema</h3>
+    <ul class="qlist">
+      <li><span class="k">Catalog</span> مجموعة schemas بتوصف الداتابيز كلها.</li>
+      <li><span class="k">Schema</span> الهيكل اللي فيه وصف الـ objects اللي عملها اليوزر (base tables, views, constraints).</li>
+    </ul>
+  </div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">🧩</span> الـ 3 أنواع أوامر — مهم جداً! <span class="tagq">سؤال 3</span></h3>
+    <div class="vs">
+      <div class="side b"><h4>DDL</h4><p>تعريف الداتابيز: <span class="en">CREATE / ALTER / DROP</span> + الـ constraints.</p></div>
+      <div class="side g"><h4>DML</h4><p>الشغل على الداتا: <span class="en">SELECT / INSERT / UPDATE / DELETE</span>.</p></div>
+      <div class="side r"><h4>DCL</h4><p>التحكم والصلاحيات: <span class="en">GRANT / REVOKE</span> + commit.</p></div>
+    </div>
+    <div class="ana"><span class="lbl">💡 تشبيه</span> تخيّل مطعم: <b>DDL</b> = بناء المطبخ والطاولات، <b>DML</b> = طبخ وتقديم الأكل اليومي، <b>DCL</b> = مين مسموح يدخل المطبخ ومين لأ.</div>
+  </div>
+</section>
+
+<!-- ===== S3: CREATE TABLE ===== -->
+<section id="s3">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#7fe0a8,#2c6a45);color:#0b0b12">03</span><div><h2>إنشاء الجداول — CREATE TABLE</h2><div class="sm">DDL · Constraints · PK/FK</div></div></div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">🏗️</span> خطوات إنشاء الجدول</h3>
+    <ul class="qlist">
+      <li><span class="k">1</span> حدّد data types للأعمدة.</li>
+      <li><span class="k">2</span> حدّد الأعمدة اللي تقبل/ماتقبلش null.</li>
+      <li><span class="k">3</span> حدّد الأعمدة الـ unique (candidate keys).</li>
+      <li><span class="k">4</span> حدّد الـ PK–FK.</li>
+      <li><span class="k">5</span> حدّد القيم الافتراضية (default).</li>
+      <li><span class="k">6</span> حدّد الـ constraints (domain).</li>
+      <li><span class="k">7</span> اعمل الجدول والـ indexes.</li>
+    </ul>
+    <div class="code"><span class="cm">-- الشكل العام</span>
+<span class="kw">CREATE TABLE</span> table_name (
+  column1  datatype  [<span class="kw">NOT NULL</span>] [<span class="kw">DEFAULT</span> value],
+  ...,
+  <span class="kw">CONSTRAINT</span> pk_name <span class="kw">PRIMARY KEY</span> (col),
+  <span class="kw">CONSTRAINT</span> fk_name <span class="kw">FOREIGN KEY</span> (col) <span class="kw">REFERENCES</span> parent(col)
+);</div>
+    <div class="tip">💡 <b>افتكر:</b> الـ PK مينفعش يكون <b>NULL</b> أبداً. والـ composite PK = أكتر من عمود في الـ PRIMARY KEY.</div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">اكتب أمر <span class="en">CREATE TABLE</span> لجدول <span class="en">CUSTOMER_T</span> فيه <span class="en">CustomerID</span> (رقم، NOT NULL، primary key) و <span class="en">CustomerName</span> (نص).</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">CREATE TABLE</span> CUSTOMER_T (
+  CustomerID    <span class="kw">NUMBER</span>      <span class="kw">NOT NULL</span>,
+  CustomerName  <span class="kw">VARCHAR2</span>(25),
+  <span class="kw">CONSTRAINT</span> Customer_PK <span class="kw">PRIMARY KEY</span> (CustomerID)
+);</div></div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">اكتب <span class="en">CREATE TABLE</span> لجدول <span class="en">ORDER_T</span> فيه <span class="en">OrderID</span> (PK)، <span class="en">OrderDate</span>، و <span class="en">CustomerID</span> كـ <b>foreign key</b> يشاور على <span class="en">CUSTOMER_T</span>.</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">CREATE TABLE</span> ORDER_T (
+  OrderID     <span class="kw">NUMBER</span>   <span class="kw">NOT NULL</span>,
+  OrderDate   <span class="kw">DATE</span>,
+  CustomerID  <span class="kw">NUMBER</span>,
+  <span class="kw">CONSTRAINT</span> Order_PK <span class="kw">PRIMARY KEY</span> (OrderID),
+  <span class="kw">CONSTRAINT</span> Order_FK <span class="kw">FOREIGN KEY</span> (CustomerID)
+       <span class="kw">REFERENCES</span> CUSTOMER_T (CustomerID)
+);</div><div class="note">الـ FK بيطبّق الـ referential integrity: أي CustomerID في ORDER_T لازم يكون موجود في CUSTOMER_T.</div></div>
+  </div>
+</section>
+
+<!-- ===== S4: ALTER / DROP ===== -->
+<section id="s4">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#ff9ecb,#7a3a5a);color:#0b0b12">04</span><div><h2>تعديل وحذف الجداول</h2><div class="sm">ALTER TABLE · DROP TABLE</div></div></div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">🔧</span> ALTER و DROP</h3>
+    <p class="simple"><b>ALTER TABLE</b> بيغيّر مواصفات الأعمدة (يضيف/يعدّل/يحذف عمود). <b>DROP TABLE</b> بيحذف الجدول كله من الـ schema.</p>
+    <div class="code"><span class="kw">ALTER TABLE</span> CUSTOMER_T <span class="kw">ADD</span> CustomerType <span class="kw">VARCHAR2</span>(2) <span class="kw">DEFAULT</span> <span class="st">'Commercial'</span>;
+<span class="kw">DROP TABLE</span> CUSTOMER_T;</div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">ضيف عمود جديد اسمه <span class="en">CustomerEmail</span> نوعه <span class="en">VARCHAR2(50)</span> لجدول <span class="en">CUSTOMER_T</span>.</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">ALTER TABLE</span> CUSTOMER_T
+  <span class="kw">ADD</span> CustomerEmail <span class="kw">VARCHAR2</span>(50);</div></div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">احذف جدول <span class="en">ORDERLINE_T</span> بالكامل من الـ schema.</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">DROP TABLE</span> ORDERLINE_T;</div></div>
+  </div>
+</section>
+
+<!-- ===== S5: INSERT / UPDATE / DELETE ===== -->
+<section id="s5">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#c79ff0,#4a2c6e);color:#0b0b12">05</span><div><h2>إدخال وتعديل وحذف الداتا</h2><div class="sm">INSERT · UPDATE · DELETE (DML)</div></div></div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">📥</span> الـ 3 أوامر الأساسية</h3>
+    <div class="code"><span class="cm">-- INSERT: إضافة صف</span>
+<span class="kw">INSERT INTO</span> CUSTOMER_T <span class="kw">VALUES</span> (001, <span class="st">'Contemporary Casuals'</span>, <span class="st">'Gainesville'</span>, <span class="st">'FL'</span>);
+<span class="cm">-- لو في أعمدة null لازم تحدد الأعمدة:</span>
+<span class="kw">INSERT INTO</span> CUSTOMER_T (CustomerID, CustomerName) <span class="kw">VALUES</span> (001, <span class="st">'Casuals'</span>);
+
+<span class="cm">-- UPDATE: تعديل</span>
+<span class="kw">UPDATE</span> PRODUCT_T <span class="kw">SET</span> ProductStandardPrice = 775 <span class="kw">WHERE</span> ProductID = 7;
+
+<span class="cm">-- DELETE: حذف</span>
+<span class="kw">DELETE FROM</span> CUSTOMER_T <span class="kw">WHERE</span> CustomerState = <span class="st">'HI'</span>;
+<span class="kw">DELETE FROM</span> CUSTOMER_T;  <span class="cm">-- يمسح كل الصفوف!</span></div>
+    <div class="warn">⚠️ <b>خطر:</b> <span class="en">DELETE FROM CUSTOMER_T;</span> من غير WHERE = بيمسح <b>كل</b> الصفوف. خلي بالك من الـ WHERE!</div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">عدّل اسم المنتج اللي <span class="en">ProductID = 4</span> وخلّيه <span class="en">'Entertainment Center'</span>.</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">UPDATE</span> PRODUCT_T
+  <span class="kw">SET</span> ProductDescription = <span class="st">'Entertainment Center'</span>
+  <span class="kw">WHERE</span> ProductID = 4;</div></div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">احذف العميل اللي <span class="en">CustomerID = 16</span> من <span class="en">CUSTOMER_T</span>.</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">DELETE FROM</span> CUSTOMER_T
+  <span class="kw">WHERE</span> CustomerID = 16;</div></div>
+  </div>
+
+  <details class="more reveal"><summary>🔎 اعرف أكتر — Identity Column (سؤال 9)</summary>
+    <div class="deep">الـ <b>identity column</b> بيعمل sequence رقمي تلقائي. مثال: <span class="en">ID SMALLINT IDENTITY(5,2)</span> → أول صف بياخد 5، واللي بعده 7، 9... الفايدة: توليد رقم فريد أوتوماتيك (زي ID). ملحوظة: ده أمر <b>SQL Server</b> ومش بيشتغل في Oracle.</div>
+  </details>
+</section>
+
+<!-- ===== S6: SELECT ===== -->
+<section id="s6">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#7fe8e0,#2c6a64);color:#0b0b12">06</span><div><h2>الاستعلامات — SELECT</h2><div class="sm">SELECT · FROM · WHERE · COUNT · Alias</div></div></div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">🔍</span> تركيب الـ SELECT</h3>
+    <p class="simple">ده أهم أمر في الشابتر — ترتيب الجمل ثابت:</p>
+    <ul class="qlist">
+      <li><span class="k">SELECT</span> الأعمدة اللي عايز ترجّعها.</li>
+      <li><span class="k">FROM</span> الجدول/الجداول.</li>
+      <li><span class="k">WHERE</span> شروط اختيار الصفوف.</li>
+      <li><span class="k">GROUP BY</span> تجميع النتايج.</li>
+      <li><span class="k">HAVING</span> شرط على المجموعات.</li>
+      <li><span class="k">ORDER BY</span> ترتيب النتيجة.</li>
+    </ul>
+    <div class="code"><span class="cm">-- مثال: المنتجات اللي سعرها أقل من 275</span>
+<span class="kw">SELECT</span> ProductDescription, ProductStandardPrice
+<span class="kw">FROM</span> PRODUCT_T
+<span class="kw">WHERE</span> ProductStandardPrice &lt; 275;</div>
+    <div class="ana"><span class="lbl">💡 افتكر</span> <b>Comparison operators:</b> <span class="en">= , &lt;&gt; , &lt; , &gt; , &lt;= , &gt;=</span>. و <b>Alias</b> = اسم بديل للعمود/الجدول: <span class="en">SELECT CustomerName AS Name FROM CUSTOMER_T CUST;</span></div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">هات <span class="en">ProductDescription</span> و <span class="en">ProductFinish</span> لكل المنتجات اللي سعرها <b>أكبر من 300</b>.</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">SELECT</span> ProductDescription, ProductFinish
+<span class="kw">FROM</span> PRODUCT_T
+<span class="kw">WHERE</span> ProductStandardPrice &gt; 300;</div></div>
+  </div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">🧮</span> Aggregate Functions — COUNT</h3>
+    <p class="simple">دوال بتحسب على مجموعة صفوف: <span class="en">COUNT, SUM, AVG, MIN, MAX</span>.</p>
+    <div class="code"><span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span class="kw">FROM</span> ORDERLINE_T <span class="kw">WHERE</span> OrderID = 1004;</div>
+    <div class="tip">💡 <b>مهم (سؤال 4):</b> <span class="en">COUNT</span> بيعدّ الصفوف اللي فيها قيمة (بيتجاهل null) · <span class="en">COUNT DISTINCT</span> بيعدّ القيم المختلفة بس · <span class="en">COUNT(*)</span> بيعدّ كل الصفوف حتى لو فيها null. ومينفعش تحط عمود عادي مع aggregate إلا لو موجود في الـ GROUP BY.</div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">اعدّ كام منتج موجود في جدول <span class="en">PRODUCT_T</span>.</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">SELECT</span> <span class="fn">COUNT</span>(*)
+<span class="kw">FROM</span> PRODUCT_T;</div></div>
+  </div>
+</section>
+
+<!-- ===== S7: BOOLEAN / LIKE ===== -->
+<section id="s7">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#ffd98a,#8f7440);color:#0b0b12">07</span><div><h2>الشروط — Boolean & LIKE</h2><div class="sm">AND · OR · NOT · LIKE · IN · سؤال 5 و 7</div></div></div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">🔀</span> AND / OR / NOT</h3>
+    <p class="simple">ترتيب التنفيذ الافتراضي (سؤال 5): <b>NOT</b> الأول، بعدين <b>AND</b>، بعدين <b>OR</b>. عايز تغيّر الترتيب؟ استخدم <b>الأقواس ()</b>.</p>
+    <div class="code"><span class="kw">SELECT</span> ProductDescription
+<span class="kw">FROM</span> PRODUCT_T
+<span class="kw">WHERE</span> (ProductFinish = <span class="st">'Cherry'</span> <span class="kw">OR</span> ProductFinish = <span class="st">'Walnut'</span>)
+  <span class="kw">AND</span> ProductStandardPrice &lt; 300;</div>
+    <div class="ana"><span class="lbl">💡 افتكر</span> <b>LIKE</b> بيقارن النصوص بـ wildcards. <span class="en">'%Desk'</span> = أي نص بينتهي بـ Desk. و <b>IN</b> (سؤال 7) بيستخدم في الـ WHERE وبعده قايمة قيم بين أقواس، وممكن تستبدله بـ <b>OR</b>.</div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">هات <span class="en">ProductID</span> و <span class="en">ProductDescription</span> لكل المنتجات اللي وصفها <b>بينتهي بكلمة Desk</b>.</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">SELECT</span> ProductID, ProductDescription
+<span class="kw">FROM</span> PRODUCT_T
+<span class="kw">WHERE</span> ProductDescription <span class="kw">LIKE</span> <span class="st">'%Desk'</span>;</div></div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">هات كل العملاء اللي الـ <span class="en">CustomerState</span> بتاعهم واحدة من: <span class="en">FL, TX, CA, HI</span> (استخدم <span class="en">IN</span>).</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">SELECT</span> *
+<span class="kw">FROM</span> CUSTOMER_T
+<span class="kw">WHERE</span> CustomerState <span class="kw">IN</span> (<span class="st">'FL'</span>, <span class="st">'TX'</span>, <span class="st">'CA'</span>, <span class="st">'HI'</span>);</div><div class="note">نفسها بالـ OR: <span class="en">WHERE CustomerState = 'FL' OR CustomerState = 'TX' ...</span></div></div>
+  </div>
+</section>
+
+<!-- ===== S8: GROUP BY / HAVING / ORDER BY ===== -->
+<section id="s8">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#7fb6e6,#2c5a7a);color:#0b0b12">08</span><div><h2>التجميع والترتيب</h2><div class="sm">ORDER BY · GROUP BY · HAVING · سؤال 6 و 8 و 10</div></div></div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">↕️</span> ORDER BY · GROUP BY · HAVING</h3>
+    <ul class="qlist">
+      <li><span class="k">ORDER BY</span> بترتّب النتيجة (سؤال 8). تشاور للعمود بـ <b>اسمه</b> أو بـ <b>رقم ترتيبه</b> في الـ SELECT (سؤال 10). و <span class="en">ASC</span>/<span class="en">DESC</span>.</li>
+      <li><span class="k">GROUP BY</span> بتجمّع الصفوف في فئات عشان الـ aggregate.</li>
+      <li><span class="k">HAVING</span> زي WHERE بس بتشتغل على <b>المجموعات</b> مش الصفوف (سؤال 6).</li>
+    </ul>
+    <div class="code"><span class="cm">-- كل state وعدد عملائها، بس اللي عندها أكتر من عميل، مرتبة</span>
+<span class="kw">SELECT</span> CustomerState, <span class="fn">COUNT</span>(*)
+<span class="kw">FROM</span> CUSTOMER_T
+<span class="kw">GROUP BY</span> CustomerState
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) &gt; 1
+<span class="kw">ORDER BY</span> CustomerState;</div>
+    <div class="ana"><span class="lbl">💡 تشبيه HAVING</span> الـ WHERE بيفلتر الأفراد قبل التجميع، والـ HAVING بيفلتر <b>المجموعات</b> بعد التجميع. زي: "هات الفصول اللي متوسطها أعلى من 80" — ده شرط على المجموعة.</div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">هات أسماء العملاء (<span class="en">CustomerName</span>) <b>مرتبة أبجدياً</b> تصاعدي.</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">SELECT</span> CustomerName
+<span class="kw">FROM</span> CUSTOMER_T
+<span class="kw">ORDER BY</span> CustomerName;</div></div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">هات الـ <span class="en">CustomerState</span> وعدد العملاء في كل state، بس للـ states اللي فيها <b>أكتر من 2 عملاء</b>.</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">SELECT</span> CustomerState, <span class="fn">COUNT</span>(*)
+<span class="kw">FROM</span> CUSTOMER_T
+<span class="kw">GROUP BY</span> CustomerState
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) &gt; 2;</div></div>
+  </div>
+</section>
+
+<!-- ===== S9: VIEWS / INDEX ===== -->
+<section id="s9">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#7fe0a8,#2c6a45);color:#0b0b12">09</span><div><h2>الـ Views والـ Indexes</h2><div class="sm">CREATE VIEW · CREATE INDEX · CHECK</div></div></div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">🪟</span> Views</h3>
+    <p class="simple"><b>View</b> = جدول افتراضي (virtual) بيتعمل من query على جداول تانية. مفيش داتا متخزّنة فعلاً — بتتجمّع وقت الطلب (dynamic view).</p>
+    <div class="code"><span class="kw">CREATE VIEW</span> Expensive_V <span class="kw">AS</span>
+<span class="kw">SELECT</span> ProductID, ProductDescription, ProductStandardPrice
+<span class="kw">FROM</span> PRODUCT_T
+<span class="kw">WHERE</span> ProductStandardPrice &gt; 300;</div>
+    <div class="vs">
+      <div class="side g"><h4>✅ مزايا</h4><p>تبسّط الـ queries · تساعد في الأمان · إنتاجية · داتا محدّثة · مساحة قليلة · استقلالية فيزيائية.</p></div>
+      <div class="mid">VS</div>
+      <div class="side r"><h4>⚠️ عيوب</h4><p>بتاخد وقت معالجة كل مرة تُستخدم · مش دايماً قابلة للتحديث (updateable).</p></div>
+    </div>
+    <details class="more"><summary>🔎 اعرف أكتر — CHECK و WITH CHECK OPTION (سؤال 11)</summary>
+      <div class="deep">في <b>CREATE TABLE</b>: الـ <span class="en">CHECK</span> بيحط validation rule للقيم المسموحة (مثلاً ProductFinish لازم تكون من قايمة معيّنة). في <b>CREATE VIEW</b>: الـ <span class="en">WITH CHECK OPTION</span> بيرفض أي INSERT/UPDATE من خلال الـ view لو بيخالف شرط الـ view.</div>
+    </details>
+  </div>
+
+  <div class="card reveal">
+    <h3><span class="emoji">⚡</span> CREATE INDEX</h3>
+    <p class="simple">الـ index بيسرّع الوصول للداتا (زي ما اتعلمنا في شابتر 5).</p>
+    <div class="code"><span class="kw">CREATE INDEX</span> NAME_IDX <span class="kw">ON</span> CUSTOMER_T (CustomerName);</div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">اعمل <b>view</b> اسمه <span class="en">CustomerNames_V</span> بيرجّع <span class="en">CustomerID</span> و <span class="en">CustomerName</span> من <span class="en">CUSTOMER_T</span>.</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">CREATE VIEW</span> CustomerNames_V <span class="kw">AS</span>
+<span class="kw">SELECT</span> CustomerID, CustomerName
+<span class="kw">FROM</span> CUSTOMER_T;</div></div>
+  </div>
+
+  <div class="exq reveal">
+    <div class="eh">✍️ اكتب الكود · +10 XP</div>
+    <div class="task">اعمل <b>index</b> اسمه <span class="en">PRICE_IDX</span> على عمود <span class="en">ProductStandardPrice</span> في <span class="en">PRODUCT_T</span>.</div>
+    <textarea spellcheck="false" placeholder="-- اكتب الـ SQL هنا..."></textarea>
+    <button class="revealbtn">👀 اظهر الإجابة</button>
+    <div class="ans"><div class="lbl">✅ الإجابة النموذجية:</div><div class="code"><span class="kw">CREATE INDEX</span> PRICE_IDX <span class="kw">ON</span> PRODUCT_T (ProductStandardPrice);</div></div>
+  </div>
+</section>
+
+<!-- ===== FLASHCARDS ===== -->
+<section id="cards">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#ff9ecb,#7a3a5a);color:#0b0b12">🃏</span><div><h2>فلاش كاردز — التعريفات</h2><div class="sm">دوس الكارت يتقلب · سؤال 1</div></div></div>
+  <p class="simple reveal" style="color:var(--dim);margin-bottom:1rem">التعريفات بنص الشيت بالحرف — دوس الكارت يوريك الإجابة 👇</p>
+  <div class="fcgrid">
+    <div class="fc reveal"><div class="fc-in"><div class="fc-face fc-front"><div class="term">Base table</div><div class="hint">دوس ↻</div></div><div class="fc-face fc-back"><div class="ans">A table in the relational data model containing the inserted raw data; likely corresponds to one physical file in secondary storage.</div></div></div></div>
+    <div class="fc reveal"><div class="fc-in"><div class="fc-face fc-front"><div class="term">Data Definition Language</div><div class="hint">دوس ↻</div></div><div class="fc-face fc-back"><div class="ans">Commands used to define a database: creating, altering, and dropping tables and establishing constraints.</div></div></div></div>
+    <div class="fc reveal"><div class="fc-in"><div class="fc-face fc-front"><div class="term">Data Manipulation Language</div><div class="hint">دوس ↻</div></div><div class="fc-face fc-back"><div class="ans">Commands used to maintain and query a database: updating, inserting, modifying, and querying data.</div></div></div></div>
+    <div class="fc reveal"><div class="fc-in"><div class="fc-face fc-front"><div class="term">Dynamic view</div><div class="hint">دوس ↻</div></div><div class="fc-face fc-back"><div class="ans">A virtual table created dynamically upon request; its definition is stored in the system catalog and its contents are materialized as the result of an SQL query.</div></div></div></div>
+    <div class="fc reveal"><div class="fc-in"><div class="fc-face fc-front"><div class="term">Referential integrity constraint</div><div class="hint">دوس ↻</div></div><div class="fc-face fc-back"><div class="ans">A constraint that the value/existence of an attribute depends on a primary key value; a many-side value must match a one-side PK value, or be null.</div></div></div></div>
+    <div class="fc reveal"><div class="fc-in"><div class="fc-face fc-front"><div class="term">Relational DBMS (RDBMS)</div><div class="hint">دوس ↻</div></div><div class="fc-face fc-back"><div class="ans">A DBMS that manages data as a collection of tables in which all relationships are represented by common values (not links) in related tables.</div></div></div></div>
+    <div class="fc reveal"><div class="fc-in"><div class="fc-face fc-front"><div class="term">Schema</div><div class="hint">دوس ↻</div></div><div class="fc-face fc-back"><div class="ans">A structure that contains descriptions of objects created by a user — base tables, views, constraints — as part of a database.</div></div></div></div>
+    <div class="fc reveal"><div class="fc-in"><div class="fc-face fc-front"><div class="term">Virtual table</div><div class="hint">دوس ↻</div></div><div class="fc-face fc-back"><div class="ans">A table constructed automatically as needed by a DBMS; not maintained as real data. Sometimes referred to as a dynamic view.</div></div></div></div>
+  </div>
+</section>
+
+<!-- ===== PROBLEMS ===== -->
+<section id="problems">
+  <div class="sec-head"><span class="num" style="background:linear-gradient(140deg,#ffd98a,#8f7440);color:#0b0b12">📝</span><div><h2>مسائل الشيت — بحل الدكتور بالحرف</h2><div class="sm">كل المسائل · افتح اللي عايزه</div></div></div>
+
+  <div class="good reveal">✅ <b>مهم:</b> دي مسائل الكود بس (الامتحان كود) — الأسئلة المقالية 1→11 اتشالت. كل الأكواد دي <b>حل الدكتور بالحرف</b> من الشيت — مش مخترعة. الأرقام 12→21 زي ما هي في الشيت (Problems &amp; Exercises 6-34 → 6-44، صفحة 283–284).</div>
+
+  <div class="card reveal" style="border-color:rgba(127,224,168,.35)">
+    <h3><span class="emoji">🗂️</span> الجداول اللي مسائل الكود بتشتغل عليها (داتابيز الجامعة)</h3>
+    <p class="simple" style="font-size:.95rem">دي جداول مسائل الشيت 12→21 (غير جداول Pine Valley بتاعة تمارين الشرح فوق). مستخرجة بالظبط من حل الدكتور لسؤال 12 (الـ CREATE TABLE) — خليها قدامك وانت بتقرا الحلول 👇</p>
+    <div class="schema">
+      <div class="st"><span class="rn">STUDENT_T</span> (<u>StudentID</u>, StudentName)</div>
+      <div class="st"><span class="rn">FACULTY_T</span> (<u>FacultyID</u>, FacultyName)</div>
+      <div class="st"><span class="rn">COURSE_T</span> (<u>CourseID</u>, CourseName)</div>
+      <div class="st"><span class="rn">SECTION_T</span> (<u>SectionNo</u>, Semester, <i>CourseID</i>) <span style="color:var(--faint)">→ FK: CourseID → COURSE_T</span></div>
+      <div class="st"><span class="rn">QUALIFIED_T</span> (<u>FacultyID</u>, <u>CourseID</u>, DateQualified) <span style="color:var(--faint)">→ FK: FACULTY_T, COURSE_T</span></div>
+      <div class="st"><span class="rn">REGISTRATION_T</span> (<u>StudentID</u>, <u>SectionNo</u>) <span style="color:var(--faint)">→ FK: STUDENT_T, SECTION_T</span></div>
+      <div class="st"><span class="rn">ASSIGNMENT_T</span> (<i>FacultyID</i>, <i>SectionNo</i>, Semester) <span style="color:var(--faint)">— مذكور في سؤال 21 (مش معرّف بالشيت)</span></div>
+    </div>
+    <div class="tip">💡 <b>طريقة قراءتها:</b> العمود <u>المسطّر</u> = primary key، والعمود <i>المايل الأزرق</i> = foreign key بيشاور على جدول تاني. دي العلاقات اللي بتخلّي الـ joins والـ subqueries في الحلول تشتغل.</div>
+  </div>
+
+  <details class="prob reveal">
+    <summary><span class="qn">12</span> Database descriptions — CREATE TABLE (P&amp;E) <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">Problems &amp; Exercises (book p.283–284): Write the database description for the given relations using CREATE TABLE (Student, Faculty, Course, Section, Qualified, Registration).</div>
+      <div class="qtext">Note: A particular SQL system may restrict the length of column names or may not permit embedded spaces in names. The following answer may not be acceptable to the SQL system you use; please modify the grammar accordingly.</div>
+      <div class="code"><span class="kw">CREATE TABLE</span> Student
+  (StudentID <span class="kw">NUMBER NOT NULL</span>,
+   StudentName <span class="kw">VARCHAR2</span>(25),
+   <span class="kw">CONSTRAINT</span> Student_PK <span class="kw">PRIMARY KEY</span> (StudentID));
+
+<span class="kw">CREATE TABLE</span> Faculty
+  (FacultyID <span class="kw">NUMBER NOT NULL</span>,
+   FacultyName <span class="kw">VARCHAR2</span>(25),
+   <span class="kw">CONSTRAINT</span> Faculty_PK <span class="kw">PRIMARY KEY</span> (FacultyID));
+
+<span class="kw">CREATE TABLE</span> Course
+  (CourseID <span class="kw">CHAR</span>(8) <span class="kw">NOT NULL</span>,
+   CourseName <span class="kw">VARCHAR2</span>(15),
+   <span class="kw">CONSTRAINT</span> Course_PK <span class="kw">PRIMARY KEY</span> (CourseID));
+
+<span class="kw">CREATE TABLE</span> Section
+  (SectionNo <span class="kw">NUMBER NOT NULL</span>,
+   Semester <span class="kw">CHAR</span>(7) <span class="kw">NOT NULL</span>,
+   CourseID <span class="kw">CHAR</span>(8),
+   <span class="kw">CONSTRAINT</span> Section_PK <span class="kw">PRIMARY KEY</span>(SectionNo),
+   <span class="kw">CONSTRAINT</span> Section_FK <span class="kw">FOREIGN KEY</span> (CourseID)
+        <span class="kw">REFERENCES</span> Course (CourseID));
+
+<span class="kw">CREATE TABLE</span> Qualified
+  (FacultyID <span class="kw">NUMBER NOT NULL</span>,
+   CourseID <span class="kw">CHAR</span>(8) <span class="kw">NOT NULL</span>,
+   DateQualified <span class="kw">DATE</span>,
+   <span class="kw">CONSTRAINT</span> IsQualified_PK <span class="kw">PRIMARY KEY</span> (FacultyID, CourseID),
+   <span class="kw">CONSTRAINT</span> QualifiedFaculty_FK <span class="kw">FOREIGN KEY</span> (FacultyID)
+        <span class="kw">REFERENCES</span> Faculty (FacultyID),
+   <span class="kw">CONSTRAINT</span> QualifiedCourse_FK <span class="kw">FOREIGN KEY</span> (CourseID)
+        <span class="kw">REFERENCES</span> Course (CourseID));
+
+<span class="kw">CREATE TABLE</span> Registration
+  (StudentID <span class="kw">NUMBER NOT NULL</span>,
+   SectionNo <span class="kw">NUMBER NOT NULL</span>,
+   <span class="kw">CONSTRAINT</span> IsRegistered_PK <span class="kw">PRIMARY KEY</span> (StudentID, SectionNo),
+   <span class="kw">CONSTRAINT</span> StudentIsRegistered_FK <span class="kw">FOREIGN KEY</span>(StudentID)
+        <span class="kw">REFERENCES</span> Student(StudentID),
+   <span class="kw">CONSTRAINT</span> CourseIsRegistered_FK <span class="kw">FOREIGN KEY</span> (SectionNo)
+        <span class="kw">REFERENCES</span> Section(SectionNo));</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">13</span> Creating a view <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">Create a view that lists StudentID and StudentName.</div>
+      <div class="code"><span class="kw">CREATE VIEW</span> Student_V <span class="kw">AS</span>
+<span class="kw">SELECT</span> StudentID, StudentName <span class="kw">FROM</span> Student_T;</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">14</span> Referential integrity in DDL <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">Show the SQL clause used to establish referential integrity in DDL.</div>
+      <div class="code"><span class="kw">CONSTRAINT</span> Section_FK <span class="kw">FOREIGN KEY</span> (CourseID) <span class="kw">REFERENCES</span> Course (CourseID));</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">15</span> SQL Definition commands (ALTER / DROP / MODIFY) <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">a) Add a Class column to Student_T. b) Drop the Registration_T table. c) Change FacultyName length to 40.</div>
+      <div class="subh">a.</div>
+      <div class="code"><span class="kw">ALTER TABLE</span> Student_T
+<span class="kw">ADD</span> Class <span class="kw">VARCHAR2</span>(5);</div>
+      <div class="subh">b.</div>
+      <div class="code"><span class="kw">DROP TABLE</span> Registration_T;</div>
+      <div class="subh">c.</div>
+      <div class="code"><span class="kw">ALTER TABLE</span> Faculty_T
+<span class="kw">MODIFY</span> FacultyName <span class="kw">VARCHAR2</span>(40);</div>
+      <p style="color:var(--dim);font-size:.85rem">Note: CHANGE instead of MODIFY also usually works.</p>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">16</span> INSERT, DELETE, UPDATE <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">a) Insert student (65798, 'Lopez'). b) Delete student 65798. c) Update CourseName for ISM 4212.</div>
+      <div class="subh">a.</div>
+      <div class="code"><span class="kw">INSERT INTO</span> Student_T (StudentID, StudentName)
+              <span class="kw">VALUES</span> (65798, <span class="st">'Lopez'</span>);
+<span class="kw">INSERT INTO</span> Student_T <span class="kw">VALUES</span> (65798, <span class="st">'Lopez'</span>);</div>
+      <div class="subh">b.</div>
+      <div class="code"><span class="kw">DELETE FROM</span> Student_T <span class="kw">WHERE</span> StudentID = 65798;</div>
+      <div class="subh">c.</div>
+      <div class="code"><span class="kw">UPDATE</span> Course_T
+<span class="kw">SET</span> CourseName = <span class="st">'Introduction to Relational Databases'</span>
+<span class="kw">WHERE</span> CourseID = <span class="st">'ISM 4212'</span>;</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">17</span> SQL queries (SELECT / WHERE / MIN) <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">a) Students with StudentID &lt; 50000. b) FacultyName where FacultyID = 4756. c) MIN SectionID where Semester = 'I-2016'.</div>
+      <div class="subh">a.</div>
+      <div class="code"><span class="kw">SELECT</span> StudentID, StudentName
+<span class="kw">FROM</span> Student_T
+<span class="kw">WHERE</span> StudentID &lt; 50000;</div>
+      <div class="subh">b.</div>
+      <div class="code"><span class="kw">SELECT</span> FacultyName
+<span class="kw">FROM</span> Faculty_T
+<span class="kw">WHERE</span> FacultyID = 4756;</div>
+      <div class="subh">c.</div>
+      <div class="code"><span class="kw">SELECT</span> <span class="fn">MIN</span>(SectionID)
+<span class="kw">FROM</span> Registration_T
+<span class="kw">WHERE</span> Semester = <span class="st">'I-2016'</span>;</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">18</span> SQL queries (COUNT / dates) <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">a) Count registrations for Section 2714, Semester 'I-2015'. b) Qualified rows with DateQualified ≥ 01-JAN-2008.</div>
+      <div class="subh">a.</div>
+      <div class="code"><span class="kw">SELECT</span> <span class="fn">COUNT</span>(*)
+<span class="kw">FROM</span> Registration_T
+<span class="kw">WHERE</span> Section = 2714
+<span class="kw">AND</span> Semester = <span class="st">'I-2015'</span>;</div>
+      <div class="subh">b.</div>
+      <div class="code"><span class="kw">SELECT</span> FacultyID, CourseID, DateQualified
+<span class="kw">FROM</span> Qualified_T
+<span class="kw">WHERE</span> DateQualified &gt;= <span class="st">'01-JAN-2008'</span>;</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">19</span> SQL queries (GROUP BY / HAVING / subquery) <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">a) Students registered in both the Database (Section 2714) and Networking (Section 2715) courses. b) Instructors who can teach one but not both of ISM 3113 / ISM 3112. c) Courses taught in first semester but not the second.</div>
+      <div class="subh">a.</div>
+      <div class="code"><span class="kw">SELECT</span> StudentID, <span class="fn">COUNT</span>(*)
+<span class="kw">FROM</span> Registration_T
+<span class="kw">WHERE</span> SectionNo <span class="kw">IN</span> (2714, 2715)
+<span class="kw">GROUP BY</span> StudentID
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) &gt; 1;</div>
+      <div class="subh">b.</div>
+      <div class="code"><span class="kw">SELECT</span> FacultyID, <span class="fn">COUNT</span>(*)
+<span class="kw">FROM</span> Qualified_T
+<span class="kw">WHERE</span> CourseID <span class="kw">IN</span> (<span class="st">'ISM 3113'</span>, <span class="st">'ISM 3112'</span>)
+<span class="kw">GROUP BY</span> InstructorID
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) = 1;</div>
+      <div class="subh">c. (uses a Chapter 7 tool — subquery)</div>
+      <div class="code"><span class="kw">SELECT</span> CourseID, Semester
+<span class="kw">FROM</span> Section_T
+<span class="kw">WHERE</span> Semester = <span class="st">'I-2015'</span>
+<span class="kw">AND</span> CourseID <span class="kw">NOT IN</span>
+   (<span class="kw">SELECT</span> CourseID <span class="kw">FROM</span> SECTION <span class="kw">WHERE</span> Semester = <span class="st">'II-2015'</span>);</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">20</span> SQL queries (DISTINCT / ORDER BY) <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">a) Distinct CourseIDs. b) Student names sorted. c) Registrations of 'I-2015' sorted. d) Courses sorted ascending.</div>
+      <div class="subh">a.</div>
+      <div class="code"><span class="kw">SELECT DISTINCT</span> CourseID
+<span class="kw">FROM</span> Section_T;</div>
+      <div class="subh">b.</div>
+      <div class="code"><span class="kw">SELECT</span> StudentName
+<span class="kw">FROM</span> Student_T
+<span class="kw">ORDER BY</span> StudentName;</div>
+      <div class="subh">c.</div>
+      <div class="code"><span class="kw">SELECT</span> SectionNo, Semester, StudentID
+<span class="kw">FROM</span> Registration_T
+<span class="kw">WHERE</span> Semester = <span class="st">'I-2015'</span>
+<span class="kw">ORDER BY</span> SectionNo, Semester, StudentID;</div>
+      <div class="subh">d.</div>
+      <div class="code"><span class="kw">SELECT</span> CourseID, CourseName
+<span class="kw">FROM</span> Course_T
+<span class="kw">ORDER BY</span> CourseID <span class="kw">ASC</span>;</div>
+    </div>
+  </details>
+
+  <details class="prob reveal">
+    <summary><span class="qn">21</span> SQL queries (WHERE / LIKE / HAVING / subquery) <span class="ar">›</span></summary>
+    <div class="pbody">
+      <div class="qtext">a) SectionNo for ISM 3113 in 'I-2015'. b) Courses whose name starts with 'Data'. c) Faculty qualified for both ISM 3112 &amp; ISM 3113. d) Same as c but DateQualified after 31-DEC-2005. (last) Faculty assigned to ISM 4212 sections in 'II-2015'.</div>
+      <div class="subh">a.</div>
+      <div class="code"><span class="kw">SELECT</span> SectionNo
+<span class="kw">FROM</span> Section_T
+<span class="kw">WHERE</span> CourseID = <span class="st">'ISM 3113'</span> <span class="kw">AND</span> Semester = <span class="st">'I-2015'</span>;</div>
+      <div class="subh">b.</div>
+      <div class="code"><span class="kw">SELECT</span> CourseID, CourseName
+<span class="kw">FROM</span> Course_T
+<span class="kw">WHERE</span> CourseName <span class="kw">LIKE</span> <span class="st">'Data%'</span>;</div>
+      <div class="subh">c.</div>
+      <div class="code"><span class="kw">SELECT</span> FacultyID
+<span class="kw">FROM</span> Qualified_T
+<span class="kw">WHERE</span> CourseID <span class="kw">IN</span> (<span class="st">'ISM 3112'</span>, <span class="st">'ISM 3113'</span>)
+<span class="kw">GROUP BY</span> FacultyID
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(CourseID) &gt; 1;</div>
+      <div class="subh">d.</div>
+      <div class="code"><span class="kw">SELECT</span> FacultyID
+<span class="kw">FROM</span> Qualified_T
+<span class="kw">WHERE</span> CourseID <span class="kw">IN</span> (<span class="st">'ISM 3112'</span>, <span class="st">'ISM 3113'</span>) <span class="kw">AND</span>
+      DateQualified &gt; <span class="st">'31-DEC-2005'</span>
+<span class="kw">GROUP BY</span> FacultyID
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(CourseID) &gt; 1;</div>
+      <div class="subh">(last) — uses the Assignment table &amp; a subquery</div>
+      <div class="code"><span class="kw">SELECT</span> FacultyID
+<span class="kw">FROM</span> Assignment_T
+<span class="kw">WHERE</span> Semester = <span class="st">'II-2015'</span> <span class="kw">AND</span>
+SectionNo <span class="kw">IN</span> (<span class="kw">SELECT</span> SectionNo
+              <span class="kw">FROM</span> Section_T
+              <span class="kw">WHERE</span> CourseID = <span class="st">'ISM 4212'</span>);</div>
+    </div>
+  </details>
+</section>
+
+<!-- ===== FINISH ===== -->
+<div class="finish">
+  <div class="finishcard reveal">
+    <h2>🎓 خلّصت SQL!</h2>
+    <p>دلوقتي بتكتب queries بإيدك — وده بالظبط اللي الامتحان عايزه. شوف كام تمرين خلّصت:</p>
+    <div class="scorebox"><span class="big" id="finalscore">0 / 14</span><span class="lbl">تمارين كود حليتها</span></div>
+    <div style="margin:.6rem 0;color:var(--gold2);font-weight:700" id="finalmsg"></div>
+    <br>
+    <button class="againbtn" onclick="location.reload()">🔁 ابدأ من الأول</button>
+  </div>
+</div>
+
+<footer>
+  <p>بالتوفيق يا أبو 💪 — مفتاح الشابتر ده: <b>اكتب بإيدك</b>. الـ SELECT/FROM/WHERE هما العمود الفقري، والـ GROUP BY + HAVING بييجوا كتير، وافتكر فرق COUNT و COUNT(*) و DISTINCT.</p>
+  <p style="margin-top:.5rem;font-size:.85rem">CSE 301 · Chapter 6 · Introduction to SQL · <span class="h">★</span></p>
+</footer>
+
+<script>
+const sb=document.getElementById('scrollbar');
+window.addEventListener('scroll',()=>{const h=document.documentElement;const p=h.scrollTop/(h.scrollHeight-h.clientHeight)*100;sb.style.width=p+'%';});
+
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.05});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+document.querySelectorAll('.navlinks a').forEach(a=>a.addEventListener('click',()=>document.getElementById('nav').classList.remove('open')));
+
+let xp=0, done=0;
+const totalEx=document.querySelectorAll('.exq').length;
+const xpnum=document.getElementById('xpnum'), lvlEl=document.getElementById('lvl');
+function levelName(x){if(x>=120)return '· أسطورة 🏆';if(x>=80)return '· محترف 🔥';if(x>=50)return '· متقدّم 💪';if(x>=20)return '· صاعد ✨';return '· مبتدئ';}
+function addXP(n,x,y){
+  xp+=n; xpnum.textContent=xp; lvlEl.textContent=levelName(xp);
+  const pop=document.createElement('div');pop.className='xp-pop';pop.textContent='+'+n+' XP';
+  pop.style.left=(x-10)+'px';pop.style.top=(y-20)+'px';document.body.appendChild(pop);
+  setTimeout(()=>pop.remove(),1000);
+  const w=document.getElementById('xpwrap');w.style.transform='scale(1.12)';setTimeout(()=>w.style.transform='scale(1)',180);
+}
+function updateFinal(){
+  document.getElementById('finalscore').textContent=done+' / '+totalEx;
+  const msg=document.getElementById('finalmsg'),pct=done/totalEx;
+  if(pct>=1)msg.textContent='كمّلت كل التمارين! جاهز للامتحان 🏆';
+  else if(pct>=0.6)msg.textContent='شغل جامد! كمّل الباقي 💪';
+  else if(done>0)msg.textContent='ماشي، كمّل وانت بتتحسّن ✨';
+}
+
+document.querySelectorAll('.exq').forEach(ex=>{
+  const btn=ex.querySelector('.revealbtn');
+  const ans=ex.querySelector('.ans');
+  let revealed=false;
+  btn.addEventListener('click',(e)=>{
+    ans.classList.toggle('show');
+    if(ans.classList.contains('show')){btn.textContent='🙈 اخفي الإجابة';if(!revealed){revealed=true;done++;addXP(10,e.clientX,e.clientY);confetti();updateFinal();}}
+    else{btn.textContent='👀 اظهر الإجابة';}
+  });
+});
+
+let flippedSet=new Set();
+document.querySelectorAll('.fc').forEach((c,i)=>{
+  c.addEventListener('click',(e)=>{c.classList.toggle('flip');if(!flippedSet.has(i)){flippedSet.add(i);addXP(2,e.clientX,e.clientY);}});
+});
+
+function confetti(){
+  const colors=['#e6b95f','#7fe0a8','#7fb6e6','#c79ff0','#ff9ecb','#ffd98a'];
+  for(let i=0;i<26;i++){
+    const c=document.createElement('div');c.className='conf';
+    c.style.left=Math.random()*100+'vw';
+    c.style.background=colors[Math.floor(Math.random()*colors.length)];
+    const dur=1.6+Math.random()*1.2;
+    c.animate([{transform:'translateY(0) rotate(0)',opacity:1},{transform:'translateY('+(window.innerHeight+40)+'px) rotate('+(360+Math.random()*360)+'deg)',opacity:.9}],{duration:dur*1000,easing:'cubic-bezier(.3,.6,.4,1)'});
+    document.body.appendChild(c);setTimeout(()=>c.remove(),dur*1000);
+  }
+}
+</script>
+</body>
+</html>

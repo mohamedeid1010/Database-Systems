@@ -19,6 +19,7 @@
       --accent-ch3: #82b4d6;
       --accent-ch4: #bd9fd8;
       --accent-ch5: #e0b56a;
+      --accent-ch6: #7fe0a8;
 
       /* Celebration Button variables */
       --gold: #e8b85a;
@@ -128,6 +129,11 @@
       box-shadow: 0 0 15px rgba(224, 181, 106, 0.15);
     }
 
+    .btn.ch6:hover {
+      border-color: var(--accent-ch6);
+      box-shadow: 0 0 15px rgba(127, 224, 168, 0.15);
+    }
+
     .ch-label {
       font-size: 0.85rem;
       font-weight: 600;
@@ -141,6 +147,7 @@
     .ch3 .ch-label { color: var(--accent-ch3); }
     .ch4 .ch-label { color: var(--accent-ch4); }
     .ch5 .ch-label { color: var(--accent-ch5); }
+    .ch6 .ch-label { color: var(--accent-ch6); }
 
     .menu-row {
       display: grid;
@@ -642,23 +649,29 @@
         <span class="arrow">→</span>
       </a>
 
-      <div class="menu-row">
-        <a href="ch4.html" class="btn ch4">
-          <div>
-            <div class="ch-label">Chapter 04</div>
-            <div class="ch-title">Relational Model & Normalization Study Guide</div>
-          </div>
-          <span class="arrow">→</span>
-        </a>
+      <a href="ch4.html" class="btn ch4">
+        <div>
+          <div class="ch-label">Chapter 04</div>
+          <div class="ch-title">Relational Model & Normalization Study Guide</div>
+        </div>
+        <span class="arrow">→</span>
+      </a>
 
-        <a href="ch5.html" class="btn ch5">
-          <div>
-            <div class="ch-label">Chapter 05</div>
-            <div class="ch-title">Physical Database Design & Performance Study Guide</div>
-          </div>
-          <span class="arrow">→</span>
-        </a>
-      </div>
+      <a href="ch5.html" class="btn ch5">
+        <div>
+          <div class="ch-label">Chapter 05</div>
+          <div class="ch-title">Physical Database Design & Performance Study Guide</div>
+        </div>
+        <span class="arrow">→</span>
+      </a>
+
+      <a href="ch6.html" class="btn ch6">
+        <div>
+          <div class="ch-label">Chapter 06</div>
+          <div class="ch-title">Introduction to SQL Study Guide</div>
+        </div>
+        <span class="arrow">→</span>
+      </a>
     </div>
 
     <!-- الزر الاحتفالي بنظام أنيميشن احترافي -->
